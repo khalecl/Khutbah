@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Khutbah">
+    <meta name="application-name" content="Khutbah Translator">
+    <meta name="theme-color" content="#0f3d24">
+    <meta name="description" content="Real-time Khutbah translation, Quran reader with transliteration, and Du'a collection for the Muslim Ummah.">
+    <link rel="manifest" href="manifest.json">
+    <title>Khutbah Live Translator v3.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        :root{
+            --bg-deep:#0a2818;--bg-mid:#0f3d24;--bg-light:#16532f;
+            --gold:#d4a843;--gold-dim:rgba(212,168,67,.15);--gold-glow:rgba(212,168,67,.35);
+            --cream:#faf5e8;--cream-dim:#f0ead6;
+            --text:#f4f0e4;--text-dim:rgba(244,240,228,.6);
+            --radius:16px;--radius-sm:10px;
+            --font-size:18px;
+            --safe-top:env(safe-area-inset-top,0px);
+            --safe-bottom:env(safe-area-inset-bottom,0px);
+        }
+        html{height:-webkit-fill-available}
+        body{
+            font-family:'Outfit',sans-serif;
+            background:var(--bg-deep);
+            min-height:100vh;min-height:-webkit-fill-available;
+            color:var(--text);
+            overscroll-behavior:none;
+            -webkit-font-smoothing:antialiased;
+        }
+
+        /* === Geometric Islamic pattern overlay === */
+        body::before{
+            content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+            opacity:.035;
+            background-image:
+                linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+                linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+                linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+                linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+                linear-gradient(60deg,rgba(212,168,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,168,67,.35) 75%,rgba(212,168,67,.35)),
+                linear-gradient(60deg,rgba(212,168,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,168,67,.35) 75%,rgba(212,168,67,.35));
+            background-size:40px 70px;
+            background-position:0 0,0 0,20px 35px,20px 35px,0 0,20px 35px;
+        }
+
+        /* === Shell === */
+        .shell{
+            position:relative;z-index:1;
+            width:100%;max-width:600px;margin:0 auto;
+            min-height:100vh;min-height:-webkit-fill-available;
+            display:flex;flex-direction:column;
+            padding-top:var(--safe-top);
+            padding-bottom:var(--safe-bottom);
+        }
+
+        /* === Header === */
+        .hdr{
+            text-align:center;
+            padding:clamp(14px,3vw,24px) 16px clamp(10px,2vw,16px);
+            background:linear-gradient(180deg,rgba(15,61,36,.9),transparent);
+        }
+        .hdr-ar{
+            font-family:'Amiri',serif;font-size:clamp(20px,5vw,30px);
+            color:var(--gold);letter-spacing:1px;line-height:1.3;
+        }
+        .hdr-en{
+            font-size:clamp(11px,2.3vw,14px);font-weight:300;
+            color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;
+            margin-top:2px;
+        }
+
+        /* === Tabs === */
+        .tabs{
+            display:flex;gap:3px;padding:0 12px;flex-shrink:0;
+        }
+        .tab{
+            flex:1;padding:clamp(9px,2vw,13px) 4px;
+            background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+            border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+            color:var(--text-dim);font-size:clamp(10px,2.1vw,12px);font-weight:500;
+            text-align:center;cursor:pointer;
+            transition:all .3s;letter-spacing:.3px;
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        }
+        .tab.on{
+            background:rgba(212,168,67,.1);border-color:rgba(212,168,67,.25);
+            color:var(--gold);font-weight:600;
+        }
+        .tab .tab-icon{display:none}
+        @media(max-width:380px){
+            .tab{font-size:9px;padding:8px 3px;letter-spacing:0}
+        }
+
+        /* === Panels === */
+        .panels{
+            flex:1;display:flex;flex-direction:column;
+            margin:0 12px;overflow:hidden;
+            background:rgba(255,255,255,.025);
+            border:1px solid rgba(255,255,255,.06);border-top:none;
+            border-radius:0 0 var(--radius) var(--radius);
+        }
+        .panel{display:none;flex-direction:column;flex:1;overflow:hidden}
+        .panel.on{display:flex}
+
+        /* === Translator Panel === */
+        .ctl{
+            padding:clamp(12px,2.5vw,18px);
+            display:flex;flex-direction:column;gap:clamp(10px,2vw,14px);
+            border-bottom:1px solid rgba(212,168,67,.12);
+        }
+
+        /* FIXED: Language row alignment */
+        .lang-row{
+            display:grid;
+            grid-template-columns:1fr auto 1fr;
+            gap:clamp(8px,2vw,14px);
+            align-items:end;
+        }
+        .lang-grp{
+            display:flex;flex-direction:column;gap:4px;
+            min-width:0; /* prevent grid blowout */
+        }
+        .lang-lbl{
+            font-size:clamp(10px,1.8vw,12px);font-weight:600;
+            color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;
+        }
+        .lang-sel{
+            width:100%; /* fill the grid cell */
+            height:clamp(44px,9vw,50px);padding:0 28px 0 10px;
+            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
+            font-family:'Outfit',sans-serif;font-size:clamp(12px,2.2vw,14px);font-weight:500;
+            color:var(--text);background:rgba(255,255,255,.05)
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
+                no-repeat right 10px center;
+            -webkit-appearance:none;appearance:none;
+        }
+        .lang-sel:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+        .lang-sel option{background:#1a1a1a;color:#eee}
+        .lang-sel optgroup{color:var(--gold);font-weight:700}
+
+        /* === Mic Button === */
+        .mic-wrap{display:flex;align-items:flex-end;justify-content:center}
+        .mic{
+            width:clamp(54px,12vw,66px);height:clamp(54px,12vw,66px);
+            border-radius:50%;border:none;cursor:pointer;
+            font-size:clamp(24px,5.5vw,30px);
+            transition:all .3s;position:relative;
+        }
+        .mic.idle{
+            background:linear-gradient(145deg,var(--bg-light),var(--bg-mid));
+            border:2px solid rgba(212,168,67,.4);
+            box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);
+        }
+        .mic.idle:active{transform:scale(1.08)}
+        .mic.live{
+            background:linear-gradient(145deg,#c62828,#e53935);
+            border:2px solid rgba(255,100,100,.5);
+            animation:mic-pulse 1.8s ease infinite;
+        }
+        @keyframes mic-pulse{
+            0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.5)}
+            50%{box-shadow:0 0 0 14px rgba(229,57,53,0)}
+        }
+
+        /* === Audio Visualizer === */
+        .viz{
+            height:clamp(36px,7vw,48px);
+            background:rgba(255,255,255,.03);border-radius:var(--radius-sm);
+            display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 12px;
+        }
+        .viz-bar{
+            width:5px;height:8px;background:rgba(212,168,67,.3);border-radius:3px;
+            transition:height .08s ease-out,background .2s;
+        }
+
+        /* === Status === */
+        .sts{
+            display:flex;align-items:center;justify-content:center;gap:10px;
+            padding:clamp(8px,1.5vw,12px);
+            background:var(--gold-dim);border-radius:var(--radius-sm);
+        }
+        .sts-dot{
+            width:10px;height:10px;background:rgba(255,255,255,.2);
+            border-radius:50%;transition:all .3s;flex-shrink:0;
+        }
+        .sts-dot.on{background:var(--gold);animation:dot-glow 2s infinite}
+        @keyframes dot-glow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+        .sts-txt{
+            font-size:clamp(11px,2vw,13px);font-weight:500;color:var(--gold);
+        }
+
+        /* === Translation Output === */
+        .out-wrap{
+            flex:1;display:flex;flex-direction:column;
+            padding:clamp(10px,2vw,16px);min-height:0;
+        }
+        .out-box{
+            flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+            padding-right:6px;
+        }
+        .out-box::-webkit-scrollbar{width:4px}
+        .out-box::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+        .out-box::-webkit-scrollbar-track{background:transparent}
+        .sent{
+            margin-bottom:12px;padding:clamp(10px,2vw,14px);
+            background:rgba(212,168,67,.06);
+            border-left:3px solid rgba(212,168,67,.35);
+            border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+            font-size:var(--font-size);line-height:1.75;color:var(--cream);
+            animation:fade-up .4s ease;
+        }
+        .sent:last-child{background:rgba(212,168,67,.12);border-left-color:var(--gold)}
+        .sent.rtl{
+            direction:rtl;text-align:right;font-family:'Amiri',serif;
+            border-left:none;border-right:3px solid rgba(212,168,67,.35);
+            border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+        }
+        .sent.rtl:last-child{border-right-color:var(--gold)}
+        @keyframes fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .empty-msg{
+            text-align:center;margin-top:clamp(30px,8vw,60px);
+            color:var(--text-dim);font-size:clamp(13px,2.5vw,15px);
+            line-height:1.8;
+        }
+        .empty-msg .icon{font-size:40px;margin-bottom:12px;display:block;opacity:.4}
+
+        /* === Font + Actions Bar === */
+        .bar{
+            display:flex;gap:8px;padding:clamp(10px,2vw,14px);
+            border-top:1px solid rgba(212,168,67,.1);
+            justify-content:center;flex-wrap:wrap;
+        }
+        .bar-btn{
+            padding:clamp(10px,2vw,12px) clamp(14px,3vw,20px);
+            font-family:'Outfit',sans-serif;
+            font-size:clamp(12px,2vw,14px);font-weight:600;
+            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
+            background:rgba(212,168,67,.08);color:var(--gold);
+            cursor:pointer;transition:all .25s;
+            display:inline-flex;align-items:center;gap:6px;
+        }
+        .bar-btn:active{background:rgba(212,168,67,.2);transform:scale(.97)}
+        .bar-btn.primary{
+            background:linear-gradient(145deg,rgba(212,168,67,.2),rgba(212,168,67,.1));
+            border-color:rgba(212,168,67,.4);
+        }
+        .font-ctrl{
+            display:flex;align-items:center;
+            background:rgba(255,255,255,.04);border-radius:20px;
+            border:1px solid rgba(255,255,255,.06);overflow:hidden;
+        }
+        .font-btn{
+            width:34px;height:34px;border:none;background:none;
+            color:var(--gold);font-size:16px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+        }
+        .font-btn:active{background:rgba(212,168,67,.15)}
+        .font-val{
+            width:38px;text-align:center;font-size:11px;font-weight:600;
+            color:var(--text-dim);
+        }
+
+        /* === API Status Indicator === */
+        .api-badge{
+            display:flex;align-items:center;gap:6px;
+            padding:6px 10px;border-radius:20px;
+            background:rgba(255,255,255,.04);
+            font-size:10px;color:var(--text-dim);
+        }
+        .api-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+        .api-dot.ok{background:#4caf50}
+        .api-dot.warn{background:#ff9800}
+        .api-dot.err{background:#f44336}
+
+        /* === Settings Panel === */
+        .settings-inner{
+            padding:clamp(16px,3vw,24px);overflow-y:auto;flex:1;
+            -webkit-overflow-scrolling:touch;
+        }
+        .set-group{
+            margin-bottom:20px;padding:18px;
+            background:rgba(255,255,255,.03);border-radius:var(--radius);
+            border:1px solid rgba(255,255,255,.06);
+        }
+        .set-title{
+            font-size:14px;font-weight:600;color:var(--gold);
+            margin-bottom:14px;letter-spacing:.5px;
+        }
+        .set-row{
+            display:flex;align-items:center;gap:12px;
+            margin-bottom:12px;font-size:13px;color:var(--cream-dim);
+            cursor:pointer;
+        }
+        .set-row input[type=checkbox]{
+            width:20px;height:20px;accent-color:var(--gold);flex-shrink:0;
+        }
+        .set-row input[type=range]{
+            flex:1;accent-color:var(--gold);height:6px;
+        }
+        .set-save{
+            width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
+            background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));
+            color:var(--gold);font-family:'Outfit',sans-serif;
+            font-size:14px;font-weight:600;cursor:pointer;
+            letter-spacing:.5px;
+        }
+
+        /* ═══════════════════════════════════════════
+           QURAN TAB
+           ═══════════════════════════════════════════ */
+        .quran-inner{
+            padding:clamp(14px,3vw,20px);overflow-y:auto;flex:1;
+            -webkit-overflow-scrolling:touch;
+        }
+        .quran-nav{
+            display:flex;gap:8px;margin-bottom:16px;align-items:center;
+        }
+        .quran-nav select{
+            flex:1;height:44px;padding:0 28px 0 10px;
+            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
+            font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+            color:var(--text);background:rgba(255,255,255,.05)
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
+                no-repeat right 10px center;
+            -webkit-appearance:none;appearance:none;
+        }
+        .quran-nav select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+        .quran-nav select option{background:#1a1a1a;color:#eee}
+        .quran-controls{
+            display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;
+        }
+        .q-toggle{
+            padding:8px 14px;border:1px solid rgba(212,168,67,.2);
+            border-radius:20px;background:rgba(255,255,255,.03);
+            color:var(--text-dim);font-size:11px;font-weight:500;
+            cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif;
+        }
+        .q-toggle.on{
+            background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.4);
+            color:var(--gold);
+        }
+        .quran-loading{
+            text-align:center;padding:40px 20px;
+            color:var(--text-dim);font-size:14px;
+        }
+        .quran-loading .spinner{
+            width:32px;height:32px;border:3px solid rgba(212,168,67,.15);
+            border-top:3px solid var(--gold);border-radius:50%;
+            animation:spin .8s linear infinite;margin:0 auto 12px;
+        }
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .ayah-card{
+            margin-bottom:16px;padding:clamp(14px,3vw,20px);
+            background:rgba(255,255,255,.025);
+            border:1px solid rgba(255,255,255,.05);
+            border-radius:var(--radius);
+            animation:fade-up .3s ease;
+            position:relative;
+        }
+        .ayah-card:hover{border-color:rgba(212,168,67,.15)}
+        .ayah-num{
+            position:absolute;top:12px;right:14px;
+            width:32px;height:32px;
+            background:var(--gold-dim);border:1px solid rgba(212,168,67,.25);
+            border-radius:50%;display:flex;align-items:center;justify-content:center;
+            font-size:12px;font-weight:700;color:var(--gold);
+        }
+        .ayah-arabic{
+            font-family:'Amiri',serif;font-size:clamp(20px,4.5vw,28px);
+            color:var(--cream);line-height:2;direction:rtl;text-align:right;
+            margin-bottom:12px;padding-right:42px;
+        }
+        .ayah-translit{
+            font-size:clamp(13px,2.5vw,15px);color:var(--gold);
+            font-style:italic;line-height:1.7;margin-bottom:8px;
+            padding-left:4px;border-left:2px solid rgba(212,168,67,.2);
+            padding:4px 0 4px 10px;
+        }
+        .ayah-trans{
+            font-size:clamp(13px,2.5vw,15px);color:var(--cream-dim);
+            line-height:1.8;
+        }
+        .surah-header{
+            text-align:center;margin-bottom:20px;
+            padding:16px;background:rgba(212,168,67,.06);
+            border-radius:var(--radius);border:1px solid rgba(212,168,67,.12);
+        }
+        .surah-header .bismillah{
+            font-family:'Amiri',serif;font-size:clamp(18px,4vw,24px);
+            color:var(--gold);margin-bottom:6px;
+        }
+        .surah-header .surah-info{
+            font-size:12px;color:var(--text-dim);letter-spacing:.5px;
+        }
+
+        /* ═══════════════════════════════════════════
+           DU'A TAB
+           ═══════════════════════════════════════════ */
+        .dua-inner{
+            padding:clamp(14px,3vw,20px);overflow-y:auto;flex:1;
+            -webkit-overflow-scrolling:touch;
+        }
+        .dua-filter{
+            display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;
+        }
+        .dua-tag{
+            padding:7px 14px;border:1px solid rgba(212,168,67,.2);
+            border-radius:20px;background:rgba(255,255,255,.03);
+            color:var(--text-dim);font-size:11px;font-weight:500;
+            cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif;
+        }
+        .dua-tag.on{
+            background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.4);
+            color:var(--gold);
+        }
+        .dua-card{
+            margin-bottom:16px;padding:clamp(14px,3vw,20px);
+            background:rgba(255,255,255,.025);
+            border:1px solid rgba(255,255,255,.05);
+            border-radius:var(--radius);
+            animation:fade-up .3s ease;
+        }
+        .dua-card:hover{border-color:rgba(212,168,67,.15)}
+        .dua-title{
+            font-size:clamp(12px,2.3vw,14px);font-weight:600;
+            color:var(--gold);margin-bottom:10px;
+            display:flex;align-items:center;gap:8px;
+        }
+        .dua-title .dua-cat{
+            font-size:9px;padding:3px 8px;border-radius:10px;
+            background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.2);
+            font-weight:500;
+        }
+        .dua-arabic{
+            font-family:'Amiri',serif;font-size:clamp(18px,4vw,24px);
+            color:var(--cream);line-height:2;direction:rtl;text-align:right;
+            margin-bottom:10px;
+        }
+        .dua-translit{
+            font-size:clamp(12px,2.3vw,14px);color:rgba(212,168,67,.7);
+            font-style:italic;line-height:1.7;margin-bottom:8px;
+        }
+        .dua-meaning{
+            font-size:clamp(12px,2.3vw,14px);color:var(--cream-dim);
+            line-height:1.8;margin-bottom:8px;
+        }
+        .dua-ref{
+            font-size:10px;color:var(--text-dim);
+            border-top:1px solid rgba(255,255,255,.04);
+            padding-top:8px;margin-top:4px;
+        }
+
+        /* ═══════════════════════════════════════════
+           ABOUT + CONTACT (Merged)
+           ═══════════════════════════════════════════ */
+        .about-inner{
+            padding:clamp(16px,3vw,24px);overflow-y:auto;flex:1;
+            -webkit-overflow-scrolling:touch;
+        }
+        .about-inner h2{
+            font-family:'Amiri',serif;font-size:clamp(22px,5vw,28px);
+            color:var(--gold);margin-bottom:6px;text-align:center;
+        }
+        .bismillah-hdr{font-family:'Amiri',serif;font-size:22px;color:var(--gold);margin:12px 0 20px;text-align:center}
+        .about-text{
+            font-size:14px;line-height:1.9;color:var(--cream-dim);
+            text-align:left;margin-bottom:20px;
+        }
+        .dev-card{
+            padding:20px;background:rgba(212,168,67,.06);
+            border-radius:var(--radius);border:1px solid rgba(212,168,67,.15);
+            text-align:left;margin-bottom:20px;
+        }
+        .dev-card h3{font-size:16px;color:var(--gold);margin-bottom:12px;text-align:center}
+        .dev-card p{font-size:13px;line-height:1.8;color:var(--cream-dim);margin-bottom:10px}
+        .c-card{
+            padding:18px;background:rgba(255,255,255,.03);
+            border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);
+            margin-bottom:16px;
+        }
+        .c-card h3{font-size:16px;color:var(--gold);margin-bottom:14px;text-align:center}
+        .c-item{
+            display:flex;align-items:center;gap:12px;
+            padding:12px;background:rgba(255,255,255,.03);
+            border-radius:var(--radius-sm);margin-bottom:8px;
+        }
+        .c-icon{font-size:20px;flex-shrink:0}
+        .c-info .c-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+        .c-info a{color:var(--gold);text-decoration:none;font-weight:500;font-size:13px}
+        .donate-box{
+            padding:20px;text-align:center;
+            background:linear-gradient(145deg,rgba(212,168,67,.1),rgba(212,168,67,.04));
+            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius);
+            margin-bottom:16px;
+        }
+        .donate-box h3{font-family:'Amiri',serif;font-size:20px;color:var(--gold);margin-bottom:8px}
+        .donate-box p{font-size:13px;color:var(--cream-dim);line-height:1.7;margin-bottom:14px}
+        .fb-grp{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+        .fb-input{
+            width:100%;padding:12px;
+            background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+            border-radius:var(--radius-sm);color:var(--text);
+            font-family:'Outfit',sans-serif;font-size:13px;
+        }
+        .fb-input:focus{outline:none;border-color:var(--gold)}
+        .fb-input::placeholder{color:var(--text-dim)}
+        textarea.fb-input{resize:vertical;min-height:80px}
+
+        /* === Section divider inside merged about+contact === */
+        .section-divider{
+            display:flex;align-items:center;gap:12px;
+            margin:24px 0 18px;
+        }
+        .section-divider::before,.section-divider::after{
+            content:'';flex:1;height:1px;
+            background:linear-gradient(90deg,transparent,rgba(212,168,67,.25),transparent);
+        }
+        .section-divider span{
+            font-size:11px;color:var(--gold);font-weight:600;
+            letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;
+        }
+
+        /* === Tutorial Overlay === */
+        .tut-overlay{
+            position:fixed;inset:0;background:rgba(0,0,0,.92);
+            z-index:9999;display:flex;align-items:center;justify-content:center;
+            padding:20px;opacity:0;visibility:hidden;transition:all .35s;
+        }
+        .tut-overlay.on{opacity:1;visibility:visible}
+        .tut-card{
+            background:var(--bg-deep);border:1px solid rgba(212,168,67,.2);
+            border-radius:20px;max-width:420px;width:100%;
+            max-height:85vh;overflow-y:auto;
+            animation:tut-in .4s ease;
+        }
+        @keyframes tut-in{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+        .tut-top{
+            padding:24px;text-align:center;
+            background:linear-gradient(180deg,rgba(212,168,67,.1),transparent);
+            border-radius:20px 20px 0 0;
+        }
+        .tut-top h2{font-family:'Amiri',serif;font-size:24px;color:var(--gold)}
+        .tut-top p{font-size:13px;color:var(--text-dim);margin-top:4px}
+        .tut-steps{padding:24px}
+        .tut-step{display:none}
+        .tut-step.on{display:block;animation:fade-up .3s ease}
+        .tut-icon{
+            width:70px;height:70px;margin:0 auto 16px;
+            background:var(--gold-dim);border:1px solid rgba(212,168,67,.25);
+            border-radius:50%;display:flex;align-items:center;justify-content:center;
+            font-size:32px;
+        }
+        .tut-title{font-size:18px;font-weight:600;color:var(--gold);text-align:center;margin-bottom:10px}
+        .tut-desc{font-size:14px;color:var(--cream-dim);text-align:center;line-height:1.7;margin-bottom:16px}
+        .tut-tip{
+            padding:12px 14px;background:var(--gold-dim);
+            border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
+            font-size:12px;color:var(--cream-dim);line-height:1.6;
+        }
+        .tut-tip strong{color:var(--gold)}
+        .tut-dots{display:flex;justify-content:center;gap:8px;padding:16px}
+        .tut-dot{
+            width:10px;height:10px;background:rgba(255,255,255,.1);
+            border-radius:50%;transition:all .3s;
+        }
+        .tut-dot.on{background:var(--gold);transform:scale(1.2)}
+        .tut-dot.done{background:rgba(212,168,67,.4)}
+        .tut-nav{
+            display:flex;gap:12px;padding:16px 24px 24px;
+            border-top:1px solid rgba(255,255,255,.05);
+        }
+        .tut-btn{
+            flex:1;padding:14px;border:none;border-radius:var(--radius-sm);
+            font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;
+            cursor:pointer;transition:all .25s;
+        }
+        .tut-btn.skip{background:rgba(255,255,255,.06);color:var(--text-dim)}
+        .tut-btn.next{background:rgba(212,168,67,.15);color:var(--gold);border:1px solid rgba(212,168,67,.3)}
+        .tut-btn.go{background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));color:var(--gold)}
+
+        /* === Help + Version === */
+        .help-float{
+            position:fixed;bottom:calc(16px + var(--safe-bottom));right:16px;
+            width:46px;height:46px;border-radius:50%;border:none;
+            background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));
+            border:1px solid rgba(212,168,67,.3);
+            color:var(--gold);font-size:20px;font-weight:700;
+            cursor:pointer;z-index:100;
+            box-shadow:0 4px 20px rgba(0,0,0,.4);
+        }
+        .ver{
+            position:fixed;bottom:calc(10px + var(--safe-bottom));left:12px;
+            font-size:10px;color:var(--text-dim);z-index:100;
+            background:rgba(10,40,24,.85);padding:3px 10px;border-radius:10px;
+        }
+
+        /* === Loader === */
+        .loader{
+            display:none;position:fixed;top:50%;left:50%;
+            transform:translate(-50%,-50%);z-index:200;
+        }
+        .loader.on{display:block}
+        .loader-ring{
+            width:44px;height:44px;
+            border:3px solid rgba(212,168,67,.15);
+            border-top:3px solid var(--gold);
+            border-radius:50%;animation:spin .8s linear infinite;
+        }
+
+        /* === Responsive === */
+        @media(max-width:380px){
+            .tabs{gap:2px;padding:0 6px}
+            .tab{padding:7px 2px;font-size:9px}
+            .lang-row{gap:6px}
+            .bar-btn{padding:8px 12px;font-size:11px}
+            .quran-nav{flex-direction:column}
+        }
+        @media(min-width:768px){
+            .shell{max-width:700px}
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader"><div class="loader-ring"></div></div>
+
+    <!-- Tutorial -->
+    <div class="tut-overlay" id="tutOverlay">
+        <div class="tut-card">
+            <div class="tut-top">
+                <h2>بِسْمِ اللَّهِ</h2>
+                <p>Welcome to Khutbah Live Translator</p>
+            </div>
+            <div class="tut-steps" id="tutSteps">
+                <div class="tut-step on" data-s="1">
+                    <div class="tut-icon">🕌</div>
+                    <div class="tut-title">Welcome, Brother/Sister!</div>
+                    <div class="tut-desc">This app translates Friday sermons (Khutbah) in real-time, helping Muslims worldwide understand the beautiful teachings regardless of language barriers.</div>
+                    <div class="tut-tip"><strong>💡 Tip:</strong> Works in any mosque or while watching online sermons.</div>
+                </div>
+                <div class="tut-step" data-s="2">
+                    <div class="tut-icon">🌍</div>
+                    <div class="tut-title">Select Languages</div>
+                    <div class="tut-desc">Choose the <strong>Source Language</strong> (what the Imam speaks) and <strong>Translation Language</strong> (your preferred language). Only verified, working language combinations are shown.</div>
+                    <div class="tut-tip"><strong>💡 Tip:</strong> Select a regional dialect (Saudi, Egyptian, etc.) for better speech recognition accuracy.</div>
+                </div>
+                <div class="tut-step" data-s="3">
+                    <div class="tut-icon">🎤</div>
+                    <div class="tut-title">Start Listening</div>
+                    <div class="tut-desc">Tap the <strong>microphone button</strong> to start. The app listens and translates automatically. The audio visualizer shows when speech is detected.</div>
+                    <div class="tut-tip"><strong>💡 Tip:</strong> Position your phone near the speaker. Allow microphone permission when prompted.</div>
+                </div>
+                <div class="tut-step" data-s="4">
+                    <div class="tut-icon">📖</div>
+                    <div class="tut-title">Quran &amp; Du'a</div>
+                    <div class="tut-desc">Read Quran with <strong>Arabic text, transliteration, and translation</strong>. Browse a collection of essential <strong>Du'as</strong> for daily life with meanings.</div>
+                    <div class="tut-tip"><strong>💡 Tip:</strong> Use the Quran tab to follow along during the khutbah when Imam recites verses.</div>
+                </div>
+                <div class="tut-step" data-s="5">
+                    <div class="tut-icon">📱</div>
+                    <div class="tut-title">Cross-Platform</div>
+                    <div class="tut-desc"><strong>Android:</strong> Use Chrome browser. Keep screen on.<br><br><strong>iPhone/iPad:</strong> Use Safari browser. Add to Home Screen for best experience.</div>
+                    <div class="tut-tip"><strong>💡 Tip:</strong> The app uses dual translation engines for maximum reliability.</div>
+                </div>
+                <div class="tut-step" data-s="6">
+                    <div class="tut-icon">🤲</div>
+                    <div class="tut-title">You're Ready!</div>
+                    <div class="tut-desc">May Allah bless you. This app is <strong>completely free</strong> and made with love for the Muslim Ummah. Please share it with others!</div>
+                    <div class="tut-tip"><strong>دعاء:</strong> اللهم علمنا ما ينفعنا وانفعنا بما علمتنا وزدنا علماً</div>
+                </div>
+            </div>
+            <div class="tut-dots" id="tutDots"></div>
+            <div class="tut-nav">
+                <button class="tut-btn skip" onclick="closeTut()">Skip</button>
+                <button class="tut-btn next" id="tutNext" onclick="nextTut()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="help-float" onclick="showTut()" title="Help">?</button>
+    <div class="ver">v3.0</div>
+
+    <div class="shell">
+        <div class="hdr">
+            <div class="hdr-ar">مترجم الخطبة الحي</div>
+            <div class="hdr-en">Khutbah Live Translator</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab on" onclick="goTab('main',this)">Translator</button>
+            <button class="tab" onclick="goTab('quran',this)">Quran</button>
+            <button class="tab" onclick="goTab('dua',this)">Du'a</button>
+            <button class="tab" onclick="goTab('settings',this)">Settings</button>
+            <button class="tab" onclick="goTab('about',this)">About</button>
+        </div>
+
+        <div class="panels">
+            <!-- === TRANSLATOR === -->
+            <div class="panel on" id="panelMain">
+                <div class="ctl">
+                    <div class="lang-row">
+                        <div class="lang-grp">
+                            <div class="lang-lbl">Source</div>
+                            <select class="lang-sel" id="srcLang">
+                                <optgroup label="Arabic">
+                                    <option value="ar-SA">Arabic (Saudi)</option>
+                                    <option value="ar-EG">Arabic (Egyptian)</option>
+                                    <option value="ar-AE">Arabic (UAE)</option>
+                                    <option value="ar-MA">Arabic (Moroccan)</option>
+                                    <option value="ar-JO">Arabic (Jordanian)</option>
+                                    <option value="ar-LB">Arabic (Lebanese)</option>
+                                    <option value="ar-SY">Arabic (Syrian)</option>
+                                    <option value="ar-IQ">Arabic (Iraqi)</option>
+                                    <option value="ar-KW">Arabic (Kuwaiti)</option>
+                                </optgroup>
+                                <optgroup label="English">
+                                    <option value="en-US">English (US)</option>
+                                    <option value="en-GB">English (UK)</option>
+                                </optgroup>
+                                <optgroup label="South Asian">
+                                    <option value="ur-PK">Urdu (Pakistan)</option>
+                                    <option value="ur-IN">Urdu (India)</option>
+                                    <option value="hi-IN">Hindi</option>
+                                    <option value="bn-BD">Bengali (BD)</option>
+                                    <option value="bn-IN">Bengali (India)</option>
+                                    <option value="ta-IN">Tamil</option>
+                                    <option value="ml-IN">Malayalam</option>
+                                    <option value="gu-IN">Gujarati</option>
+                                </optgroup>
+                                <optgroup label="Southeast Asian">
+                                    <option value="id-ID">Indonesian</option>
+                                    <option value="ms-MY">Malay</option>
+                                    <option value="th-TH">Thai</option>
+                                    <option value="vi-VN">Vietnamese</option>
+                                </optgroup>
+                                <optgroup label="Turkish & Persian">
+                                    <option value="tr-TR">Turkish</option>
+                                    <option value="fa-IR">Farsi/Persian</option>
+                                </optgroup>
+                                <optgroup label="European">
+                                    <option value="fr-FR">French</option>
+                                    <option value="de-DE">German</option>
+                                    <option value="nl-NL">Dutch</option>
+                                    <option value="it-IT">Italian</option>
+                                    <option value="ru-RU">Russian</option>
+                                    <option value="es-ES">Spanish</option>
+                                    <option value="pt-BR">Portuguese</option>
+                                    <option value="pl-PL">Polish</option>
+                                    <option value="bs-BA">Bosnian</option>
+                                    <option value="sq-AL">Albanian</option>
+                                </optgroup>
+                                <optgroup label="East Asian">
+                                    <option value="zh-CN">Chinese (Mandarin)</option>
+                                    <option value="zh-HK">Chinese (Cantonese)</option>
+                                    <option value="ja-JP">Japanese</option>
+                                    <option value="ko-KR">Korean</option>
+                                </optgroup>
+                                <optgroup label="African">
+                                    <option value="sw-KE">Swahili</option>
+                                    <option value="am-ET">Amharic</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="mic-wrap">
+                            <button class="mic idle" id="micBtn" onclick="toggleListen()">🎤</button>
+                        </div>
+                        <div class="lang-grp">
+                            <div class="lang-lbl">Translate to</div>
+                            <select class="lang-sel" id="tgtLang">
+                                <optgroup label="⭐ Most Common">
+                                    <option value="en">English</option>
+                                    <option value="ar">Arabic</option>
+                                    <option value="ur">Urdu</option>
+                                    <option value="id">Indonesian</option>
+                                    <option value="ms">Malay</option>
+                                    <option value="tr">Turkish</option>
+                                    <option value="fr">French</option>
+                                    <option value="es">Spanish</option>
+                                </optgroup>
+                                <optgroup label="South Asian">
+                                    <option value="hi">Hindi</option>
+                                    <option value="bn">Bengali</option>
+                                    <option value="ta">Tamil</option>
+                                    <option value="ml">Malayalam</option>
+                                    <option value="gu">Gujarati</option>
+                                    <option value="pa">Punjabi</option>
+                                </optgroup>
+                                <optgroup label="Southeast Asian">
+                                    <option value="tl">Filipino</option>
+                                    <option value="th">Thai</option>
+                                    <option value="vi">Vietnamese</option>
+                                </optgroup>
+                                <optgroup label="Middle East & Central Asia">
+                                    <option value="fa">Farsi/Persian</option>
+                                    <option value="ps">Pashto</option>
+                                    <option value="ku">Kurdish</option>
+                                    <option value="az">Azerbaijani</option>
+                                    <option value="uz">Uzbek</option>
+                                </optgroup>
+                                <optgroup label="African">
+                                    <option value="sw">Swahili</option>
+                                    <option value="ha">Hausa</option>
+                                    <option value="so">Somali</option>
+                                    <option value="am">Amharic</option>
+                                </optgroup>
+                                <optgroup label="European">
+                                    <option value="de">German</option>
+                                    <option value="nl">Dutch</option>
+                                    <option value="it">Italian</option>
+                                    <option value="ru">Russian</option>
+                                    <option value="pt">Portuguese</option>
+                                    <option value="pl">Polish</option>
+                                    <option value="bs">Bosnian</option>
+                                    <option value="sq">Albanian</option>
+                                </optgroup>
+                                <optgroup label="East Asian">
+                                    <option value="zh">Chinese</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="ko">Korean</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="viz" id="viz"></div>
+                    <div class="sts">
+                        <div class="sts-dot" id="stsDot"></div>
+                        <span class="sts-txt" id="stsTxt">Tap microphone to start</span>
+                    </div>
+                </div>
+                <div class="out-wrap">
+                    <div class="out-box" id="outBox">
+                        <div class="empty-msg">
+                            <span class="icon">🕌</span>
+                            Tap the microphone to begin<br>live translation of the Khutbah
+                        </div>
+                    </div>
+                </div>
+                <div class="bar">
+                    <div class="font-ctrl">
+                        <button class="font-btn" onclick="adjFont(-2)">−</button>
+                        <span class="font-val" id="fontVal">18px</span>
+                        <button class="font-btn" onclick="adjFont(2)">+</button>
+                    </div>
+                    <button class="bar-btn" onclick="clearAll()">🗑️ Clear</button>
+                    <button class="bar-btn primary" onclick="saveText()">💾 Save</button>
+                    <button class="bar-btn" id="recBtn" onclick="toggleRec()">⏺️ <span id="recTxt">Rec</span></button>
+                    <div class="api-badge" id="apiBadge">
+                        <div class="api-dot ok" id="apiDot"></div>
+                        <span id="apiLabel">API Ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === QURAN === -->
+            <div class="panel" id="panelQuran">
+                <div class="quran-inner">
+                    <div class="quran-nav">
+                        <select id="surahSelect" onchange="loadSurah()">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div class="quran-controls">
+                        <button class="q-toggle on" id="qShowArabic" onclick="toggleQView(this)">Arabic</button>
+                        <button class="q-toggle on" id="qShowTranslit" onclick="toggleQView(this)">Transliteration</button>
+                        <button class="q-toggle on" id="qShowTrans" onclick="toggleQView(this)">Translation</button>
+                    </div>
+                    <div id="quranContent">
+                        <div class="quran-loading">
+                            <div class="spinner"></div>
+                            Select a Surah to begin reading
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === DU'A === -->
+            <div class="panel" id="panelDua">
+                <div class="dua-inner">
+                    <div class="dua-filter" id="duaFilterBar">
+                        <!-- Populated dynamically from duas.json categories -->
+                    </div>
+                    <div id="duaContent">
+                        <div class="quran-loading">
+                            <div class="spinner"></div>
+                            Loading Du'as...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === SETTINGS === -->
+            <div class="panel" id="panelSettings">
+                <div class="settings-inner">
+                    <div class="set-group">
+                        <div class="set-title">Translation</div>
+                        <label class="set-row"><input type="checkbox" id="sInstant" checked> Instant translate (sentence-by-sentence)</label>
+                        <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> Auto-scroll to latest</label>
+                        <label class="set-row"><input type="checkbox" id="sHighlight" checked> Highlight latest translation</label>
+                        <label class="set-row"><input type="checkbox" id="sShowOrig" > Show original text alongside</label>
+                    </div>
+                    <div class="set-group">
+                        <div class="set-title">Audio</div>
+                        <label class="set-row">
+                            Mic sensitivity: <span id="threshVal">15</span>
+                            <input type="range" id="sThresh" min="5" max="60" value="15" oninput="document.getElementById('threshVal').textContent=this.value">
+                        </label>
+                        <label class="set-row"><input type="checkbox" id="sWakeLock" checked> Keep screen on while listening</label>
+                    </div>
+                    <div class="set-group">
+                        <div class="set-title">Translation Engine</div>
+                        <label class="set-row"><input type="radio" name="engine" value="auto" checked> Auto (Lingva → MyMemory → LibreTranslate)</label>
+                        <label class="set-row"><input type="radio" name="engine" value="lingva"> Lingva only (Google-powered)</label>
+                        <label class="set-row"><input type="radio" name="engine" value="mymemory"> MyMemory only</label>
+                    </div>
+                    <button class="set-save" onclick="saveSettings()">Save Settings ✓</button>
+                </div>
+            </div>
+
+            <!-- === ABOUT + CONTACT (Merged) === -->
+            <div class="panel" id="panelAbout">
+                <div class="about-inner">
+                    <h2>Khutbah Live Translator</h2>
+                    <div class="bismillah-hdr">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+
+                    <div class="about-text">
+                        This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
+                    </div>
+                    <div class="about-text">
+                        <strong>v3.0 Features:</strong><br>
+                        • Dual translation engine (Lingva + MyMemory fallback)<br>
+                        • Quran reader with Arabic, transliteration &amp; translation<br>
+                        • Du'a collection with categories and references<br>
+                        • Translation caching to reduce API usage<br>
+                        • Cross-platform PWA (Android + iOS ready)<br>
+                        • Dark theme for mosque-friendly use
+                    </div>
+
+                    <div class="dev-card">
+                        <h3>Developer</h3>
+                        <p><strong>Dr. Khaled Diab</strong><br>Senior Corporate Trainer &amp; Energy Systems Expert<br>Jeddah, Saudi Arabia</p>
+                        <p>This app is <strong>completely free</strong>, open-source, and made as Sadaqah Jariyah for the Muslim Ummah. Please share it with anyone who might benefit.</p>
+                    </div>
+
+                    <div class="section-divider"><span>Contact &amp; Support</span></div>
+
+                    <div class="c-card">
+                        <h3>Get in Touch</h3>
+                        <div class="c-item">
+                            <span class="c-icon">📧</span>
+                            <div class="c-info">
+                                <div class="c-lbl">Email</div>
+                                <a href="mailto:khaleddiab@engineer.com">khaleddiab@engineer.com</a>
+                            </div>
+                        </div>
+                        <div class="c-item">
+                            <span class="c-icon">💼</span>
+                            <div class="c-info">
+                                <div class="c-lbl">LinkedIn</div>
+                                <a href="https://linkedin.com/in/khaleddiab" target="_blank">linkedin.com/in/khaleddiab</a>
+                            </div>
+                        </div>
+                        <div class="c-item">
+                            <span class="c-icon">💻</span>
+                            <div class="c-info">
+                                <div class="c-lbl">GitHub</div>
+                                <a href="https://github.com/khalecl" target="_blank">github.com/khalecl</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="donate-box">
+                        <h3>صدقة جارية</h3>
+                        <p>This app is free and always will be. If you'd like to support its development, please make dua for us or share it with your community.</p>
+                    </div>
+
+                    <div class="c-card">
+                        <h3>Send Feedback</h3>
+                        <div class="fb-grp">
+                            <input id="fbName" class="fb-input" placeholder="Your name">
+                            <input id="fbEmail" class="fb-input" placeholder="Email address">
+                            <select id="fbType" class="fb-input">
+                                <option value="">Select feedback type...</option>
+                                <option value="bug">🐛 Bug Report</option>
+                                <option value="feature">✨ Feature Request</option>
+                                <option value="translation">🌍 Translation Issue</option>
+                                <option value="quran">📖 Quran/Du'a Issue</option>
+                                <option value="general">💬 General Feedback</option>
+                            </select>
+                            <textarea id="fbMsg" class="fb-input" placeholder="Your message..."></textarea>
+                            <button class="bar-btn primary" style="width:100%;justify-content:center" onclick="sendFB()">📤 Send via WhatsApp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center;padding:8px 0 4px;">
+            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fkhalecl.github.io%2Ftools%2Fkhutbah.html&label=Visitors&icon=graph-up&color=%23d4a843" alt="Visitors" style="opacity:.5;height:18px">
+        </div>
+    </div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   KHUTBAH LIVE TRANSLATOR v3.0
+   Cross-platform PWA — Android (Chrome) + iOS (Safari)
+   Dual Translation Engine: Lingva (primary) + MyMemory (fallback)
+   + Quran Reader + Du'a Collection
+   ═══════════════════════════════════════════════════════════════ */
+
+// ── State ──
+let recognition, isListening = false, isRecording = false;
+let mediaRecorder, audioChunks = [], translations = [];
+let currentFontSize = 18, audioCtx, analyser, stream = null, wakeLock = null;
+let tutStep = 1;
+const TUT_TOTAL = 6;
+const RTL_LANGS = ['ar','ur','fa','ps','he','ku','sd','yi'];
+
+// ── Translation Cache ──
+const txCache = new Map();
+let apiStats = { lingvaOk: 0, lingvaFail: 0, mmOk: 0, mmFail: 0, cacheHit: 0 };
+
+// ── Settings ──
+let cfg = {
+    instant: true, autoScroll: true, highlight: true, showOrig: false,
+    threshold: 15, wakeLock: true, engine: 'auto'
+};
+
+// ── Lingva instances (rotation for reliability) ──
+// Updated v3.0: more reliable hosts + LibreTranslate fallback
+const LINGVA_HOSTS = [
+    'https://lingva.ml',
+    'https://lingva.thedaviddelta.com',
+    'https://lingva.lunar.icu',
+    'https://lingva.garuber.eu',
+];
+let lingvaIdx = 0;
+
+// LibreTranslate public instances (third fallback engine)
+const LIBRE_HOSTS = [
+    'https://libretranslate.com',
+    'https://translate.terraprint.co',
+    'https://trans.zillyhuhn.com',
+];
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+    buildViz();
+    buildTutDots();
+    initSurahList();
+    loadDuasFromJSON();
+    if (!localStorage.getItem('kht_tut_v3')) setTimeout(showTut, 500);
+    const savedSrc = localStorage.getItem('kht_src');
+    const savedTgt = localStorage.getItem('kht_tgt');
+    if (savedSrc) document.getElementById('srcLang').value = savedSrc;
+    if (savedTgt) document.getElementById('tgtLang').value = savedTgt;
+});
+
+// Save language selections on change
+document.getElementById('srcLang').addEventListener('change', function() {
+    localStorage.setItem('kht_src', this.value);
+    if (recognition && isListening) {
+        recognition.lang = this.value;
+        try { recognition.stop(); } catch(e){}
+        setTimeout(() => { if (isListening) try { recognition.start(); } catch(e){} }, 200);
+    }
+});
+document.getElementById('tgtLang').addEventListener('change', function() {
+    localStorage.setItem('kht_tgt', this.value);
+    renderTranslations();
+});
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function goTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('panel' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('on');
+}
+
+// ══════════════════════════════════════════════
+// TUTORIAL
+// ══════════════════════════════════════════════
+function buildTutDots() {
+    const c = document.getElementById('tutDots');
+    c.innerHTML = '';
+    for (let i = 1; i <= TUT_TOTAL; i++) {
+        const d = document.createElement('div');
+        d.className = 'tut-dot' + (i === 1 ? ' on' : '');
+        d.dataset.d = i;
+        c.appendChild(d);
+    }
+}
+function showTut() {
+    tutStep = 1; updTut();
+    document.getElementById('tutOverlay').classList.add('on');
+}
+function closeTut() {
+    document.getElementById('tutOverlay').classList.remove('on');
+    localStorage.setItem('kht_tut_v3', '1');
+}
+function nextTut() {
+    if (tutStep < TUT_TOTAL) { tutStep++; updTut(); }
+    else closeTut();
+}
+function updTut() {
+    document.querySelectorAll('.tut-step').forEach(s => {
+        s.classList.toggle('on', +s.dataset.s === tutStep);
+    });
+    document.querySelectorAll('.tut-dot').forEach(d => {
+        const n = +d.dataset.d;
+        d.className = 'tut-dot' + (n === tutStep ? ' on' : n < tutStep ? ' done' : '');
+    });
+    const btn = document.getElementById('tutNext');
+    btn.textContent = tutStep === TUT_TOTAL ? 'Start ✓' : 'Next →';
+    btn.className = 'tut-btn ' + (tutStep === TUT_TOTAL ? 'go' : 'next');
+}
+
+// ══════════════════════════════════════════════
+// AUDIO VISUALIZER
+// ══════════════════════════════════════════════
+function buildViz() {
+    const c = document.getElementById('viz');
+    c.innerHTML = '';
+    for (let i = 0; i < 16; i++) {
+        const b = document.createElement('div');
+        b.className = 'viz-bar';
+        c.appendChild(b);
+    }
+}
+function runViz(stream) {
+    try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        audioCtx.createMediaStreamSource(stream).connect(analyser);
+        analyser.fftSize = 256;
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        const bars = document.querySelectorAll('.viz-bar');
+        (function loop() {
+            if (!isListening || !audioCtx) return;
+            analyser.getByteFrequencyData(data);
+            const avg = data.reduce((a, b) => a + b, 0) / data.length;
+            const dot = document.getElementById('stsDot');
+            dot.style.boxShadow = avg > cfg.threshold ? `0 0 ${Math.min(avg/3,16)}px var(--gold)` : 'none';
+            bars.forEach((bar, i) => {
+                const v = data[i * 4] || 0;
+                bar.style.height = Math.max(6, (v / 255) * 40) + 'px';
+                bar.style.background = avg > cfg.threshold ? 'var(--gold)' : 'rgba(212,168,67,.3)';
+            });
+            requestAnimationFrame(loop);
+        })();
+    } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+// SPEECH RECOGNITION
+// ══════════════════════════════════════════════
+async function toggleListen() {
+    if (!isListening) await startListen();
+    else stopListen();
+}
+
+async function startListen() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+        alert('Speech recognition not supported.\n\nAndroid: Use Chrome\niPhone/iPad: Use Safari');
+        return;
+    }
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        });
+        if (cfg.wakeLock) await reqWakeLock();
+        runViz(stream);
+        setupRecorder(stream);
+
+        recognition = new SR();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = document.getElementById('srcLang').value;
+
+        let transcript = '', silenceTimer, restarts = 0;
+
+        recognition.onstart = () => {
+            isListening = true; restarts = 0;
+            updMicUI(true);
+        };
+
+        recognition.onresult = (e) => {
+            clearTimeout(silenceTimer);
+            restarts = 0;
+            let interim = '', final = '';
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+                else interim = e.results[i][0].transcript;
+            }
+            if (final) transcript += final;
+            document.getElementById('stsTxt').textContent = interim ? '🎤 Speech detected...' : '🎤 Listening...';
+
+            if (cfg.instant && final && transcript.trim()) {
+                doTranslate(transcript.trim());
+                transcript = '';
+            } else if (!cfg.instant && (transcript + interim).trim()) {
+                silenceTimer = setTimeout(() => {
+                    if (transcript.trim()) {
+                        doTranslate(transcript.trim());
+                        transcript = '';
+                    }
+                }, 1500);
+            }
+        };
+
+        recognition.onerror = (e) => {
+            if ((e.error === 'no-speech' || e.error === 'audio-capture') && isListening && restarts < 15) {
+                restarts++;
+                setTimeout(() => { if (isListening) try { recognition.start(); } catch(er){} }, 300);
+            } else if (e.error === 'not-allowed') {
+                alert('Microphone permission denied. Please allow access in your browser settings.');
+                stopListen();
+            } else if (e.error === 'language-not-supported') {
+                alert('This language is not supported for speech recognition on your device. Please try a different source language.');
+                stopListen();
+            }
+        };
+
+        recognition.onend = () => {
+            if (transcript.trim()) {
+                doTranslate(transcript.trim());
+                transcript = '';
+            }
+            if (isListening) {
+                setTimeout(() => { if (isListening) try { recognition.start(); } catch(e){} }, 100);
+            }
+        };
+
+        recognition.start();
+    } catch (e) {
+        alert('Microphone access denied.\n\nPlease allow microphone permission in your browser/device settings.');
+    }
+}
+
+function stopListen() {
+    isListening = false;
+    if (recognition) try { recognition.stop(); } catch(e){}
+    if (audioCtx) try { audioCtx.close(); } catch(e){} audioCtx = null;
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    relWakeLock();
+    updMicUI(false);
+}
+
+function updMicUI(on) {
+    const btn = document.getElementById('micBtn');
+    const dot = document.getElementById('stsDot');
+    const txt = document.getElementById('stsTxt');
+    if (on) {
+        btn.className = 'mic live'; btn.textContent = '⏹️';
+        dot.classList.add('on'); txt.textContent = '🎤 Listening...';
+    } else {
+        btn.className = 'mic idle'; btn.textContent = '🎤';
+        dot.classList.remove('on'); dot.style.boxShadow = 'none';
+        txt.textContent = 'Tap microphone to start';
+        document.querySelectorAll('.viz-bar').forEach(b => {
+            b.style.height = '8px'; b.style.background = 'rgba(212,168,67,.3)';
+        });
+    }
+}
+
+// ══════════════════════════════════════════════
+// TRANSLATION ENGINE
+// ══════════════════════════════════════════════
+async function doTranslate(text) {
+    if (!text?.trim()) return;
+    const last = translations[translations.length - 1];
+    if (last?.orig === text.trim()) return;
+
+    const src = document.getElementById('srcLang').value.split('-')[0];
+    const tgt = document.getElementById('tgtLang').value;
+    if (src === tgt) { addEntry(text, text); return; }
+
+    const cacheKey = `${src}|${tgt}|${text.trim().toLowerCase()}`;
+    if (txCache.has(cacheKey)) {
+        apiStats.cacheHit++;
+        addEntry(text, txCache.get(cacheKey));
+        updApiUI();
+        return;
+    }
+
+    document.getElementById('loader').classList.add('on');
+    let result = null;
+    const engine = cfg.engine;
+
+    // Engine 1: Lingva (Google-powered)
+    if (engine === 'auto' || engine === 'lingva') {
+        result = await tryLingva(text, src, tgt);
+    }
+    // Engine 2: MyMemory
+    if (!result && (engine === 'auto' || engine === 'mymemory')) {
+        result = await tryMyMemory(text, src, tgt);
+    }
+    // Engine 3: LibreTranslate (auto-fallback when engine=auto)
+    if (!result && engine === 'auto') {
+        result = await tryLibre(text, src, tgt);
+    }
+
+    document.getElementById('loader').classList.remove('on');
+
+    if (result) {
+        txCache.set(cacheKey, result);
+        if (txCache.size > 500) {
+            const firstKey = txCache.keys().next().value;
+            txCache.delete(firstKey);
+        }
+        addEntry(text, result);
+    } else {
+        addEntry(text, '⚠️ Translation unavailable — ' + text);
+    }
+    updApiUI();
+}
+
+// Truncate text for Lingva URL-based API (URLs have max length ~2000)
+function truncateForUrl(text, maxChars) {
+    if (text.length <= maxChars) return text;
+    // Cut at last word boundary within limit
+    const trimmed = text.substring(0, maxChars);
+    const lastSpace = trimmed.lastIndexOf(' ');
+    return lastSpace > maxChars * 0.5 ? trimmed.substring(0, lastSpace) : trimmed;
+}
+
+async function tryLingva(text, src, tgt) {
+    // Lingva uses text in URL path, so we must keep URL length reasonable
+    const safeText = truncateForUrl(text, 800);
+
+    for (let attempt = 0; attempt < LINGVA_HOSTS.length; attempt++) {
+        const host = LINGVA_HOSTS[(lingvaIdx + attempt) % LINGVA_HOSTS.length];
+        try {
+            const url = `${host}/api/v1/${src}/${tgt}/${encodeURIComponent(safeText)}`;
+            const res = await fetch(url, {
+                signal: AbortSignal.timeout(6000),
+                mode: 'cors'
+            });
+            if (!res.ok) throw new Error(res.status);
+            const data = await res.json();
+            if (data.translation && data.translation.trim()) {
+                apiStats.lingvaOk++;
+                lingvaIdx = (lingvaIdx + attempt) % LINGVA_HOSTS.length;
+                return data.translation;
+            }
+        } catch(e) {
+            apiStats.lingvaFail++;
+        }
+    }
+    return null;
+}
+
+async function tryMyMemory(text, src, tgt) {
+    try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${src}|${tgt}&de=khutbah.app@translator.net`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+        const data = await res.json();
+        if (data.responseStatus === 200 && data.responseData?.translatedText) {
+            const trans = data.responseData.translatedText;
+            if (tgt !== 'it' && isLikelyItalian(trans, text)) {
+                apiStats.mmFail++;
+                return null;
+            }
+            if (trans.trim().toLowerCase() === text.trim().toLowerCase()) {
+                apiStats.mmFail++;
+                return null;
+            }
+            apiStats.mmOk++;
+            return trans;
+        }
+    } catch(e) {
+        apiStats.mmFail++;
+    }
+    return null;
+}
+
+async function tryLibre(text, src, tgt) {
+    for (const host of LIBRE_HOSTS) {
+        try {
+            const res = await fetch(`${host}/translate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ q: text, source: src, target: tgt, format: 'text' }),
+                signal: AbortSignal.timeout(8000)
+            });
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (data.translatedText && data.translatedText.trim()) {
+                apiStats.lingvaOk++; // count as successful
+                return data.translatedText;
+            }
+        } catch(e) { /* try next host */ }
+    }
+    return null;
+}
+
+function isLikelyItalian(trans, orig) {
+    const italianMarkers = ['ciao', 'mondo', 'buon', 'giorno', 'grazie', 'prego', 'della', 'nella'];
+    const lower = trans.toLowerCase();
+    return italianMarkers.some(m => lower.includes(m)) && !orig.toLowerCase().includes(lower.substring(0, 5));
+}
+
+function updApiUI() {
+    const dot = document.getElementById('apiDot');
+    const label = document.getElementById('apiLabel');
+    const total = apiStats.lingvaOk + apiStats.mmOk + apiStats.cacheHit;
+    const fails = apiStats.lingvaFail + apiStats.mmFail;
+    if (fails === 0 || total > fails * 3) {
+        dot.className = 'api-dot ok';
+        label.textContent = `API OK · ${total} translated`;
+    } else if (total > fails) {
+        dot.className = 'api-dot warn';
+        label.textContent = `Fallback active · ${total} ok`;
+    } else {
+        dot.className = 'api-dot err';
+        label.textContent = `API issues · ${fails} errors`;
+    }
+}
+
+// ══════════════════════════════════════════════
+// TRANSLATION DISPLAY
+// ══════════════════════════════════════════════
+function addEntry(orig, trans) {
+    if (translations.some(t => t.orig === orig.trim() && t.text === trans.trim())) return;
+    translations.push({
+        orig: orig.trim(),
+        text: trans.trim(),
+        time: new Date().toLocaleTimeString()
+    });
+    renderTranslations();
+}
+
+function renderTranslations() {
+    const box = document.getElementById('outBox');
+    const tgt = document.getElementById('tgtLang').value;
+    const isRtl = RTL_LANGS.includes(tgt);
+
+    if (!translations.length) {
+        box.innerHTML = '<div class="empty-msg"><span class="icon">🕌</span>Tap the microphone to begin<br>live translation of the Khutbah</div>';
+        return;
+    }
+
+    box.innerHTML = translations.map((t, i) => {
+        const isLast = i === translations.length - 1;
+        let cls = 'sent' + (isRtl ? ' rtl' : '') + (isLast && cfg.highlight ? ' latest' : '');
+        let html = t.text;
+        if (cfg.showOrig && t.orig !== t.text) {
+            html = `<div style="opacity:.45;font-size:.85em;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:6px">${t.orig}</div>${t.text}`;
+        }
+        return `<div class="${cls}">${html}</div>`;
+    }).join('');
+
+    if (cfg.autoScroll) box.scrollTop = box.scrollHeight;
+}
+
+// ══════════════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════════════
+function adjFont(d) {
+    currentFontSize = Math.max(12, Math.min(36, currentFontSize + d));
+    document.documentElement.style.setProperty('--font-size', currentFontSize + 'px');
+    document.getElementById('fontVal').textContent = currentFontSize + 'px';
+}
+
+function clearAll() {
+    if (!translations.length || confirm('Clear all translations?')) {
+        translations = [];
+        renderTranslations();
+    }
+}
+
+function saveText() {
+    if (!translations.length) { alert('No translations to save'); return; }
+    const lines = translations.map(t => {
+        let line = `[${t.time}] ${t.text}`;
+        if (cfg.showOrig) line = `[${t.time}]\nOriginal: ${t.orig}\nTranslation: ${t.text}`;
+        return line;
+    }).join('\n\n');
+    const header = `Khutbah Translation — ${new Date().toLocaleDateString()}\n${'═'.repeat(40)}\n\n`;
+    const blob = new Blob([header + lines], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `khutbah-${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ── Recording ──
+function setupRecorder(s) {
+    try {
+        const mime = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm'
+            : MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : 'audio/wav';
+        mediaRecorder = new MediaRecorder(s, { mimeType: mime });
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunks, { type: mime });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            const ext = mime.includes('webm') ? 'webm' : mime.includes('mp4') ? 'm4a' : 'wav';
+            a.download = `khutbah-${new Date().toISOString().slice(0,10)}.${ext}`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            audioChunks = [];
+        };
+    } catch(e) {}
+}
+
+function toggleRec() {
+    if (!mediaRecorder) { alert('Start listening first'); return; }
+    const btn = document.getElementById('recBtn');
+    const txt = document.getElementById('recTxt');
+    if (!isRecording) {
+        audioChunks = [];
+        mediaRecorder.start(1000);
+        isRecording = true;
+        txt.textContent = 'Stop';
+        btn.style.borderColor = '#e53935';
+        btn.style.color = '#e53935';
+    } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        txt.textContent = 'Rec';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+    }
+}
+
+// ── Wake Lock ──
+async function reqWakeLock() {
+    if ('wakeLock' in navigator) {
+        try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+    }
+}
+async function relWakeLock() {
+    if (wakeLock) { try { await wakeLock.release(); } catch(e) {} wakeLock = null; }
+}
+document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && isListening && cfg.wakeLock) {
+        await reqWakeLock();
+    }
+});
+
+// ── Feedback ──
+function sendFB() {
+    const name = document.getElementById('fbName').value.trim();
+    const email = document.getElementById('fbEmail').value.trim();
+    const type = document.getElementById('fbType').value;
+    const msg = document.getElementById('fbMsg').value.trim();
+    if (!name || !email || !type || !msg) { alert('Please fill all fields'); return; }
+    const body = `*Khutbah v3.0 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
+    window.open(`https://wa.me/201227822099?text=${body}`, '_blank');
+    ['fbName','fbEmail','fbMsg'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('fbType').value = '';
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════
+function loadSettings() {
+    try {
+        const s = localStorage.getItem('kht_cfg_v3');
+        if (s) cfg = { ...cfg, ...JSON.parse(s) };
+    } catch(e) {}
+    applySettings();
+}
+
+function applySettings() {
+    document.getElementById('sInstant').checked = cfg.instant;
+    document.getElementById('sAutoScroll').checked = cfg.autoScroll;
+    document.getElementById('sHighlight').checked = cfg.highlight;
+    document.getElementById('sShowOrig').checked = cfg.showOrig;
+    document.getElementById('sThresh').value = cfg.threshold;
+    document.getElementById('threshVal').textContent = cfg.threshold;
+    document.getElementById('sWakeLock').checked = cfg.wakeLock;
+    document.querySelectorAll('input[name=engine]').forEach(r => {
+        r.checked = r.value === cfg.engine;
+    });
+}
+
+function saveSettings() {
+    cfg.instant = document.getElementById('sInstant').checked;
+    cfg.autoScroll = document.getElementById('sAutoScroll').checked;
+    cfg.highlight = document.getElementById('sHighlight').checked;
+    cfg.showOrig = document.getElementById('sShowOrig').checked;
+    cfg.threshold = parseInt(document.getElementById('sThresh').value);
+    cfg.wakeLock = document.getElementById('sWakeLock').checked;
+    cfg.engine = document.querySelector('input[name=engine]:checked')?.value || 'auto';
+    try { localStorage.setItem('kht_cfg_v3', JSON.stringify(cfg)); } catch(e) {}
+    alert('Settings saved ✓');
+}
+
+
+// ══════════════════════════════════════════════
+// QURAN TAB — Uses Al-Quran Cloud API
+// ══════════════════════════════════════════════
+
+// Surah list (114 surahs)
+const SURAH_LIST = [
+    "Al-Fatiha","Al-Baqarah","Aal-Imran","An-Nisa","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Tawbah","Yunus",
+    "Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra","Al-Kahf","Maryam","Taha",
+    "Al-Anbiya","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Ash-Shu'ara","An-Naml","Al-Qasas","Al-Ankabut","Ar-Rum",
+    "Luqman","As-Sajdah","Al-Ahzab","Saba","Fatir","Ya-Sin","As-Saffat","Sad","Az-Zumar","Ghafir",
+    "Fussilat","Ash-Shura","Az-Zukhruf","Ad-Dukhan","Al-Jathiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf",
+    "Adh-Dhariyat","At-Tur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hashr","Al-Mumtahanah",
+    "As-Saff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","At-Talaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij",
+    "Nuh","Al-Jinn","Al-Muzzammil","Al-Muddaththir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba","An-Nazi'at","Abasa",
+    "At-Takwir","Al-Infitar","Al-Mutaffifin","Al-Inshiqaq","Al-Buruj","At-Tariq","Al-A'la","Al-Ghashiyah","Al-Fajr","Al-Balad",
+    "Ash-Shams","Al-Layl","Ad-Duha","Ash-Sharh","At-Tin","Al-Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-Adiyat",
+    "Al-Qari'ah","At-Takathur","Al-Asr","Al-Humazah","Al-Fil","Quraysh","Al-Ma'un","Al-Kawthar","Al-Kafirun","An-Nasr",
+    "Al-Masad","Al-Ikhlas","Al-Falaq","An-Nas"
+];
+
+let quranCache = {};
+let qShowArabic = true, qShowTranslit = true, qShowTrans = true;
+
+function initSurahList() {
+    const sel = document.getElementById('surahSelect');
+    sel.innerHTML = '<option value="">— Select a Surah —</option>';
+    SURAH_LIST.forEach((name, i) => {
+        const opt = document.createElement('option');
+        opt.value = i + 1;
+        opt.textContent = `${i + 1}. ${name}`;
+        sel.appendChild(opt);
+    });
+    // Default to Al-Fatiha
+    sel.value = '1';
+    loadSurah();
+}
+
+async function loadSurah() {
+    const num = document.getElementById('surahSelect').value;
+    if (!num) return;
+
+    const container = document.getElementById('quranContent');
+
+    // Check cache
+    if (quranCache[num]) {
+        renderSurah(quranCache[num]);
+        return;
+    }
+
+    container.innerHTML = '<div class="quran-loading"><div class="spinner"></div>Loading Surah...</div>';
+
+    try {
+        // Fetch Arabic + English translation + transliteration in one batch
+        const [arRes, enRes, trRes] = await Promise.all([
+            fetch(`https://api.alquran.cloud/v1/surah/${num}`),
+            fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`),
+            fetch(`https://api.alquran.cloud/v1/surah/${num}/en.transliteration`)
+        ]);
+
+        const arData = await arRes.json();
+        const enData = await enRes.json();
+        const trData = await trRes.json();
+
+        if (arData.code === 200 && enData.code === 200) {
+            const surahData = {
+                name: arData.data.name,
+                englishName: arData.data.englishName,
+                englishNameTranslation: arData.data.englishNameTranslation,
+                revelationType: arData.data.revelationType,
+                numberOfAyahs: arData.data.numberOfAyahs,
+                ayahs: arData.data.ayahs.map((ayah, idx) => ({
+                    number: ayah.numberInSurah,
+                    arabic: ayah.text,
+                    translation: enData.data.ayahs[idx]?.text || '',
+                    transliteration: (trData.code === 200 && trData.data.ayahs[idx]?.text) || ''
+                }))
+            };
+
+            quranCache[num] = surahData;
+            renderSurah(surahData);
+        } else {
+            container.innerHTML = '<div class="quran-loading">Failed to load. Please try again.</div>';
+        }
+    } catch (e) {
+        container.innerHTML = '<div class="quran-loading">Network error. Please check your connection.</div>';
+    }
+}
+
+function renderSurah(data) {
+    const container = document.getElementById('quranContent');
+    let html = `
+        <div class="surah-header">
+            <div class="bismillah">${data.name}</div>
+            <div style="font-size:16px;color:var(--cream);font-weight:500;margin-bottom:4px">${data.englishName}</div>
+            <div class="surah-info">${data.englishNameTranslation} · ${data.revelationType} · ${data.numberOfAyahs} Ayahs</div>
+        </div>
+    `;
+
+    data.ayahs.forEach(ayah => {
+        html += `<div class="ayah-card">`;
+        html += `<div class="ayah-num">${ayah.number}</div>`;
+        if (qShowArabic) {
+            html += `<div class="ayah-arabic">${ayah.arabic}</div>`;
+        }
+        if (qShowTranslit && ayah.transliteration) {
+            html += `<div class="ayah-translit">${ayah.transliteration}</div>`;
+        }
+        if (qShowTrans) {
+            html += `<div class="ayah-trans">${ayah.translation}</div>`;
+        }
+        html += `</div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function toggleQView(btn) {
+    btn.classList.toggle('on');
+    qShowArabic = document.getElementById('qShowArabic').classList.contains('on');
+    qShowTranslit = document.getElementById('qShowTranslit').classList.contains('on');
+    qShowTrans = document.getElementById('qShowTrans').classList.contains('on');
+
+    const num = document.getElementById('surahSelect').value;
+    if (num && quranCache[num]) {
+        renderSurah(quranCache[num]);
+    }
+}
+
+
+// ══════════════════════════════════════════════
+// DU'A TAB — Loaded from external duas.json
+// ══════════════════════════════════════════════
+
+// ── CONFIGURE THIS: Path to your duas.json file ──
+const DUAS_JSON_URL = 'duas.json';
+
+let duaData = { categories: [], duas: [] };
+let currentDuaFilter = 'all';
+
+async function loadDuasFromJSON() {
+    const container = document.getElementById('duaContent');
+    const filterBar = document.getElementById('duaFilterBar');
+
+    try {
+        const res = await fetch(DUAS_JSON_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        duaData = await res.json();
+
+        // Build filter buttons from categories in JSON
+        let filterHTML = '<button class="dua-tag on" onclick="filterDua(\'all\',this)">All</button>';
+        duaData.categories.forEach(cat => {
+            filterHTML += `<button class="dua-tag" onclick="filterDua('${cat.id}',this)">${cat.icon || ''} ${cat.label}</button>`;
+        });
+        filterBar.innerHTML = filterHTML;
+
+        // Render all duas
+        renderDuas('all');
+
+    } catch (e) {
+        console.warn('Failed to load duas.json, using built-in fallback:', e.message);
+        // Fallback: show error with retry
+        container.innerHTML = `
+            <div class="quran-loading">
+                Could not load Du'as file.<br>
+                <small style="color:var(--text-dim)">Make sure <strong>duas.json</strong> is in the same folder as this HTML file.</small><br><br>
+                <button class="bar-btn" onclick="loadDuasFromJSON()" style="margin:0 auto">🔄 Retry</button>
+            </div>
+        `;
+        // Also provide hardcoded fallback filter buttons
+        filterBar.innerHTML = `
+            <button class="dua-tag on" onclick="filterDua('all',this)">All</button>
+            <button class="dua-tag" onclick="filterDua('daily',this)">Daily</button>
+            <button class="dua-tag" onclick="filterDua('salah',this)">Salah</button>
+            <button class="dua-tag" onclick="filterDua('morning',this)">Morning</button>
+            <button class="dua-tag" onclick="filterDua('evening',this)">Evening</button>
+        `;
+    }
+}
+
+function renderDuas(filter) {
+    filter = filter || 'all';
+    const container = document.getElementById('duaContent');
+    const filtered = filter === 'all' ? duaData.duas : duaData.duas.filter(d => d.cat === filter);
+
+    if (!filtered.length) {
+        container.innerHTML = '<div class="quran-loading">No du\'as in this category yet.</div>';
+        return;
+    }
+
+    container.innerHTML = filtered.map(d => `
+        <div class="dua-card">
+            <div class="dua-title">
+                ${d.title}
+                <span class="dua-cat">${d.cat}</span>
+            </div>
+            <div class="dua-arabic">${d.arabic}</div>
+            <div class="dua-translit">${d.transliteration}</div>
+            <div class="dua-meaning">${d.meaning}</div>
+            <div class="dua-ref">📚 ${d.reference}</div>
+        </div>
+    `).join('');
+}
+
+function filterDua(cat, btn) {
+    currentDuaFilter = cat;
+    document.querySelectorAll('.dua-tag').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
+    renderDuas(cat);
+}
+
+</script>
+</body>
+</html>
