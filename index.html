@@ -10,6 +10,8 @@
     <meta name="application-name" content="Khutbah Translator">
     <meta name="theme-color" content="#0f3d24">
     <meta name="description" content="Real-time Khutbah translation, Quran reader with transliteration, and Du'a collection for the Muslim Ummah.">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
     <title>Khutbah Live Translator v3.0</title>
     <style>
@@ -956,7 +958,7 @@
                             <span class="c-icon">📧</span>
                             <div class="c-info">
                                 <div class="c-lbl">Email</div>
-                                <a href="mailto:khaleddiab@engineer.com">khaleddiab@engineer.com</a>
+                                <a href="/cdn-cgi/l/email-protection#6c07040d00090808050d0e2c09020b050209091e420f0301"><span class="__cf_email__" data-cfemail="48232029242d2c2c21292a082d262f21262d2d3a662b2725">[email&#160;protected]</span></a>
                             </div>
                         </div>
                         <div class="c-item">
@@ -1006,7 +1008,7 @@
         </div>
     </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ═══════════════════════════════════════════════════════════════
    KHUTBAH LIVE TRANSLATOR v3.0
    Cross-platform PWA — Android (Chrome) + iOS (Safari)
@@ -1328,12 +1330,7 @@ async function doTranslate(text) {
     updApiUI();
 }
 
-// Truncate text for Lingva URL-based API (URLs have max length ~2000)
-function truncateForUrl(text, maxChars) {
-    if (text.length <= maxChars) return text;
-    // Cut at last word boundary within limit
-    const trimmed = text.substring(0, maxChars);
-    const lastSpace = trimmed.lastIndexOf(' ');
+// Truncate text for Lingvaimmed.lastIndexOf(' ');
     return lastSpace > maxChars * 0.5 ? trimmed.substring(0, lastSpace) : trimmed;
 }
 
