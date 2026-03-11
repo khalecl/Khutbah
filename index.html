@@ -404,6 +404,73 @@
         }
 
         /* ═══════════════════════════════════════════
+           QURAN AUDIO PLAYER
+           ═══════════════════════════════════════════ */
+        .quran-audio-bar{
+            display:flex;align-items:center;gap:8px;
+            margin-bottom:14px;padding:10px 12px;
+            background:rgba(212,168,67,.06);
+            border:1px solid rgba(212,168,67,.15);
+            border-radius:var(--radius-sm);
+            flex-wrap:wrap;
+        }
+        .qa-btn{
+            width:36px;height:36px;border:none;border-radius:50%;
+            background:rgba(212,168,67,.15);color:var(--gold);
+            font-size:16px;cursor:pointer;display:flex;
+            align-items:center;justify-content:center;
+            transition:all .2s;flex-shrink:0;
+        }
+        .qa-btn:hover{background:rgba(212,168,67,.3)}
+        .qa-btn:disabled{opacity:.35;cursor:default}
+        .qa-btn.playing{background:var(--gold);color:var(--bg-deep)}
+        .qa-progress{
+            flex:1;min-width:80px;height:4px;background:rgba(255,255,255,.08);
+            border-radius:2px;overflow:hidden;cursor:pointer;
+        }
+        .qa-progress-fill{
+            height:100%;background:var(--gold);border-radius:2px;
+            width:0%;transition:width .3s linear;
+        }
+        .qa-info{
+            font-size:11px;color:var(--text-dim);white-space:nowrap;
+        }
+        .qa-reciter-select{
+            height:32px;padding:0 24px 0 8px;
+            border:1px solid rgba(212,168,67,.2);border-radius:16px;
+            font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;
+            color:var(--gold);background:rgba(255,255,255,.03)
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath fill='%23d4a843' d='M4 6L0 1.5h8z'/%3E%3C/svg%3E")
+                no-repeat right 8px center;
+            -webkit-appearance:none;appearance:none;
+        }
+        .qa-reciter-select option{background:#1a1a1a;color:#eee}
+        .ayah-card.ayah-playing{
+            border-color:rgba(212,168,67,.5) !important;
+            background:rgba(212,168,67,.08) !important;
+            box-shadow:0 0 20px rgba(212,168,67,.12);
+        }
+        .ayah-card .ayah-play-btn{
+            position:absolute;top:12px;left:12px;
+            width:28px;height:28px;border:none;border-radius:50%;
+            background:rgba(212,168,67,.1);color:var(--gold);
+            font-size:12px;cursor:pointer;display:flex;
+            align-items:center;justify-content:center;
+            opacity:.5;transition:all .2s;
+        }
+        .ayah-card:hover .ayah-play-btn,.ayah-card .ayah-play-btn:focus{opacity:1}
+        .ayah-card.ayah-playing .ayah-play-btn{
+            opacity:1;background:var(--gold);color:var(--bg-deep);
+        }
+        .qa-speed{
+            height:28px;padding:0 8px;border:1px solid rgba(212,168,67,.2);
+            border-radius:14px;font-size:11px;color:var(--gold);
+            background:rgba(255,255,255,.03);cursor:pointer;
+            font-family:'Outfit',sans-serif;font-weight:600;
+            display:flex;align-items:center;gap:2px;
+        }
+        .qa-speed:hover{background:rgba(212,168,67,.1)}
+        /* ═══════════════════════════════════════════
            DU'A TAB
            ═══════════════════════════════════════════ */
         .dua-inner{
@@ -872,6 +939,26 @@
                         <button class="q-toggle on" id="qShowArabic" onclick="toggleQView(this)">Arabic</button>
                         <button class="q-toggle on" id="qShowTranslit" onclick="toggleQView(this)">Transliteration</button>
                         <button class="q-toggle on" id="qShowTrans" onclick="toggleQView(this)">Translation</button>
+                    </div>
+                    <div class="quran-audio-bar" id="quranAudioBar">
+                        <button class="qa-btn" id="qaPrev" onclick="qaPlayPrev()" title="Previous Ayah">⏮</button>
+                        <button class="qa-btn" id="qaPlayBtn" onclick="qaTogglePlay()" title="Play / Pause">▶</button>
+                        <button class="qa-btn" id="qaNext" onclick="qaPlayNext()" title="Next Ayah">⏭</button>
+                        <button class="qa-btn" id="qaStop" onclick="qaStop()" title="Stop">⏹</button>
+                        <div class="qa-progress" onclick="qaSeek(event)">
+                            <div class="qa-progress-fill" id="qaProgressFill"></div>
+                        </div>
+                        <div class="qa-info" id="qaInfo">—</div>
+                        <button class="qa-speed" id="qaSpeedBtn" onclick="qaCycleSpeed()" title="Playback Speed">1×</button>
+                        <select class="qa-reciter-select" id="qaReciterSelect" onchange="qaChangeReciter()">
+                            <option value="ar.alafasy">Mishary Alafasy</option>
+                            <option value="ar.abdulbasitmurattal">AbdulBasit (Murattal)</option>
+                            <option value="ar.hudhaify">Hudhaify</option>
+                            <option value="ar.minshawi">Minshawi</option>
+                            <option value="ar.abdurrahmaansudais">As-Sudais</option>
+                            <option value="ar.saaborehman">Saad Al-Ghamdi</option>
+                            <option value="ar.maaborehman">Maher Al-Muaiqly</option>
+                        </select>
                     </div>
                     <div id="quranContent">
                         <div class="quran-loading">
@@ -1703,7 +1790,8 @@ function renderSurah(data) {
     `;
 
     data.ayahs.forEach(ayah => {
-        html += `<div class="ayah-card">`;
+        html += `<div class="ayah-card" id="ayah-${ayah.number}" data-ayah="${ayah.number}">`;
+        html += `<button class="ayah-play-btn" onclick="qaPlayFromAyah(${ayah.number})" title="Play from Ayah ${ayah.number}">▶</button>`;
         html += `<div class="ayah-num">${ayah.number}</div>`;
         if (qShowArabic) {
             html += `<div class="ayah-arabic">${ayah.arabic}</div>`;
@@ -1718,6 +1806,10 @@ function renderSurah(data) {
     });
 
     container.innerHTML = html;
+    // Re-highlight if currently playing this surah
+    if (qaState.playing && qaState.surahNum == document.getElementById('surahSelect').value) {
+        qaHighlightAyah(qaState.currentAyah);
+    }
 }
 
 function toggleQView(btn) {
@@ -1729,6 +1821,236 @@ function toggleQView(btn) {
     const num = document.getElementById('surahSelect').value;
     if (num && quranCache[num]) {
         renderSurah(quranCache[num]);
+    }
+}
+
+
+// ══════════════════════════════════════════════
+// QURAN AUDIO PLAYER
+// ══════════════════════════════════════════════
+const qaState = {
+    playing: false,
+    paused: false,
+    surahNum: null,
+    currentAyah: 0,
+    totalAyahs: 0,
+    audioUrls: [],   // per-ayah audio URLs
+    audio: new Audio(),
+    reciter: 'ar.alafasy',
+    speed: 1,
+    progressTimer: null
+};
+
+const QA_SPEEDS = [0.75, 1, 1.25, 1.5];
+
+// Fetch audio URLs for a surah from AlQuran.cloud
+async function qaFetchAudio(surahNum, reciter) {
+    const cacheKey = `audio_${surahNum}_${reciter}`;
+    if (quranCache[cacheKey]) return quranCache[cacheKey];
+
+    try {
+        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}/${reciter}`);
+        const data = await res.json();
+        if (data.code === 200) {
+            const urls = data.data.ayahs.map(a => a.audio);
+            quranCache[cacheKey] = urls;
+            return urls;
+        }
+    } catch (e) {
+        console.error('Audio fetch error:', e);
+    }
+    return null;
+}
+
+// Start playing from a specific ayah number (1-based)
+async function qaPlayFromAyah(ayahNum) {
+    const surahNum = document.getElementById('surahSelect').value;
+    if (!surahNum) return;
+
+    const reciter = document.getElementById('qaReciterSelect').value;
+    qaState.reciter = reciter;
+    qaState.surahNum = surahNum;
+
+    // Show loading
+    document.getElementById('qaInfo').textContent = 'Loading audio...';
+    document.getElementById('qaPlayBtn').disabled = true;
+
+    const urls = await qaFetchAudio(surahNum, reciter);
+    if (!urls) {
+        document.getElementById('qaInfo').textContent = 'Audio unavailable';
+        document.getElementById('qaPlayBtn').disabled = false;
+        return;
+    }
+
+    qaState.audioUrls = urls;
+    qaState.totalAyahs = urls.length;
+    qaState.currentAyah = ayahNum;
+    document.getElementById('qaPlayBtn').disabled = false;
+
+    qaPlayCurrent();
+}
+
+function qaPlayCurrent() {
+    const idx = qaState.currentAyah - 1;
+    if (idx < 0 || idx >= qaState.audioUrls.length) {
+        qaStop();
+        return;
+    }
+
+    qaState.audio.pause();
+    qaState.audio.src = qaState.audioUrls[idx];
+    qaState.audio.playbackRate = qaState.speed;
+    qaState.audio.play().catch(() => {});
+
+    qaState.playing = true;
+    qaState.paused = false;
+
+    // UI updates
+    const playBtn = document.getElementById('qaPlayBtn');
+    playBtn.textContent = '⏸';
+    playBtn.classList.add('playing');
+
+    qaHighlightAyah(qaState.currentAyah);
+    qaUpdateInfo();
+
+    // Progress tracking
+    clearInterval(qaState.progressTimer);
+    qaState.progressTimer = setInterval(qaUpdateProgress, 200);
+
+    // When ayah finishes, play next
+    qaState.audio.onended = () => {
+        if (qaState.currentAyah < qaState.totalAyahs) {
+            qaState.currentAyah++;
+            qaPlayCurrent();
+        } else {
+            qaStop();
+        }
+    };
+
+    qaState.audio.onerror = () => {
+        document.getElementById('qaInfo').textContent = 'Audio error — skipping...';
+        setTimeout(() => {
+            if (qaState.currentAyah < qaState.totalAyahs) {
+                qaState.currentAyah++;
+                qaPlayCurrent();
+            } else {
+                qaStop();
+            }
+        }, 1000);
+    };
+}
+
+function qaTogglePlay() {
+    if (!qaState.playing && !qaState.paused) {
+        // Start from ayah 1 if not already playing
+        qaPlayFromAyah(1);
+        return;
+    }
+    if (qaState.paused) {
+        qaState.audio.play().catch(() => {});
+        qaState.paused = false;
+        qaState.playing = true;
+        document.getElementById('qaPlayBtn').textContent = '⏸';
+        document.getElementById('qaPlayBtn').classList.add('playing');
+        qaState.progressTimer = setInterval(qaUpdateProgress, 200);
+    } else {
+        qaState.audio.pause();
+        qaState.paused = true;
+        qaState.playing = false;
+        document.getElementById('qaPlayBtn').textContent = '▶';
+        document.getElementById('qaPlayBtn').classList.remove('playing');
+        clearInterval(qaState.progressTimer);
+    }
+}
+
+function qaStop() {
+    qaState.audio.pause();
+    qaState.audio.src = '';
+    qaState.playing = false;
+    qaState.paused = false;
+    qaState.currentAyah = 0;
+    clearInterval(qaState.progressTimer);
+
+    document.getElementById('qaPlayBtn').textContent = '▶';
+    document.getElementById('qaPlayBtn').classList.remove('playing');
+    document.getElementById('qaProgressFill').style.width = '0%';
+    document.getElementById('qaInfo').textContent = '—';
+
+    // Remove all highlights
+    document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => {
+        el.classList.remove('ayah-playing');
+    });
+}
+
+function qaPlayNext() {
+    if (!qaState.playing && !qaState.paused) return;
+    if (qaState.currentAyah < qaState.totalAyahs) {
+        qaState.currentAyah++;
+        qaPlayCurrent();
+    }
+}
+
+function qaPlayPrev() {
+    if (!qaState.playing && !qaState.paused) return;
+    if (qaState.currentAyah > 1) {
+        qaState.currentAyah--;
+        qaPlayCurrent();
+    }
+}
+
+function qaHighlightAyah(ayahNum) {
+    // Remove previous highlights
+    document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => {
+        el.classList.remove('ayah-playing');
+    });
+    const card = document.getElementById(`ayah-${ayahNum}`);
+    if (card) {
+        card.classList.add('ayah-playing');
+        // Smooth scroll into view
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function qaUpdateInfo() {
+    const surahName = SURAH_LIST[qaState.surahNum - 1] || '';
+    document.getElementById('qaInfo').textContent =
+        `Ayah ${qaState.currentAyah}/${qaState.totalAyahs} · ${surahName}`;
+}
+
+function qaUpdateProgress() {
+    const a = qaState.audio;
+    if (a.duration) {
+        const pct = (a.currentTime / a.duration) * 100;
+        document.getElementById('qaProgressFill').style.width = pct + '%';
+    }
+}
+
+function qaSeek(e) {
+    const bar = e.currentTarget;
+    const rect = bar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    if (qaState.audio.duration) {
+        qaState.audio.currentTime = pct * qaState.audio.duration;
+    }
+}
+
+function qaCycleSpeed() {
+    const idx = QA_SPEEDS.indexOf(qaState.speed);
+    qaState.speed = QA_SPEEDS[(idx + 1) % QA_SPEEDS.length];
+    qaState.audio.playbackRate = qaState.speed;
+    document.getElementById('qaSpeedBtn').textContent = qaState.speed + '×';
+}
+
+function qaChangeReciter() {
+    const wasPlaying = qaState.playing || qaState.paused;
+    const currentAyah = qaState.currentAyah || 1;
+    if (wasPlaying) {
+        qaState.audio.pause();
+        qaState.playing = false;
+        qaState.paused = false;
+        clearInterval(qaState.progressTimer);
+        // Re-start with new reciter
+        qaPlayFromAyah(currentAyah);
     }
 }
 
