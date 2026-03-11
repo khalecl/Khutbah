@@ -306,6 +306,10 @@
         .set-row input[type=range]{
             flex:1;accent-color:var(--gold);height:6px;
         }
+        .set-hint{
+            font-size:11px;color:var(--text-dim);line-height:1.5;
+            margin:-4px 0 8px 0;padding-left:2px;opacity:.7;
+        }
         .set-save{
             width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
             background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));
@@ -1003,6 +1007,19 @@
                         <label class="set-row"><input type="checkbox" id="sWakeLock" checked> Keep screen on while listening</label>
                     </div>
                     <div class="set-group">
+                        <div class="set-title">Speech Flow</div>
+                        <label class="set-row">
+                            Max buffer time: <span id="bufferVal">8</span>s
+                            <input type="range" id="sBuffer" min="3" max="20" value="8" step="1" oninput="document.getElementById('bufferVal').textContent=this.value">
+                        </label>
+                        <div class="set-hint">Forces translation after this many seconds of continuous speech — even if the speaker doesn't pause. Lower = faster but shorter fragments. Higher = more complete sentences.</div>
+                        <label class="set-row">
+                            Silence wait: <span id="silenceVal">1.5</span>s
+                            <input type="range" id="sSilence" min="0.5" max="5" value="1.5" step="0.5" oninput="document.getElementById('silenceVal').textContent=this.value">
+                        </label>
+                        <div class="set-hint">How long to wait after the speaker pauses before translating. Shorter = more responsive but may split sentences.</div>
+                    </div>
+                    <div class="set-group">
                         <div class="set-title">Translation Engine</div>
                         <label class="set-row"><input type="radio" name="engine" value="auto" checked> Auto (Lingva → MyMemory → LibreTranslate)</label>
                         <label class="set-row"><input type="radio" name="engine" value="lingva"> Lingva only (Google-powered)</label>
@@ -1118,7 +1135,8 @@ let apiStats = { lingvaOk: 0, lingvaFail: 0, mmOk: 0, mmFail: 0, cacheHit: 0 };
 // ── Settings ──
 let cfg = {
     instant: true, autoScroll: true, highlight: true, showOrig: false,
-    threshold: 15, wakeLock: true, engine: 'auto'
+    threshold: 15, wakeLock: true, engine: 'auto',
+    bufferTime: 8, silenceWait: 1.5
 };
 
 // ── Lingva instances (rotation for reliability) ──
@@ -1279,7 +1297,7 @@ async function startListen() {
         recognition.interimResults = true;
         recognition.lang = document.getElementById('srcLang').value;
 
-        let transcript = '', silenceTimer, restarts = 0;
+        let transcript = '', silenceTimer, bufferFlushTimer, restarts = 0;
 
         recognition.onstart = () => {
             isListening = true; restarts = 0;
@@ -1298,15 +1316,30 @@ async function startListen() {
             document.getElementById('stsTxt').textContent = interim ? '🎤 Speech detected...' : '🎤 Listening...';
 
             if (cfg.instant && final && transcript.trim()) {
+                clearTimeout(bufferFlushTimer);
                 doTranslate(transcript.trim());
                 transcript = '';
             } else if (!cfg.instant && (transcript + interim).trim()) {
+                // Silence-based flush
                 silenceTimer = setTimeout(() => {
                     if (transcript.trim()) {
+                        clearTimeout(bufferFlushTimer);
                         doTranslate(transcript.trim());
                         transcript = '';
                     }
-                }, 1500);
+                }, cfg.silenceWait * 1000);
+            }
+
+            // Forced buffer flush — handles continuous speech without pauses
+            if (transcript.trim() && !bufferFlushTimer) {
+                bufferFlushTimer = setTimeout(() => {
+                    bufferFlushTimer = null;
+                    if (transcript.trim()) {
+                        clearTimeout(silenceTimer);
+                        doTranslate(transcript.trim());
+                        transcript = '';
+                    }
+                }, cfg.bufferTime * 1000);
             }
         };
 
@@ -1673,6 +1706,10 @@ function applySettings() {
     document.getElementById('sThresh').value = cfg.threshold;
     document.getElementById('threshVal').textContent = cfg.threshold;
     document.getElementById('sWakeLock').checked = cfg.wakeLock;
+    document.getElementById('sBuffer').value = cfg.bufferTime;
+    document.getElementById('bufferVal').textContent = cfg.bufferTime;
+    document.getElementById('sSilence').value = cfg.silenceWait;
+    document.getElementById('silenceVal').textContent = cfg.silenceWait;
     document.querySelectorAll('input[name=engine]').forEach(r => {
         r.checked = r.value === cfg.engine;
     });
@@ -1686,6 +1723,8 @@ function saveSettings() {
     cfg.threshold = parseInt(document.getElementById('sThresh').value);
     cfg.wakeLock = document.getElementById('sWakeLock').checked;
     cfg.engine = document.querySelector('input[name=engine]:checked')?.value || 'auto';
+    cfg.bufferTime = parseInt(document.getElementById('sBuffer').value);
+    cfg.silenceWait = parseFloat(document.getElementById('sSilence').value);
     try { localStorage.setItem('kht_cfg_v3', JSON.stringify(cfg)); } catch(e) {}
     alert('Settings saved ✓');
 }
