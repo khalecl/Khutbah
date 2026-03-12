@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,1080 +38,1097 @@
             -webkit-font-smoothing:antialiased;
         }
 
-        /* === Geometric Islamic pattern overlay === */
-        body::before{
-            content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-            opacity:.035;
-            background-image:
-                linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
-                linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
-                linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
-                linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
-                linear-gradient(60deg,rgba(212,168,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,168,67,.35) 75%,rgba(212,168,67,.35)),
-                linear-gradient(60deg,rgba(212,168,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,168,67,.35) 75%,rgba(212,168,67,.35));
-            background-size:40px 70px;
-            background-position:0 0,0 0,20px 35px,20px 35px,0 0,20px 35px;
-        }
+```
+    /* === Geometric Islamic pattern overlay === */
+    body::before{
+        content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+        opacity:.035;
+        background-image:
+            linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+            linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+            linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+            linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+            linear-gradient(60deg,rgba(212,168,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,168,67,.35) 75%,rgba(212,168,67,.35)),
+            linear-gradient(60deg,rgba(212,168,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,168,67,.35) 75%,rgba(212,168,67,.35));
+        background-size:40px 70px;
+        background-position:0 0,0 0,20px 35px,20px 35px,0 0,20px 35px;
+    }
 
-        /* === Shell === */
-        .shell{
-            position:relative;z-index:1;
-            width:100%;max-width:600px;margin:0 auto;
-            min-height:100vh;min-height:-webkit-fill-available;
-            display:flex;flex-direction:column;
-            padding-top:var(--safe-top);
-            padding-bottom:var(--safe-bottom);
-        }
+    /* === Shell === */
+    .shell{
+        position:relative;z-index:1;
+        width:100%;max-width:600px;margin:0 auto;
+        min-height:100vh;min-height:-webkit-fill-available;
+        display:flex;flex-direction:column;
+        padding-top:var(--safe-top);
+        padding-bottom:var(--safe-bottom);
+    }
 
-        /* === Header === */
-        .hdr{
-            text-align:center;
-            padding:clamp(14px,3vw,24px) 16px clamp(10px,2vw,16px);
-            background:linear-gradient(180deg,rgba(15,61,36,.9),transparent);
-        }
-        .hdr-ar{
-            font-family:'Amiri',serif;font-size:clamp(20px,5vw,30px);
-            color:var(--gold);letter-spacing:1px;line-height:1.3;
-        }
-        .hdr-en{
-            font-size:clamp(11px,2.3vw,14px);font-weight:300;
-            color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;
-            margin-top:2px;
-        }
+    /* === Header === */
+    .hdr{
+        text-align:center;
+        padding:clamp(14px,3vw,24px) 16px clamp(10px,2vw,16px);
+        background:linear-gradient(180deg,rgba(15,61,36,.9),transparent);
+    }
+    .hdr-ar{
+        font-family:'Amiri',serif;font-size:clamp(20px,5vw,30px);
+        color:var(--gold);letter-spacing:1px;line-height:1.3;
+    }
+    .hdr-en{
+        font-size:clamp(11px,2.3vw,14px);font-weight:300;
+        color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;
+        margin-top:2px;
+    }
 
-        /* === Tabs === */
-        .tabs{
-            display:flex;gap:3px;padding:0 12px;flex-shrink:0;
-        }
-        .tab{
-            flex:1;padding:clamp(9px,2vw,13px) 4px;
-            background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
-            border-radius:var(--radius-sm) var(--radius-sm) 0 0;
-            color:var(--text-dim);font-size:clamp(10px,2.1vw,12px);font-weight:500;
-            text-align:center;cursor:pointer;
-            transition:all .3s;letter-spacing:.3px;
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-        }
-        .tab.on{
-            background:rgba(212,168,67,.1);border-color:rgba(212,168,67,.25);
-            color:var(--gold);font-weight:600;
-        }
-        .tab .tab-icon{display:none}
-        @media(max-width:380px){
-            .tab{font-size:9px;padding:8px 3px;letter-spacing:0}
-        }
+    /* === Tabs === */
+    .tabs{
+        display:flex;gap:3px;padding:0 12px;flex-shrink:0;
+    }
+    .tab{
+        flex:1;padding:clamp(9px,2vw,13px) 4px;
+        background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+        border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+        color:var(--text-dim);font-size:clamp(10px,2.1vw,12px);font-weight:500;
+        text-align:center;cursor:pointer;
+        transition:all .3s;letter-spacing:.3px;
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .tab.on{
+        background:rgba(212,168,67,.1);border-color:rgba(212,168,67,.25);
+        color:var(--gold);font-weight:600;
+    }
+    .tab .tab-icon{display:none}
+    @media(max-width:380px){
+        .tab{font-size:9px;padding:8px 3px;letter-spacing:0}
+    }
 
-        /* === Panels === */
-        .panels{
-            flex:1;display:flex;flex-direction:column;
-            margin:0 12px;overflow:hidden;
-            background:rgba(255,255,255,.025);
-            border:1px solid rgba(255,255,255,.06);border-top:none;
-            border-radius:0 0 var(--radius) var(--radius);
-        }
-        .panel{display:none;flex-direction:column;flex:1;overflow:hidden}
-        .panel.on{display:flex}
+    /* === Panels === */
+    .panels{
+        flex:1;display:flex;flex-direction:column;
+        margin:0 12px;overflow:hidden;
+        background:rgba(255,255,255,.025);
+        border:1px solid rgba(255,255,255,.06);border-top:none;
+        border-radius:0 0 var(--radius) var(--radius);
+    }
+    .panel{display:none;flex-direction:column;flex:1;overflow:hidden}
+    .panel.on{display:flex}
 
-        /* === Translator Panel === */
-        .ctl{
-            padding:clamp(12px,2.5vw,18px);
-            display:flex;flex-direction:column;gap:clamp(10px,2vw,14px);
-            border-bottom:1px solid rgba(212,168,67,.12);
-        }
+    /* === Translator Panel === */
+    .ctl{
+        padding:clamp(12px,2.5vw,18px);
+        display:flex;flex-direction:column;gap:clamp(10px,2vw,14px);
+        border-bottom:1px solid rgba(212,168,67,.12);
+    }
 
-        /* FIXED: Language row alignment */
-        .lang-row{
-            display:grid;
-            grid-template-columns:1fr auto 1fr;
-            gap:clamp(8px,2vw,14px);
-            align-items:end;
-        }
-        .lang-grp{
-            display:flex;flex-direction:column;gap:4px;
-            min-width:0; /* prevent grid blowout */
-        }
-        .lang-lbl{
-            font-size:clamp(10px,1.8vw,12px);font-weight:600;
-            color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;
-        }
-        .lang-sel{
-            width:100%; /* fill the grid cell */
-            height:clamp(44px,9vw,50px);padding:0 28px 0 10px;
-            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
-            font-family:'Outfit',sans-serif;font-size:clamp(12px,2.2vw,14px);font-weight:500;
-            color:var(--text);background:rgba(255,255,255,.05)
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
-                no-repeat right 10px center;
-            -webkit-appearance:none;appearance:none;
-        }
-        .lang-sel:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
-        .lang-sel option{background:#1a1a1a;color:#eee}
-        .lang-sel optgroup{color:var(--gold);font-weight:700}
+    /* FIXED: Language row alignment */
+    .lang-row{
+        display:grid;
+        grid-template-columns:1fr auto 1fr;
+        gap:clamp(8px,2vw,14px);
+        align-items:end;
+    }
+    .lang-grp{
+        display:flex;flex-direction:column;gap:4px;
+        min-width:0; /* prevent grid blowout */
+    }
+    .lang-lbl{
+        font-size:clamp(10px,1.8vw,12px);font-weight:600;
+        color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;
+    }
+    .lang-sel{
+        width:100%; /* fill the grid cell */
+        height:clamp(44px,9vw,50px);padding:0 28px 0 10px;
+        border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
+        font-family:'Outfit',sans-serif;font-size:clamp(12px,2.2vw,14px);font-weight:500;
+        color:var(--text);background:rgba(255,255,255,.05)
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
+            no-repeat right 10px center;
+        -webkit-appearance:none;appearance:none;
+    }
+    .lang-sel:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+    .lang-sel option{background:#1a1a1a;color:#eee}
+    .lang-sel optgroup{color:var(--gold);font-weight:700}
 
-        /* === Mic Button === */
-        .mic-wrap{display:flex;align-items:flex-end;justify-content:center}
-        .mic{
-            width:clamp(54px,12vw,66px);height:clamp(54px,12vw,66px);
-            border-radius:50%;border:none;cursor:pointer;
-            font-size:clamp(24px,5.5vw,30px);
-            transition:all .3s;position:relative;
-        }
-        .mic.idle{
-            background:linear-gradient(145deg,var(--bg-light),var(--bg-mid));
-            border:2px solid rgba(212,168,67,.4);
-            box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);
-        }
-        .mic.idle:active{transform:scale(1.08)}
-        .mic.live{
-            background:linear-gradient(145deg,#c62828,#e53935);
-            border:2px solid rgba(255,100,100,.5);
-            animation:mic-pulse 1.8s ease infinite;
-        }
-        @keyframes mic-pulse{
-            0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.5)}
-            50%{box-shadow:0 0 0 14px rgba(229,57,53,0)}
-        }
+    /* === Mic Button === */
+    .mic-wrap{display:flex;align-items:flex-end;justify-content:center}
+    .mic{
+        width:clamp(54px,12vw,66px);height:clamp(54px,12vw,66px);
+        border-radius:50%;border:none;cursor:pointer;
+        font-size:clamp(24px,5.5vw,30px);
+        transition:all .3s;position:relative;
+    }
+    .mic.idle{
+        background:linear-gradient(145deg,var(--bg-light),var(--bg-mid));
+        border:2px solid rgba(212,168,67,.4);
+        box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .mic.idle:active{transform:scale(1.08)}
+    .mic.live{
+        background:linear-gradient(145deg,#c62828,#e53935);
+        border:2px solid rgba(255,100,100,.5);
+        animation:mic-pulse 1.8s ease infinite;
+    }
+    @keyframes mic-pulse{
+        0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,.5)}
+        50%{box-shadow:0 0 0 14px rgba(229,57,53,0)}
+    }
 
-        /* === Audio Visualizer === */
-        .viz{
-            height:clamp(36px,7vw,48px);
-            background:rgba(255,255,255,.03);border-radius:var(--radius-sm);
-            display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 12px;
-        }
-        .viz-bar{
-            width:5px;height:8px;background:rgba(212,168,67,.3);border-radius:3px;
-            transition:height .08s ease-out,background .2s;
-        }
+    /* === Audio Visualizer === */
+    .viz{
+        height:clamp(36px,7vw,48px);
+        background:rgba(255,255,255,.03);border-radius:var(--radius-sm);
+        display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 12px;
+    }
+    .viz-bar{
+        width:5px;height:8px;background:rgba(212,168,67,.3);border-radius:3px;
+        transition:height .08s ease-out,background .2s;
+    }
 
-        /* === Status === */
-        .sts{
-            display:flex;align-items:center;justify-content:center;gap:10px;
-            padding:clamp(8px,1.5vw,12px);
-            background:var(--gold-dim);border-radius:var(--radius-sm);
-        }
-        .sts-dot{
-            width:10px;height:10px;background:rgba(255,255,255,.2);
-            border-radius:50%;transition:all .3s;flex-shrink:0;
-        }
-        .sts-dot.on{background:var(--gold);animation:dot-glow 2s infinite}
-        @keyframes dot-glow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
-        .sts-txt{
-            font-size:clamp(11px,2vw,13px);font-weight:500;color:var(--gold);
-        }
+    /* === Status === */
+    .sts{
+        display:flex;align-items:center;justify-content:center;gap:10px;
+        padding:clamp(8px,1.5vw,12px);
+        background:var(--gold-dim);border-radius:var(--radius-sm);
+    }
+    .sts-dot{
+        width:10px;height:10px;background:rgba(255,255,255,.2);
+        border-radius:50%;transition:all .3s;flex-shrink:0;
+    }
+    .sts-dot.on{background:var(--gold);animation:dot-glow 2s infinite}
+    @keyframes dot-glow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+    .sts-txt{
+        font-size:clamp(11px,2vw,13px);font-weight:500;color:var(--gold);
+    }
 
-        /* === Translation Output === */
-        .out-wrap{
-            flex:1;display:flex;flex-direction:column;
-            padding:clamp(10px,2vw,16px);min-height:0;
-        }
-        .out-box{
-            flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-            padding-right:6px;
-        }
-        .out-box::-webkit-scrollbar{width:4px}
-        .out-box::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
-        .out-box::-webkit-scrollbar-track{background:transparent}
-        .sent{
-            margin-bottom:12px;padding:clamp(10px,2vw,14px);
-            background:rgba(212,168,67,.06);
-            border-left:3px solid rgba(212,168,67,.35);
-            border-radius:0 var(--radius-sm) var(--radius-sm) 0;
-            font-size:var(--font-size);line-height:1.75;color:var(--cream);
-            animation:fade-up .4s ease;
-        }
-        .sent:last-child{background:rgba(212,168,67,.12);border-left-color:var(--gold)}
-        .sent.rtl{
-            direction:rtl;text-align:right;font-family:'Amiri',serif;
-            border-left:none;border-right:3px solid rgba(212,168,67,.35);
-            border-radius:var(--radius-sm) 0 0 var(--radius-sm);
-        }
-        .sent.rtl:last-child{border-right-color:var(--gold)}
-        @keyframes fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .empty-msg{
-            text-align:center;margin-top:clamp(30px,8vw,60px);
-            color:var(--text-dim);font-size:clamp(13px,2.5vw,15px);
-            line-height:1.8;
-        }
-        .empty-msg .icon{font-size:40px;margin-bottom:12px;display:block;opacity:.4}
+    /* === Translation Output === */
+    .out-wrap{
+        flex:1;display:flex;flex-direction:column;
+        padding:clamp(10px,2vw,16px);min-height:0;
+    }
+    .out-box{
+        flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+        padding-right:6px;
+    }
+    .out-box::-webkit-scrollbar{width:4px}
+    .out-box::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+    .out-box::-webkit-scrollbar-track{background:transparent}
+    .sent{
+        margin-bottom:12px;padding:clamp(10px,2vw,14px);
+        background:rgba(212,168,67,.06);
+        border-left:3px solid rgba(212,168,67,.35);
+        border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+        font-size:var(--font-size);line-height:1.75;color:var(--cream);
+        animation:fade-up .4s ease;
+    }
+    .sent:last-child{background:rgba(212,168,67,.12);border-left-color:var(--gold)}
+    .sent.rtl{
+        direction:rtl;text-align:right;font-family:'Amiri',serif;
+        border-left:none;border-right:3px solid rgba(212,168,67,.35);
+        border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+    }
+    .sent.rtl:last-child{border-right-color:var(--gold)}
+    @keyframes fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .empty-msg{
+        text-align:center;margin-top:clamp(30px,8vw,60px);
+        color:var(--text-dim);font-size:clamp(13px,2.5vw,15px);
+        line-height:1.8;
+    }
+    .empty-msg .icon{font-size:40px;margin-bottom:12px;display:block;opacity:.4}
 
-        /* === Font + Actions Bar === */
-        .bar{
-            display:flex;gap:8px;padding:clamp(10px,2vw,14px);
-            border-top:1px solid rgba(212,168,67,.1);
-            justify-content:center;flex-wrap:wrap;
-        }
-        .bar-btn{
-            padding:clamp(10px,2vw,12px) clamp(14px,3vw,20px);
-            font-family:'Outfit',sans-serif;
-            font-size:clamp(12px,2vw,14px);font-weight:600;
-            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
-            background:rgba(212,168,67,.08);color:var(--gold);
-            cursor:pointer;transition:all .25s;
-            display:inline-flex;align-items:center;gap:6px;
-        }
-        .bar-btn:active{background:rgba(212,168,67,.2);transform:scale(.97)}
-        .bar-btn.primary{
-            background:linear-gradient(145deg,rgba(212,168,67,.2),rgba(212,168,67,.1));
-            border-color:rgba(212,168,67,.4);
-        }
-        .font-ctrl{
-            display:flex;align-items:center;
-            background:rgba(255,255,255,.04);border-radius:20px;
-            border:1px solid rgba(255,255,255,.06);overflow:hidden;
-        }
-        .font-btn{
-            width:34px;height:34px;border:none;background:none;
-            color:var(--gold);font-size:16px;cursor:pointer;
-            display:flex;align-items:center;justify-content:center;
-        }
-        .font-btn:active{background:rgba(212,168,67,.15)}
-        .font-val{
-            width:38px;text-align:center;font-size:11px;font-weight:600;
-            color:var(--text-dim);
-        }
+    /* === Font + Actions Bar === */
+    .bar{
+        display:flex;gap:8px;padding:clamp(10px,2vw,14px);
+        border-top:1px solid rgba(212,168,67,.1);
+        justify-content:center;flex-wrap:wrap;
+    }
+    .bar-btn{
+        padding:clamp(10px,2vw,12px) clamp(14px,3vw,20px);
+        font-family:'Outfit',sans-serif;
+        font-size:clamp(12px,2vw,14px);font-weight:600;
+        border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
+        background:rgba(212,168,67,.08);color:var(--gold);
+        cursor:pointer;transition:all .25s;
+        display:inline-flex;align-items:center;gap:6px;
+    }
+    .bar-btn:active{background:rgba(212,168,67,.2);transform:scale(.97)}
+    .bar-btn.primary{
+        background:linear-gradient(145deg,rgba(212,168,67,.2),rgba(212,168,67,.1));
+        border-color:rgba(212,168,67,.4);
+    }
+    .font-ctrl{
+        display:flex;align-items:center;
+        background:rgba(255,255,255,.04);border-radius:20px;
+        border:1px solid rgba(255,255,255,.06);overflow:hidden;
+    }
+    .font-btn{
+        width:34px;height:34px;border:none;background:none;
+        color:var(--gold);font-size:16px;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;
+    }
+    .font-btn:active{background:rgba(212,168,67,.15)}
+    .font-val{
+        width:38px;text-align:center;font-size:11px;font-weight:600;
+        color:var(--text-dim);
+    }
 
-        /* === API Status Indicator === */
-        .api-badge{
-            display:flex;align-items:center;gap:6px;
-            padding:6px 10px;border-radius:20px;
-            background:rgba(255,255,255,.04);
-            font-size:10px;color:var(--text-dim);
-        }
-        .api-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-        .api-dot.ok{background:#4caf50}
-        .api-dot.warn{background:#ff9800}
-        .api-dot.err{background:#f44336}
+    /* === API Status Indicator === */
+    .api-badge{
+        display:flex;align-items:center;gap:6px;
+        padding:6px 10px;border-radius:20px;
+        background:rgba(255,255,255,.04);
+        font-size:10px;color:var(--text-dim);
+    }
+    .api-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .api-dot.ok{background:#4caf50}
+    .api-dot.warn{background:#ff9800}
+    .api-dot.err{background:#f44336}
 
-        /* === Settings Panel === */
-        .settings-inner{
-            padding:clamp(16px,3vw,24px);overflow-y:auto;flex:1;
-            -webkit-overflow-scrolling:touch;
-        }
-        .set-group{
-            margin-bottom:20px;padding:18px;
-            background:rgba(255,255,255,.03);border-radius:var(--radius);
-            border:1px solid rgba(255,255,255,.06);
-        }
-        .set-title{
-            font-size:14px;font-weight:600;color:var(--gold);
-            margin-bottom:14px;letter-spacing:.5px;
-        }
-        .set-row{
-            display:flex;align-items:center;gap:12px;
-            margin-bottom:12px;font-size:13px;color:var(--cream-dim);
-            cursor:pointer;
-        }
-        .set-row input[type=checkbox]{
-            width:20px;height:20px;accent-color:var(--gold);flex-shrink:0;
-        }
-        .set-row input[type=range]{
-            flex:1;accent-color:var(--gold);height:6px;
-        }
-        .set-hint{
-            font-size:11px;color:var(--text-dim);line-height:1.5;
-            margin:-4px 0 8px 0;padding-left:2px;opacity:.7;
-        }
-        .set-save{
-            width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
-            background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));
-            color:var(--gold);font-family:'Outfit',sans-serif;
-            font-size:14px;font-weight:600;cursor:pointer;
-            letter-spacing:.5px;
-        }
+    /* === Settings Panel === */
+    .settings-inner{
+        padding:clamp(16px,3vw,24px);overflow-y:auto;flex:1;
+        -webkit-overflow-scrolling:touch;
+    }
+    .set-group{
+        margin-bottom:20px;padding:18px;
+        background:rgba(255,255,255,.03);border-radius:var(--radius);
+        border:1px solid rgba(255,255,255,.06);
+    }
+    .set-title{
+        font-size:14px;font-weight:600;color:var(--gold);
+        margin-bottom:14px;letter-spacing:.5px;
+    }
+    .set-row{
+        display:flex;align-items:center;gap:12px;
+        margin-bottom:12px;font-size:13px;color:var(--cream-dim);
+        cursor:pointer;
+    }
+    .set-row input[type=checkbox]{
+        width:20px;height:20px;accent-color:var(--gold);flex-shrink:0;
+    }
+    .set-row input[type=range]{
+        flex:1;accent-color:var(--gold);height:6px;
+    }
+    .set-hint{
+        font-size:11px;color:var(--text-dim);line-height:1.5;
+        margin:-4px 0 8px 0;padding-left:2px;opacity:.7;
+    }
+    .set-save{
+        width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
+        background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));
+        color:var(--gold);font-family:'Outfit',sans-serif;
+        font-size:14px;font-weight:600;cursor:pointer;
+        letter-spacing:.5px;
+    }
 
-        /* ═══════════════════════════════════════════
-           QURAN TAB
-           ═══════════════════════════════════════════ */
-        .quran-inner{
-            padding:clamp(14px,3vw,20px);overflow-y:auto;flex:1;
-            -webkit-overflow-scrolling:touch;
-        }
-        .quran-nav{
-            display:flex;gap:8px;margin-bottom:16px;align-items:center;
-        }
-        .quran-nav select{
-            flex:1;height:44px;padding:0 28px 0 10px;
-            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
-            font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
-            color:var(--text);background:rgba(255,255,255,.05)
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
-                no-repeat right 10px center;
-            -webkit-appearance:none;appearance:none;
-        }
-        .quran-nav select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
-        .quran-nav select option{background:#1a1a1a;color:#eee}
-        .quran-controls{
-            display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;
-        }
-        .q-toggle{
-            padding:8px 14px;border:1px solid rgba(212,168,67,.2);
-            border-radius:20px;background:rgba(255,255,255,.03);
-            color:var(--text-dim);font-size:11px;font-weight:500;
-            cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif;
-        }
-        .q-toggle.on{
-            background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.4);
-            color:var(--gold);
-        }
-        .quran-loading{
-            text-align:center;padding:40px 20px;
-            color:var(--text-dim);font-size:14px;
-        }
-        .quran-loading .spinner{
-            width:32px;height:32px;border:3px solid rgba(212,168,67,.15);
-            border-top:3px solid var(--gold);border-radius:50%;
-            animation:spin .8s linear infinite;margin:0 auto 12px;
-        }
-        @keyframes spin{to{transform:rotate(360deg)}}
+    /* ═══════════════════════════════════════════
+       QURAN TAB
+       ═══════════════════════════════════════════ */
+    .quran-inner{
+        padding:clamp(14px,3vw,20px);overflow-y:auto;flex:1;
+        -webkit-overflow-scrolling:touch;
+    }
+    .quran-nav{
+        display:flex;gap:8px;margin-bottom:16px;align-items:center;
+    }
+    .quran-nav select{
+        flex:1;height:44px;padding:0 28px 0 10px;
+        border:1px solid rgba(212,168,67,.25);border-radius:var(--radius-sm);
+        font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+        color:var(--text);background:rgba(255,255,255,.05)
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
+            no-repeat right 10px center;
+        -webkit-appearance:none;appearance:none;
+    }
+    .quran-nav select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+    .quran-nav select option{background:#1a1a1a;color:#eee}
+    .quran-controls{
+        display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;
+    }
+    .q-toggle{
+        padding:8px 14px;border:1px solid rgba(212,168,67,.2);
+        border-radius:20px;background:rgba(255,255,255,.03);
+        color:var(--text-dim);font-size:11px;font-weight:500;
+        cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif;
+    }
+    .q-toggle.on{
+        background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.4);
+        color:var(--gold);
+    }
+    .quran-loading{
+        text-align:center;padding:40px 20px;
+        color:var(--text-dim);font-size:14px;
+    }
+    .quran-loading .spinner{
+        width:32px;height:32px;border:3px solid rgba(212,168,67,.15);
+        border-top:3px solid var(--gold);border-radius:50%;
+        animation:spin .8s linear infinite;margin:0 auto 12px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-        .ayah-card{
-            margin-bottom:16px;padding:clamp(14px,3vw,20px);
-            background:rgba(255,255,255,.025);
-            border:1px solid rgba(255,255,255,.05);
-            border-radius:var(--radius);
-            animation:fade-up .3s ease;
-            position:relative;
-        }
-        .ayah-card:hover{border-color:rgba(212,168,67,.15)}
-        .ayah-num{
-            position:absolute;top:12px;right:14px;
-            width:32px;height:32px;
-            background:var(--gold-dim);border:1px solid rgba(212,168,67,.25);
-            border-radius:50%;display:flex;align-items:center;justify-content:center;
-            font-size:12px;font-weight:700;color:var(--gold);
-        }
-        .ayah-arabic{
-            font-family:'Amiri',serif;font-size:clamp(20px,4.5vw,28px);
-            color:var(--cream);line-height:2;direction:rtl;text-align:right;
-            margin-bottom:12px;padding-right:42px;
-        }
-        .ayah-translit{
-            font-size:clamp(13px,2.5vw,15px);color:var(--gold);
-            font-style:italic;line-height:1.7;margin-bottom:8px;
-            padding-left:4px;border-left:2px solid rgba(212,168,67,.2);
-            padding:4px 0 4px 10px;
-        }
-        .ayah-trans{
-            font-size:clamp(13px,2.5vw,15px);color:var(--cream-dim);
-            line-height:1.8;
-        }
-        .surah-header{
-            text-align:center;margin-bottom:20px;
-            padding:16px;background:rgba(212,168,67,.06);
-            border-radius:var(--radius);border:1px solid rgba(212,168,67,.12);
-        }
-        .surah-header .bismillah{
-            font-family:'Amiri',serif;font-size:clamp(18px,4vw,24px);
-            color:var(--gold);margin-bottom:6px;
-        }
-        .surah-header .surah-info{
-            font-size:12px;color:var(--text-dim);letter-spacing:.5px;
-        }
+    .ayah-card{
+        margin-bottom:16px;padding:clamp(14px,3vw,20px);
+        background:rgba(255,255,255,.025);
+        border:1px solid rgba(255,255,255,.05);
+        border-radius:var(--radius);
+        animation:fade-up .3s ease;
+        position:relative;
+    }
+    .ayah-card:hover{border-color:rgba(212,168,67,.15)}
+    .ayah-num{
+        position:absolute;top:12px;right:14px;
+        width:32px;height:32px;
+        background:var(--gold-dim);border:1px solid rgba(212,168,67,.25);
+        border-radius:50%;display:flex;align-items:center;justify-content:center;
+        font-size:12px;font-weight:700;color:var(--gold);
+    }
+    .ayah-arabic{
+        font-family:'Amiri',serif;font-size:clamp(20px,4.5vw,28px);
+        color:var(--cream);line-height:2;direction:rtl;text-align:right;
+        margin-bottom:12px;padding-right:42px;
+    }
+    .ayah-translit{
+        font-size:clamp(13px,2.5vw,15px);color:var(--gold);
+        font-style:italic;line-height:1.7;margin-bottom:8px;
+        padding-left:4px;border-left:2px solid rgba(212,168,67,.2);
+        padding:4px 0 4px 10px;
+    }
+    .ayah-trans{
+        font-size:clamp(13px,2.5vw,15px);color:var(--cream-dim);
+        line-height:1.8;
+    }
+    .surah-header{
+        text-align:center;margin-bottom:20px;
+        padding:16px;background:rgba(212,168,67,.06);
+        border-radius:var(--radius);border:1px solid rgba(212,168,67,.12);
+    }
+    .surah-header .bismillah{
+        font-family:'Amiri',serif;font-size:clamp(18px,4vw,24px);
+        color:var(--gold);margin-bottom:6px;
+    }
+    .surah-header .surah-info{
+        font-size:12px;color:var(--text-dim);letter-spacing:.5px;
+    }
 
-        /* ═══════════════════════════════════════════
-           QURAN AUDIO PLAYER
-           ═══════════════════════════════════════════ */
-        .quran-audio-bar{
-            display:flex;align-items:center;gap:8px;
-            margin-bottom:14px;padding:10px 12px;
-            background:rgba(212,168,67,.06);
-            border:1px solid rgba(212,168,67,.15);
-            border-radius:var(--radius-sm);
-            flex-wrap:wrap;
-        }
-        .qa-btn{
-            width:36px;height:36px;border:none;border-radius:50%;
-            background:rgba(212,168,67,.15);color:var(--gold);
-            font-size:16px;cursor:pointer;display:flex;
-            align-items:center;justify-content:center;
-            transition:all .2s;flex-shrink:0;
-        }
-        .qa-btn:hover{background:rgba(212,168,67,.3)}
-        .qa-btn:disabled{opacity:.35;cursor:default}
-        .qa-btn.playing{background:var(--gold);color:var(--bg-deep)}
-        .qa-progress{
-            flex:1;min-width:80px;height:4px;background:rgba(255,255,255,.08);
-            border-radius:2px;overflow:hidden;cursor:pointer;
-        }
-        .qa-progress-fill{
-            height:100%;background:var(--gold);border-radius:2px;
-            width:0%;transition:width .3s linear;
-        }
-        .qa-info{
-            font-size:11px;color:var(--text-dim);white-space:nowrap;
-        }
-        .qa-reciter-select{
-            height:32px;padding:0 24px 0 8px;
-            border:1px solid rgba(212,168,67,.2);border-radius:16px;
-            font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;
-            color:var(--gold);background:rgba(255,255,255,.03)
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath fill='%23d4a843' d='M4 6L0 1.5h8z'/%3E%3C/svg%3E")
-                no-repeat right 8px center;
-            -webkit-appearance:none;appearance:none;
-        }
-        .qa-reciter-select option{background:#1a1a1a;color:#eee}
-        .ayah-card.ayah-playing{
-            border-color:rgba(212,168,67,.5) !important;
-            background:rgba(212,168,67,.08) !important;
-            box-shadow:0 0 20px rgba(212,168,67,.12);
-        }
-        .ayah-card .ayah-play-btn{
-            position:absolute;top:12px;left:12px;
-            width:28px;height:28px;border:none;border-radius:50%;
-            background:rgba(212,168,67,.1);color:var(--gold);
-            font-size:12px;cursor:pointer;display:flex;
-            align-items:center;justify-content:center;
-            opacity:.5;transition:all .2s;
-        }
-        .ayah-card:hover .ayah-play-btn,.ayah-card .ayah-play-btn:focus{opacity:1}
-        .ayah-card.ayah-playing .ayah-play-btn{
-            opacity:1;background:var(--gold);color:var(--bg-deep);
-        }
-        .qa-speed{
-            height:28px;padding:0 8px;border:1px solid rgba(212,168,67,.2);
-            border-radius:14px;font-size:11px;color:var(--gold);
-            background:rgba(255,255,255,.03);cursor:pointer;
-            font-family:'Outfit',sans-serif;font-weight:600;
-            display:flex;align-items:center;gap:2px;
-        }
-        .qa-speed:hover{background:rgba(212,168,67,.1)}
-        /* ═══════════════════════════════════════════
-           DU'A TAB
-           ═══════════════════════════════════════════ */
-        .dua-inner{
-            padding:clamp(14px,3vw,20px);overflow-y:auto;flex:1;
-            -webkit-overflow-scrolling:touch;
-        }
-        .dua-filter{
-            display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;
-        }
-        .dua-tag{
-            padding:7px 14px;border:1px solid rgba(212,168,67,.2);
-            border-radius:20px;background:rgba(255,255,255,.03);
-            color:var(--text-dim);font-size:11px;font-weight:500;
-            cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif;
-        }
-        .dua-tag.on{
-            background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.4);
-            color:var(--gold);
-        }
-        .dua-card{
-            margin-bottom:16px;padding:clamp(14px,3vw,20px);
-            background:rgba(255,255,255,.025);
-            border:1px solid rgba(255,255,255,.05);
-            border-radius:var(--radius);
-            animation:fade-up .3s ease;
-        }
-        .dua-card:hover{border-color:rgba(212,168,67,.15)}
-        .dua-title{
-            font-size:clamp(12px,2.3vw,14px);font-weight:600;
-            color:var(--gold);margin-bottom:10px;
-            display:flex;align-items:center;gap:8px;
-        }
-        .dua-title .dua-cat{
-            font-size:9px;padding:3px 8px;border-radius:10px;
-            background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.2);
-            font-weight:500;
-        }
-        .dua-arabic{
-            font-family:'Amiri',serif;font-size:clamp(18px,4vw,24px);
-            color:var(--cream);line-height:2;direction:rtl;text-align:right;
-            margin-bottom:10px;
-        }
-        .dua-translit{
-            font-size:clamp(12px,2.3vw,14px);color:rgba(212,168,67,.7);
-            font-style:italic;line-height:1.7;margin-bottom:8px;
-        }
-        .dua-meaning{
-            font-size:clamp(12px,2.3vw,14px);color:var(--cream-dim);
-            line-height:1.8;margin-bottom:8px;
-        }
-        .dua-ref{
-            font-size:10px;color:var(--text-dim);
-            border-top:1px solid rgba(255,255,255,.04);
-            padding-top:8px;margin-top:4px;
-        }
+    /* ═══════════════════════════════════════════
+       QURAN AUDIO PLAYER
+       ═══════════════════════════════════════════ */
+    .quran-audio-bar{
+        display:flex;align-items:center;gap:8px;
+        margin-bottom:14px;padding:10px 12px;
+        background:rgba(212,168,67,.06);
+        border:1px solid rgba(212,168,67,.15);
+        border-radius:var(--radius-sm);
+        flex-wrap:wrap;
+    }
+    .qa-btn{
+        width:36px;height:36px;border:none;border-radius:50%;
+        background:rgba(212,168,67,.15);color:var(--gold);
+        font-size:16px;cursor:pointer;display:flex;
+        align-items:center;justify-content:center;
+        transition:all .2s;flex-shrink:0;
+    }
+    .qa-btn:hover{background:rgba(212,168,67,.3)}
+    .qa-btn:disabled{opacity:.35;cursor:default}
+    .qa-btn.playing{background:var(--gold);color:var(--bg-deep)}
+    .qa-progress{
+        flex:1;min-width:80px;height:4px;background:rgba(255,255,255,.08);
+        border-radius:2px;overflow:hidden;cursor:pointer;
+    }
+    .qa-progress-fill{
+        height:100%;background:var(--gold);border-radius:2px;
+        width:0%;transition:width .3s linear;
+    }
+    .qa-info{
+        font-size:11px;color:var(--text-dim);white-space:nowrap;
+    }
+    .qa-reciter-select{
+        height:32px;padding:0 24px 0 8px;
+        border:1px solid rgba(212,168,67,.2);border-radius:16px;
+        font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;
+        color:var(--gold);background:rgba(255,255,255,.03)
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath fill='%23d4a843' d='M4 6L0 1.5h8z'/%3E%3C/svg%3E")
+            no-repeat right 8px center;
+        -webkit-appearance:none;appearance:none;
+    }
+    .qa-reciter-select option{background:#1a1a1a;color:#eee}
+    .ayah-card.ayah-playing{
+        border-color:rgba(212,168,67,.5) !important;
+        background:rgba(212,168,67,.08) !important;
+        box-shadow:0 0 20px rgba(212,168,67,.12);
+    }
+    .ayah-card .ayah-play-btn{
+        position:absolute;top:12px;left:12px;
+        width:28px;height:28px;border:none;border-radius:50%;
+        background:rgba(212,168,67,.1);color:var(--gold);
+        font-size:12px;cursor:pointer;display:flex;
+        align-items:center;justify-content:center;
+        opacity:.5;transition:all .2s;
+    }
+    .ayah-card:hover .ayah-play-btn,.ayah-card .ayah-play-btn:focus{opacity:1}
+    .ayah-card.ayah-playing .ayah-play-btn{
+        opacity:1;background:var(--gold);color:var(--bg-deep);
+    }
+    .qa-speed{
+        height:28px;padding:0 8px;border:1px solid rgba(212,168,67,.2);
+        border-radius:14px;font-size:11px;color:var(--gold);
+        background:rgba(255,255,255,.03);cursor:pointer;
+        font-family:'Outfit',sans-serif;font-weight:600;
+        display:flex;align-items:center;gap:2px;
+    }
+    .qa-speed:hover{background:rgba(212,168,67,.1)}
+    /* ═══════════════════════════════════════════
+       DU'A TAB
+       ═══════════════════════════════════════════ */
+    .dua-inner{
+        padding:clamp(14px,3vw,20px);overflow-y:auto;flex:1;
+        -webkit-overflow-scrolling:touch;
+    }
+    .dua-filter{
+        display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;
+    }
+    .dua-tag{
+        padding:7px 14px;border:1px solid rgba(212,168,67,.2);
+        border-radius:20px;background:rgba(255,255,255,.03);
+        color:var(--text-dim);font-size:11px;font-weight:500;
+        cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif;
+    }
+    .dua-tag.on{
+        background:rgba(212,168,67,.12);border-color:rgba(212,168,67,.4);
+        color:var(--gold);
+    }
+    .dua-card{
+        margin-bottom:16px;padding:clamp(14px,3vw,20px);
+        background:rgba(255,255,255,.025);
+        border:1px solid rgba(255,255,255,.05);
+        border-radius:var(--radius);
+        animation:fade-up .3s ease;
+    }
+    .dua-card:hover{border-color:rgba(212,168,67,.15)}
+    .dua-title{
+        font-size:clamp(12px,2.3vw,14px);font-weight:600;
+        color:var(--gold);margin-bottom:10px;
+        display:flex;align-items:center;gap:8px;
+    }
+    .dua-title .dua-cat{
+        font-size:9px;padding:3px 8px;border-radius:10px;
+        background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.2);
+        font-weight:500;
+    }
+    .dua-arabic{
+        font-family:'Amiri',serif;font-size:clamp(18px,4vw,24px);
+        color:var(--cream);line-height:2;direction:rtl;text-align:right;
+        margin-bottom:10px;
+    }
+    .dua-translit{
+        font-size:clamp(12px,2.3vw,14px);color:rgba(212,168,67,.7);
+        font-style:italic;line-height:1.7;margin-bottom:8px;
+    }
+    .dua-meaning{
+        font-size:clamp(12px,2.3vw,14px);color:var(--cream-dim);
+        line-height:1.8;margin-bottom:8px;
+    }
+    .dua-ref{
+        font-size:10px;color:var(--text-dim);
+        border-top:1px solid rgba(255,255,255,.04);
+        padding-top:8px;margin-top:4px;
+    }
 
-        /* ═══════════════════════════════════════════
-           ABOUT + CONTACT (Merged)
-           ═══════════════════════════════════════════ */
-        .about-inner{
-            padding:clamp(16px,3vw,24px);overflow-y:auto;flex:1;
-            -webkit-overflow-scrolling:touch;
-        }
-        .about-inner h2{
-            font-family:'Amiri',serif;font-size:clamp(22px,5vw,28px);
-            color:var(--gold);margin-bottom:6px;text-align:center;
-        }
-        .bismillah-hdr{font-family:'Amiri',serif;font-size:22px;color:var(--gold);margin:12px 0 20px;text-align:center}
-        .about-text{
-            font-size:14px;line-height:1.9;color:var(--cream-dim);
-            text-align:left;margin-bottom:20px;
-        }
-        .dev-card{
-            padding:20px;background:rgba(212,168,67,.06);
-            border-radius:var(--radius);border:1px solid rgba(212,168,67,.15);
-            text-align:left;margin-bottom:20px;
-        }
-        .dev-card h3{font-size:16px;color:var(--gold);margin-bottom:12px;text-align:center}
-        .dev-card p{font-size:13px;line-height:1.8;color:var(--cream-dim);margin-bottom:10px}
-        .c-card{
-            padding:18px;background:rgba(255,255,255,.03);
-            border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);
-            margin-bottom:16px;
-        }
-        .c-card h3{font-size:16px;color:var(--gold);margin-bottom:14px;text-align:center}
-        .c-item{
-            display:flex;align-items:center;gap:12px;
-            padding:12px;background:rgba(255,255,255,.03);
-            border-radius:var(--radius-sm);margin-bottom:8px;
-        }
-        .c-icon{font-size:20px;flex-shrink:0}
-        .c-info .c-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
-        .c-info a{color:var(--gold);text-decoration:none;font-weight:500;font-size:13px}
-        .donate-box{
-            padding:20px;text-align:center;
-            background:linear-gradient(145deg,rgba(212,168,67,.1),rgba(212,168,67,.04));
-            border:1px solid rgba(212,168,67,.25);border-radius:var(--radius);
-            margin-bottom:16px;
-        }
-        .donate-box h3{font-family:'Amiri',serif;font-size:20px;color:var(--gold);margin-bottom:8px}
-        .donate-box p{font-size:13px;color:var(--cream-dim);line-height:1.7;margin-bottom:14px}
-        .fb-grp{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-        .fb-input{
-            width:100%;padding:12px;
-            background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
-            border-radius:var(--radius-sm);color:var(--text);
-            font-family:'Outfit',sans-serif;font-size:13px;
-        }
-        .fb-input:focus{outline:none;border-color:var(--gold)}
-        .fb-input::placeholder{color:var(--text-dim)}
-        textarea.fb-input{resize:vertical;min-height:80px}
+    /* ═══════════════════════════════════════════
+       ABOUT + CONTACT (Merged)
+       ═══════════════════════════════════════════ */
+    .about-inner{
+        padding:clamp(16px,3vw,24px);overflow-y:auto;flex:1;
+        -webkit-overflow-scrolling:touch;
+    }
+    .about-inner h2{
+        font-family:'Amiri',serif;font-size:clamp(22px,5vw,28px);
+        color:var(--gold);margin-bottom:6px;text-align:center;
+    }
+    .bismillah-hdr{font-family:'Amiri',serif;font-size:22px;color:var(--gold);margin:12px 0 20px;text-align:center}
+    .about-text{
+        font-size:14px;line-height:1.9;color:var(--cream-dim);
+        text-align:left;margin-bottom:20px;
+    }
+    .dev-card{
+        padding:20px;background:rgba(212,168,67,.06);
+        border-radius:var(--radius);border:1px solid rgba(212,168,67,.15);
+        text-align:left;margin-bottom:20px;
+    }
+    .dev-card h3{font-size:16px;color:var(--gold);margin-bottom:12px;text-align:center}
+    .dev-card p{font-size:13px;line-height:1.8;color:var(--cream-dim);margin-bottom:10px}
+    .c-card{
+        padding:18px;background:rgba(255,255,255,.03);
+        border-radius:var(--radius);border:1px solid rgba(255,255,255,.06);
+        margin-bottom:16px;
+    }
+    .c-card h3{font-size:16px;color:var(--gold);margin-bottom:14px;text-align:center}
+    .c-item{
+        display:flex;align-items:center;gap:12px;
+        padding:12px;background:rgba(255,255,255,.03);
+        border-radius:var(--radius-sm);margin-bottom:8px;
+    }
+    .c-icon{font-size:20px;flex-shrink:0}
+    .c-info .c-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+    .c-info a{color:var(--gold);text-decoration:none;font-weight:500;font-size:13px}
+    .donate-box{
+        padding:20px;text-align:center;
+        background:linear-gradient(145deg,rgba(212,168,67,.1),rgba(212,168,67,.04));
+        border:1px solid rgba(212,168,67,.25);border-radius:var(--radius);
+        margin-bottom:16px;
+    }
+    .donate-box h3{font-family:'Amiri',serif;font-size:20px;color:var(--gold);margin-bottom:8px}
+    .donate-box p{font-size:13px;color:var(--cream-dim);line-height:1.7;margin-bottom:14px}
+    .fb-grp{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+    .fb-input{
+        width:100%;padding:12px;
+        background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+        border-radius:var(--radius-sm);color:var(--text);
+        font-family:'Outfit',sans-serif;font-size:13px;
+    }
+    .fb-input:focus{outline:none;border-color:var(--gold)}
+    .fb-input::placeholder{color:var(--text-dim)}
+    textarea.fb-input{resize:vertical;min-height:80px}
 
-        /* === Section divider inside merged about+contact === */
-        .section-divider{
-            display:flex;align-items:center;gap:12px;
-            margin:24px 0 18px;
-        }
-        .section-divider::before,.section-divider::after{
-            content:'';flex:1;height:1px;
-            background:linear-gradient(90deg,transparent,rgba(212,168,67,.25),transparent);
-        }
-        .section-divider span{
-            font-size:11px;color:var(--gold);font-weight:600;
-            letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;
-        }
+    /* === Section divider inside merged about+contact === */
+    .section-divider{
+        display:flex;align-items:center;gap:12px;
+        margin:24px 0 18px;
+    }
+    .section-divider::before,.section-divider::after{
+        content:'';flex:1;height:1px;
+        background:linear-gradient(90deg,transparent,rgba(212,168,67,.25),transparent);
+    }
+    .section-divider span{
+        font-size:11px;color:var(--gold);font-weight:600;
+        letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;
+    }
 
-        /* === Tutorial Overlay === */
-        .tut-overlay{
-            position:fixed;inset:0;background:rgba(0,0,0,.92);
-            z-index:9999;display:flex;align-items:center;justify-content:center;
-            padding:20px;opacity:0;visibility:hidden;transition:all .35s;
-        }
-        .tut-overlay.on{opacity:1;visibility:visible}
-        .tut-card{
-            background:var(--bg-deep);border:1px solid rgba(212,168,67,.2);
-            border-radius:20px;max-width:420px;width:100%;
-            max-height:85vh;overflow-y:auto;
-            animation:tut-in .4s ease;
-        }
-        @keyframes tut-in{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-        .tut-top{
-            padding:24px;text-align:center;
-            background:linear-gradient(180deg,rgba(212,168,67,.1),transparent);
-            border-radius:20px 20px 0 0;
-        }
-        .tut-top h2{font-family:'Amiri',serif;font-size:24px;color:var(--gold)}
-        .tut-top p{font-size:13px;color:var(--text-dim);margin-top:4px}
-        .tut-steps{padding:24px}
-        .tut-step{display:none}
-        .tut-step.on{display:block;animation:fade-up .3s ease}
-        .tut-icon{
-            width:70px;height:70px;margin:0 auto 16px;
-            background:var(--gold-dim);border:1px solid rgba(212,168,67,.25);
-            border-radius:50%;display:flex;align-items:center;justify-content:center;
-            font-size:32px;
-        }
-        .tut-title{font-size:18px;font-weight:600;color:var(--gold);text-align:center;margin-bottom:10px}
-        .tut-desc{font-size:14px;color:var(--cream-dim);text-align:center;line-height:1.7;margin-bottom:16px}
-        .tut-tip{
-            padding:12px 14px;background:var(--gold-dim);
-            border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
-            font-size:12px;color:var(--cream-dim);line-height:1.6;
-        }
-        .tut-tip strong{color:var(--gold)}
-        .tut-dots{display:flex;justify-content:center;gap:8px;padding:16px}
-        .tut-dot{
-            width:10px;height:10px;background:rgba(255,255,255,.1);
-            border-radius:50%;transition:all .3s;
-        }
-        .tut-dot.on{background:var(--gold);transform:scale(1.2)}
-        .tut-dot.done{background:rgba(212,168,67,.4)}
-        .tut-nav{
-            display:flex;gap:12px;padding:16px 24px 24px;
-            border-top:1px solid rgba(255,255,255,.05);
-        }
-        .tut-btn{
-            flex:1;padding:14px;border:none;border-radius:var(--radius-sm);
-            font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;
-            cursor:pointer;transition:all .25s;
-        }
-        .tut-btn.skip{background:rgba(255,255,255,.06);color:var(--text-dim)}
-        .tut-btn.next{background:rgba(212,168,67,.15);color:var(--gold);border:1px solid rgba(212,168,67,.3)}
-        .tut-btn.go{background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));color:var(--gold)}
+    /* === Tutorial Overlay === */
+    .tut-overlay{
+        position:fixed;inset:0;background:rgba(0,0,0,.92);
+        z-index:9999;display:flex;align-items:center;justify-content:center;
+        padding:20px;opacity:0;visibility:hidden;transition:all .35s;
+    }
+    .tut-overlay.on{opacity:1;visibility:visible}
+    .tut-card{
+        background:var(--bg-deep);border:1px solid rgba(212,168,67,.2);
+        border-radius:20px;max-width:420px;width:100%;
+        max-height:85vh;overflow-y:auto;
+        animation:tut-in .4s ease;
+    }
+    @keyframes tut-in{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .tut-top{
+        padding:24px;text-align:center;
+        background:linear-gradient(180deg,rgba(212,168,67,.1),transparent);
+        border-radius:20px 20px 0 0;
+    }
+    .tut-top h2{font-family:'Amiri',serif;font-size:24px;color:var(--gold)}
+    .tut-top p{font-size:13px;color:var(--text-dim);margin-top:4px}
+    .tut-steps{padding:24px}
+    .tut-step{display:none}
+    .tut-step.on{display:block;animation:fade-up .3s ease}
+    .tut-icon{
+        width:70px;height:70px;margin:0 auto 16px;
+        background:var(--gold-dim);border:1px solid rgba(212,168,67,.25);
+        border-radius:50%;display:flex;align-items:center;justify-content:center;
+        font-size:32px;
+    }
+    .tut-title{font-size:18px;font-weight:600;color:var(--gold);text-align:center;margin-bottom:10px}
+    .tut-desc{font-size:14px;color:var(--cream-dim);text-align:center;line-height:1.7;margin-bottom:16px}
+    .tut-tip{
+        padding:12px 14px;background:var(--gold-dim);
+        border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
+        font-size:12px;color:var(--cream-dim);line-height:1.6;
+    }
+    .tut-tip strong{color:var(--gold)}
+    .tut-dots{display:flex;justify-content:center;gap:8px;padding:16px}
+    .tut-dot{
+        width:10px;height:10px;background:rgba(255,255,255,.1);
+        border-radius:50%;transition:all .3s;
+    }
+    .tut-dot.on{background:var(--gold);transform:scale(1.2)}
+    .tut-dot.done{background:rgba(212,168,67,.4)}
+    .tut-nav{
+        display:flex;gap:12px;padding:16px 24px 24px;
+        border-top:1px solid rgba(255,255,255,.05);
+    }
+    .tut-btn{
+        flex:1;padding:14px;border:none;border-radius:var(--radius-sm);
+        font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;
+        cursor:pointer;transition:all .25s;
+    }
+    .tut-btn.skip{background:rgba(255,255,255,.06);color:var(--text-dim)}
+    .tut-btn.next{background:rgba(212,168,67,.15);color:var(--gold);border:1px solid rgba(212,168,67,.3)}
+    .tut-btn.go{background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));color:var(--gold)}
 
-        /* === Help + Version === */
-        .help-float{
-            position:fixed;bottom:calc(16px + var(--safe-bottom));right:16px;
-            width:46px;height:46px;border-radius:50%;border:none;
-            background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));
-            border:1px solid rgba(212,168,67,.3);
-            color:var(--gold);font-size:20px;font-weight:700;
-            cursor:pointer;z-index:100;
-            box-shadow:0 4px 20px rgba(0,0,0,.4);
-        }
-        .ver{
-            position:fixed;bottom:calc(10px + var(--safe-bottom));left:12px;
-            font-size:10px;color:var(--text-dim);z-index:100;
-            background:rgba(10,40,24,.85);padding:3px 10px;border-radius:10px;
-        }
+    /* === Help + Version === */
+    .help-float{
+        position:fixed;bottom:calc(16px + var(--safe-bottom));right:16px;
+        width:46px;height:46px;border-radius:50%;border:none;
+        background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));
+        border:1px solid rgba(212,168,67,.3);
+        color:var(--gold);font-size:20px;font-weight:700;
+        cursor:pointer;z-index:100;
+        box-shadow:0 4px 20px rgba(0,0,0,.4);
+    }
+    .ver{
+        position:fixed;bottom:calc(10px + var(--safe-bottom));left:12px;
+        font-size:10px;color:var(--text-dim);z-index:100;
+        background:rgba(10,40,24,.85);padding:3px 10px;border-radius:10px;
+    }
 
-        /* === Loader === */
-        .loader{
-            display:none;position:fixed;top:50%;left:50%;
-            transform:translate(-50%,-50%);z-index:200;
-        }
-        .loader.on{display:block}
-        .loader-ring{
-            width:44px;height:44px;
-            border:3px solid rgba(212,168,67,.15);
-            border-top:3px solid var(--gold);
-            border-radius:50%;animation:spin .8s linear infinite;
-        }
+    /* === Loader === */
+    .loader{
+        display:none;position:fixed;top:50%;left:50%;
+        transform:translate(-50%,-50%);z-index:200;
+    }
+    .loader.on{display:block}
+    .loader-ring{
+        width:44px;height:44px;
+        border:3px solid rgba(212,168,67,.15);
+        border-top:3px solid var(--gold);
+        border-radius:50%;animation:spin .8s linear infinite;
+    }
 
-        /* === Responsive === */
-        @media(max-width:380px){
-            .tabs{gap:2px;padding:0 6px}
-            .tab{padding:7px 2px;font-size:9px}
-            .lang-row{gap:6px}
-            .bar-btn{padding:8px 12px;font-size:11px}
-            .quran-nav{flex-direction:column}
-        }
-        @media(min-width:768px){
-            .shell{max-width:700px}
-        }
-    </style>
+    /* === Responsive === */
+    @media(max-width:380px){
+        .tabs{gap:2px;padding:0 6px}
+        .tab{padding:7px 2px;font-size:9px}
+        .lang-row{gap:6px}
+        .bar-btn{padding:8px 12px;font-size:11px}
+        .quran-nav{flex-direction:column}
+    }
+    @media(min-width:768px){
+        .shell{max-width:700px}
+    }
+</style>
+```
+
 </head>
 <body>
     <div class="loader" id="loader"><div class="loader-ring"></div></div>
 
-    <!-- Tutorial -->
-    <div class="tut-overlay" id="tutOverlay">
-        <div class="tut-card">
-            <div class="tut-top">
-                <h2>بِسْمِ اللَّهِ</h2>
-                <p>Welcome to Khutbah Live Translator</p>
+```
+<!-- Tutorial -->
+<div class="tut-overlay" id="tutOverlay">
+    <div class="tut-card">
+        <div class="tut-top">
+            <h2>بِسْمِ اللَّهِ</h2>
+            <p>Welcome to Khutbah Live Translator</p>
+        </div>
+        <div class="tut-steps" id="tutSteps">
+            <div class="tut-step on" data-s="1">
+                <div class="tut-icon">🕌</div>
+                <div class="tut-title">Welcome, Brother/Sister!</div>
+                <div class="tut-desc">This app translates Friday sermons (Khutbah) in real-time, helping Muslims worldwide understand the beautiful teachings regardless of language barriers.</div>
+                <div class="tut-tip"><strong>💡 Tip:</strong> Works in any mosque or while watching online sermons.</div>
             </div>
-            <div class="tut-steps" id="tutSteps">
-                <div class="tut-step on" data-s="1">
-                    <div class="tut-icon">🕌</div>
-                    <div class="tut-title">Welcome, Brother/Sister!</div>
-                    <div class="tut-desc">This app translates Friday sermons (Khutbah) in real-time, helping Muslims worldwide understand the beautiful teachings regardless of language barriers.</div>
-                    <div class="tut-tip"><strong>💡 Tip:</strong> Works in any mosque or while watching online sermons.</div>
+            <div class="tut-step" data-s="2">
+                <div class="tut-icon">🌍</div>
+                <div class="tut-title">Select Languages</div>
+                <div class="tut-desc">Choose the <strong>Source Language</strong> (what the Imam speaks) and <strong>Translation Language</strong> (your preferred language). Only verified, working language combinations are shown.</div>
+                <div class="tut-tip"><strong>💡 Tip:</strong> Select a regional dialect (Saudi, Egyptian, etc.) for better speech recognition accuracy.</div>
+            </div>
+            <div class="tut-step" data-s="3">
+                <div class="tut-icon">🎤</div>
+                <div class="tut-title">Start Listening</div>
+                <div class="tut-desc">Tap the <strong>microphone button</strong> to start. The app listens and translates automatically. The audio visualizer shows when speech is detected.</div>
+                <div class="tut-tip"><strong>💡 Tip:</strong> Position your phone near the speaker. Allow microphone permission when prompted.</div>
+            </div>
+            <div class="tut-step" data-s="4">
+                <div class="tut-icon">📖</div>
+                <div class="tut-title">Quran &amp; Du'a</div>
+                <div class="tut-desc">Read Quran with <strong>Arabic text, transliteration, and translation</strong>. Browse a collection of essential <strong>Du'as</strong> for daily life with meanings.</div>
+                <div class="tut-tip"><strong>💡 Tip:</strong> Use the Quran tab to follow along during the khutbah when Imam recites verses.</div>
+            </div>
+            <div class="tut-step" data-s="5">
+                <div class="tut-icon">📱</div>
+                <div class="tut-title">Cross-Platform</div>
+                <div class="tut-desc"><strong>Android:</strong> Use Chrome browser. Keep screen on.<br><br><strong>iPhone/iPad:</strong> Use Safari browser. Add to Home Screen for best experience.</div>
+                <div class="tut-tip"><strong>💡 Tip:</strong> The app uses dual translation engines for maximum reliability.</div>
+            </div>
+            <div class="tut-step" data-s="6">
+                <div class="tut-icon">🤲</div>
+                <div class="tut-title">You're Ready!</div>
+                <div class="tut-desc">May Allah bless you. This app is <strong>completely free</strong> and made with love for the Muslim Ummah. Please share it with others!</div>
+                <div class="tut-tip"><strong>دعاء:</strong> اللهم علمنا ما ينفعنا وانفعنا بما علمتنا وزدنا علماً</div>
+            </div>
+        </div>
+        <div class="tut-dots" id="tutDots"></div>
+        <div class="tut-nav">
+            <button class="tut-btn skip" onclick="closeTut()">Skip</button>
+            <button class="tut-btn next" id="tutNext" onclick="nextTut()">Next →</button>
+        </div>
+    </div>
+</div>
+
+<button class="help-float" onclick="showTut()" title="Help">?</button>
+<div class="ver">v3.0</div>
+
+<div class="shell">
+    <div class="hdr">
+        <div class="hdr-ar">مترجم الخطبة الحي</div>
+        <div class="hdr-en">Khutbah Live Translator</div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab on" onclick="goTab('main',this)">Translator</button>
+        <button class="tab" onclick="goTab('quran',this)">Quran</button>
+        <button class="tab" onclick="goTab('dua',this)">Du'a</button>
+        <button class="tab" onclick="goTab('settings',this)">Settings</button>
+        <button class="tab" onclick="goTab('about',this)">About</button>
+    </div>
+
+    <div class="panels">
+        <!-- === TRANSLATOR === -->
+        <div class="panel on" id="panelMain">
+            <div class="ctl">
+                <div class="lang-row">
+                    <div class="lang-grp">
+                        <div class="lang-lbl">Source</div>
+                        <select class="lang-sel" id="srcLang">
+                            <optgroup label="Arabic">
+                                <option value="ar-SA">Arabic (Saudi)</option>
+                                <option value="ar-EG">Arabic (Egyptian)</option>
+                                <option value="ar-AE">Arabic (UAE)</option>
+                                <option value="ar-MA">Arabic (Moroccan)</option>
+                                <option value="ar-JO">Arabic (Jordanian)</option>
+                                <option value="ar-LB">Arabic (Lebanese)</option>
+                                <option value="ar-SY">Arabic (Syrian)</option>
+                                <option value="ar-IQ">Arabic (Iraqi)</option>
+                                <option value="ar-KW">Arabic (Kuwaiti)</option>
+                            </optgroup>
+                            <optgroup label="English">
+                                <option value="en-US">English (US)</option>
+                                <option value="en-GB">English (UK)</option>
+                            </optgroup>
+                            <optgroup label="South Asian">
+                                <option value="ur-PK">Urdu (Pakistan)</option>
+                                <option value="ur-IN">Urdu (India)</option>
+                                <option value="hi-IN">Hindi</option>
+                                <option value="bn-BD">Bengali (BD)</option>
+                                <option value="bn-IN">Bengali (India)</option>
+                                <option value="ta-IN">Tamil</option>
+                                <option value="ml-IN">Malayalam</option>
+                                <option value="gu-IN">Gujarati</option>
+                            </optgroup>
+                            <optgroup label="Southeast Asian">
+                                <option value="id-ID">Indonesian</option>
+                                <option value="ms-MY">Malay</option>
+                                <option value="th-TH">Thai</option>
+                                <option value="vi-VN">Vietnamese</option>
+                            </optgroup>
+                            <optgroup label="Turkish & Persian">
+                                <option value="tr-TR">Turkish</option>
+                                <option value="fa-IR">Farsi/Persian</option>
+                            </optgroup>
+                            <optgroup label="European">
+                                <option value="fr-FR">French</option>
+                                <option value="de-DE">German</option>
+                                <option value="nl-NL">Dutch</option>
+                                <option value="it-IT">Italian</option>
+                                <option value="ru-RU">Russian</option>
+                                <option value="es-ES">Spanish</option>
+                                <option value="pt-BR">Portuguese</option>
+                                <option value="pl-PL">Polish</option>
+                                <option value="bs-BA">Bosnian</option>
+                                <option value="sq-AL">Albanian</option>
+                            </optgroup>
+                            <optgroup label="East Asian">
+                                <option value="zh-CN">Chinese (Mandarin)</option>
+                                <option value="zh-HK">Chinese (Cantonese)</option>
+                                <option value="ja-JP">Japanese</option>
+                                <option value="ko-KR">Korean</option>
+                            </optgroup>
+                            <optgroup label="African">
+                                <option value="sw-KE">Swahili</option>
+                                <option value="am-ET">Amharic</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="mic-wrap">
+                        <button class="mic idle" id="micBtn" onclick="toggleListen()">🎤</button>
+                    </div>
+                    <div class="lang-grp">
+                        <div class="lang-lbl">Translate to</div>
+                        <select class="lang-sel" id="tgtLang">
+                            <optgroup label="⭐ Most Common">
+                                <option value="en">English</option>
+                                <option value="ar">Arabic</option>
+                                <option value="ur">Urdu</option>
+                                <option value="id">Indonesian</option>
+                                <option value="ms">Malay</option>
+                                <option value="tr">Turkish</option>
+                                <option value="fr">French</option>
+                                <option value="es">Spanish</option>
+                            </optgroup>
+                            <optgroup label="South Asian">
+                                <option value="hi">Hindi</option>
+                                <option value="bn">Bengali</option>
+                                <option value="ta">Tamil</option>
+                                <option value="ml">Malayalam</option>
+                                <option value="gu">Gujarati</option>
+                                <option value="pa">Punjabi</option>
+                            </optgroup>
+                            <optgroup label="Southeast Asian">
+                                <option value="tl">Filipino</option>
+                                <option value="th">Thai</option>
+                                <option value="vi">Vietnamese</option>
+                            </optgroup>
+                            <optgroup label="Middle East & Central Asia">
+                                <option value="fa">Farsi/Persian</option>
+                                <option value="ps">Pashto</option>
+                                <option value="ku">Kurdish</option>
+                                <option value="az">Azerbaijani</option>
+                                <option value="uz">Uzbek</option>
+                            </optgroup>
+                            <optgroup label="African">
+                                <option value="sw">Swahili</option>
+                                <option value="ha">Hausa</option>
+                                <option value="so">Somali</option>
+                                <option value="am">Amharic</option>
+                            </optgroup>
+                            <optgroup label="European">
+                                <option value="de">German</option>
+                                <option value="nl">Dutch</option>
+                                <option value="it">Italian</option>
+                                <option value="ru">Russian</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="pl">Polish</option>
+                                <option value="bs">Bosnian</option>
+                                <option value="sq">Albanian</option>
+                            </optgroup>
+                            <optgroup label="East Asian">
+                                <option value="zh">Chinese</option>
+                                <option value="ja">Japanese</option>
+                                <option value="ko">Korean</option>
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
-                <div class="tut-step" data-s="2">
-                    <div class="tut-icon">🌍</div>
-                    <div class="tut-title">Select Languages</div>
-                    <div class="tut-desc">Choose the <strong>Source Language</strong> (what the Imam speaks) and <strong>Translation Language</strong> (your preferred language). Only verified, working language combinations are shown.</div>
-                    <div class="tut-tip"><strong>💡 Tip:</strong> Select a regional dialect (Saudi, Egyptian, etc.) for better speech recognition accuracy.</div>
-                </div>
-                <div class="tut-step" data-s="3">
-                    <div class="tut-icon">🎤</div>
-                    <div class="tut-title">Start Listening</div>
-                    <div class="tut-desc">Tap the <strong>microphone button</strong> to start. The app listens and translates automatically. The audio visualizer shows when speech is detected.</div>
-                    <div class="tut-tip"><strong>💡 Tip:</strong> Position your phone near the speaker. Allow microphone permission when prompted.</div>
-                </div>
-                <div class="tut-step" data-s="4">
-                    <div class="tut-icon">📖</div>
-                    <div class="tut-title">Quran &amp; Du'a</div>
-                    <div class="tut-desc">Read Quran with <strong>Arabic text, transliteration, and translation</strong>. Browse a collection of essential <strong>Du'as</strong> for daily life with meanings.</div>
-                    <div class="tut-tip"><strong>💡 Tip:</strong> Use the Quran tab to follow along during the khutbah when Imam recites verses.</div>
-                </div>
-                <div class="tut-step" data-s="5">
-                    <div class="tut-icon">📱</div>
-                    <div class="tut-title">Cross-Platform</div>
-                    <div class="tut-desc"><strong>Android:</strong> Use Chrome browser. Keep screen on.<br><br><strong>iPhone/iPad:</strong> Use Safari browser. Add to Home Screen for best experience.</div>
-                    <div class="tut-tip"><strong>💡 Tip:</strong> The app uses dual translation engines for maximum reliability.</div>
-                </div>
-                <div class="tut-step" data-s="6">
-                    <div class="tut-icon">🤲</div>
-                    <div class="tut-title">You're Ready!</div>
-                    <div class="tut-desc">May Allah bless you. This app is <strong>completely free</strong> and made with love for the Muslim Ummah. Please share it with others!</div>
-                    <div class="tut-tip"><strong>دعاء:</strong> اللهم علمنا ما ينفعنا وانفعنا بما علمتنا وزدنا علماً</div>
+                <div class="viz" id="viz"></div>
+                <div class="sts">
+                    <div class="sts-dot" id="stsDot"></div>
+                    <span class="sts-txt" id="stsTxt">Tap microphone to start</span>
                 </div>
             </div>
-            <div class="tut-dots" id="tutDots"></div>
-            <div class="tut-nav">
-                <button class="tut-btn skip" onclick="closeTut()">Skip</button>
-                <button class="tut-btn next" id="tutNext" onclick="nextTut()">Next →</button>
+            <div class="out-wrap">
+                <div class="out-box" id="outBox">
+                    <div class="empty-msg">
+                        <span class="icon">🕌</span>
+                        Tap the microphone to begin<br>live translation of the Khutbah
+                    </div>
+                </div>
+            </div>
+            <div class="bar">
+                <div class="font-ctrl">
+                    <button class="font-btn" onclick="adjFont(-2)">−</button>
+                    <span class="font-val" id="fontVal">18px</span>
+                    <button class="font-btn" onclick="adjFont(2)">+</button>
+                </div>
+                <button class="bar-btn" onclick="clearAll()">🗑️ Clear</button>
+                <button class="bar-btn primary" onclick="saveText()">💾 Save</button>
+                <button class="bar-btn" id="recBtn" onclick="toggleRec()">⏺️ <span id="recTxt">Rec</span></button>
+                <div class="api-badge" id="apiBadge">
+                    <div class="api-dot ok" id="apiDot"></div>
+                    <span id="apiLabel">API Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- === QURAN === -->
+        <div class="panel" id="panelQuran">
+            <div class="quran-inner">
+                <div class="quran-nav">
+                    <select id="surahSelect" onchange="loadSurah()">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="quran-controls">
+                    <button class="q-toggle on" id="qShowArabic" onclick="toggleQView(this)">Arabic</button>
+                    <button class="q-toggle on" id="qShowTranslit" onclick="toggleQView(this)">Transliteration</button>
+                    <button class="q-toggle on" id="qShowTrans" onclick="toggleQView(this)">Translation</button>
+                </div>
+                <div class="quran-audio-bar" id="quranAudioBar">
+                    <button class="qa-btn" id="qaPrev" onclick="qaPlayPrev()" title="Previous Ayah">⏮</button>
+                    <button class="qa-btn" id="qaPlayBtn" onclick="qaTogglePlay()" title="Play / Pause">▶</button>
+                    <button class="qa-btn" id="qaNext" onclick="qaPlayNext()" title="Next Ayah">⏭</button>
+                    <button class="qa-btn" id="qaStop" onclick="qaStop()" title="Stop">⏹</button>
+                    <div class="qa-progress" onclick="qaSeek(event)">
+                        <div class="qa-progress-fill" id="qaProgressFill"></div>
+                    </div>
+                    <div class="qa-info" id="qaInfo">—</div>
+                    <button class="qa-speed" id="qaSpeedBtn" onclick="qaCycleSpeed()" title="Playback Speed">1×</button>
+                    <select class="qa-reciter-select" id="qaReciterSelect" onchange="qaChangeReciter()">
+                        <option value="ar.alafasy">Mishary Alafasy</option>
+                        <option value="ar.abdulbasitmurattal">AbdulBasit (Murattal)</option>
+                        <option value="ar.hudhaify">Hudhaify</option>
+                        <option value="ar.minshawi">Minshawi</option>
+                        <option value="ar.abdurrahmaansudais">As-Sudais</option>
+                        <option value="ar.saaborehman">Saad Al-Ghamdi</option>
+                        <option value="ar.maaborehman">Maher Al-Muaiqly</option>
+                    </select>
+                </div>
+                <div id="quranContent">
+                    <div class="quran-loading">
+                        <div class="spinner"></div>
+                        Select a Surah to begin reading
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === DU'A === -->
+        <div class="panel" id="panelDua">
+            <div class="dua-inner">
+                <div class="dua-filter" id="duaFilterBar">
+                    <!-- Populated dynamically from duas.json categories -->
+                </div>
+                <div id="duaContent">
+                    <div class="quran-loading">
+                        <div class="spinner"></div>
+                        Loading Du'as...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === SETTINGS === -->
+        <div class="panel" id="panelSettings">
+            <div class="settings-inner">
+                <div class="set-group">
+                    <div class="set-title">Translation</div>
+                    <label class="set-row"><input type="checkbox" id="sInstant" checked> Instant translate (sentence-by-sentence)</label>
+                    <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> Auto-scroll to latest</label>
+                    <label class="set-row"><input type="checkbox" id="sHighlight" checked> Highlight latest translation</label>
+                    <label class="set-row"><input type="checkbox" id="sShowOrig" > Show original text alongside</label>
+                </div>
+                <div class="set-group">
+                    <div class="set-title">Audio</div>
+                    <label class="set-row">
+                        Mic sensitivity: <span id="threshVal">15</span>
+                        <input type="range" id="sThresh" min="5" max="60" value="15" oninput="document.getElementById('threshVal').textContent=this.value">
+                    </label>
+                    <label class="set-row"><input type="checkbox" id="sWakeLock" checked> Keep screen on while listening</label>
+                    <label class="set-row"><input type="checkbox" id="sNoiseFilter" checked> Enhanced noise filter (mosque/outdoor mode)</label>
+                    <div class="set-hint">Applies highpass + lowpass filters to isolate speech and remove background noise like AC hum, crowd murmur, and echo.</div>
+                    <label class="set-row">
+                        Voice boost: <span id="gainVal">1.5</span>×
+                        <input type="range" id="sGain" min="1" max="4" value="1.5" step="0.5" oninput="document.getElementById('gainVal').textContent=this.value">
+                    </label>
+                    <div class="set-hint">Amplifies the speech signal before recognition. Increase if the speaker is far from the mic or the environment is very loud.</div>
+                    <label class="set-row">
+                        Noise gate: <span id="gateVal">20</span>
+                        <input type="range" id="sGate" min="0" max="50" value="20" step="5" oninput="document.getElementById('gateVal').textContent=this.value">
+                    </label>
+                    <div class="set-hint">Audio below this volume level is treated as background noise and muted. Higher = more aggressive noise removal but may clip quiet speech. Set to 0 to disable.</div>
+                </div>
+                <div class="set-group">
+                    <div class="set-title">Speech Flow</div>
+                    <label class="set-row">
+                        Max buffer time: <span id="bufferVal">8</span>s
+                        <input type="range" id="sBuffer" min="3" max="20" value="8" step="1" oninput="document.getElementById('bufferVal').textContent=this.value">
+                    </label>
+                    <div class="set-hint">Forces translation after this many seconds of continuous speech — even if the speaker doesn't pause. Lower = faster but shorter fragments. Higher = more complete sentences.</div>
+                    <label class="set-row">
+                        Silence wait: <span id="silenceVal">1.5</span>s
+                        <input type="range" id="sSilence" min="0.5" max="5" value="1.5" step="0.5" oninput="document.getElementById('silenceVal').textContent=this.value">
+                    </label>
+                    <div class="set-hint">How long to wait after the speaker pauses before translating. Shorter = more responsive but may split sentences.</div>
+                </div>
+                <div class="set-group">
+                    <div class="set-title">Translation Engine</div>
+                    <label class="set-row"><input type="radio" name="engine" value="auto" checked> Auto (Lingva → MyMemory → LibreTranslate)</label>
+                    <label class="set-row"><input type="radio" name="engine" value="lingva"> Lingva only (Google-powered)</label>
+                    <label class="set-row"><input type="radio" name="engine" value="mymemory"> MyMemory only</label>
+                </div>
+                <button class="set-save" onclick="saveSettings()">Save Settings ✓</button>
+            </div>
+        </div>
+
+        <!-- === ABOUT + CONTACT (Merged) === -->
+        <div class="panel" id="panelAbout">
+            <div class="about-inner">
+                <h2>Khutbah Live Translator</h2>
+                <div class="bismillah-hdr">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+
+                <div class="about-text">
+                    This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
+                </div>
+                <div class="about-text">
+                    <strong>v3.0 Features:</strong><br>
+                    • Dual translation engine (Lingva + MyMemory fallback)<br>
+                    • Quran reader with Arabic, transliteration &amp; translation<br>
+                    • Du'a collection with categories and references<br>
+                    • Translation caching to reduce API usage<br>
+                    • Cross-platform PWA (Android + iOS ready)<br>
+                    • Dark theme for mosque-friendly use
+                </div>
+
+                <div class="dev-card">
+                    <h3>Developer</h3>
+                    <p><strong>Dr. Khaled Diab</strong><br>Senior Corporate Trainer &amp; Energy Systems Expert<br>Jeddah, Saudi Arabia</p>
+                    <p>This app is <strong>completely free</strong>, open-source, and made as Sadaqah Jariyah for the Muslim Ummah. Please share it with anyone who might benefit.</p>
+                </div>
+
+                <div class="section-divider"><span>Contact &amp; Support</span></div>
+
+                <div class="c-card">
+                    <h3>Get in Touch</h3>
+                    <div class="c-item">
+                        <span class="c-icon">📧</span>
+                        <div class="c-info">
+                            <div class="c-lbl">Email</div>
+                            <a href="mailto:khaleddiab&#64;engineer.com">khaleddiab&#64;engineer.com</a>
+                        </div>
+                    </div>
+                    <div class="c-item">
+                        <span class="c-icon">💼</span>
+                        <div class="c-info">
+                            <div class="c-lbl">LinkedIn</div>
+                            <a href="https://linkedin.com/in/khaleddiab" target="_blank">linkedin.com/in/khaleddiab</a>
+                        </div>
+                    </div>
+                    <div class="c-item">
+                        <span class="c-icon">💻</span>
+                        <div class="c-info">
+                            <div class="c-lbl">GitHub</div>
+                            <a href="https://github.com/khalecl" target="_blank">github.com/khalecl</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="donate-box">
+                    <h3>صدقة جارية</h3>
+                    <p>This app is free and always will be. If you'd like to support its development, please make dua for us or share it with your community.</p>
+                </div>
+
+                <div class="c-card">
+                    <h3>Send Feedback</h3>
+                    <div class="fb-grp">
+                        <input id="fbName" class="fb-input" placeholder="Your name">
+                        <input id="fbEmail" class="fb-input" placeholder="Email address">
+                        <select id="fbType" class="fb-input">
+                            <option value="">Select feedback type...</option>
+                            <option value="bug">🐛 Bug Report</option>
+                            <option value="feature">✨ Feature Request</option>
+                            <option value="translation">🌍 Translation Issue</option>
+                            <option value="quran">📖 Quran/Du'a Issue</option>
+                            <option value="general">💬 General Feedback</option>
+                        </select>
+                        <textarea id="fbMsg" class="fb-input" placeholder="Your message..."></textarea>
+                        <button class="bar-btn primary" style="width:100%;justify-content:center" onclick="sendFB()">📤 Send via WhatsApp</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <button class="help-float" onclick="showTut()" title="Help">?</button>
-    <div class="ver">v3.0</div>
-
-    <div class="shell">
-        <div class="hdr">
-            <div class="hdr-ar">مترجم الخطبة الحي</div>
-            <div class="hdr-en">Khutbah Live Translator</div>
-        </div>
-
-        <div class="tabs">
-            <button class="tab on" onclick="goTab('main',this)">Translator</button>
-            <button class="tab" onclick="goTab('quran',this)">Quran</button>
-            <button class="tab" onclick="goTab('dua',this)">Du'a</button>
-            <button class="tab" onclick="goTab('settings',this)">Settings</button>
-            <button class="tab" onclick="goTab('about',this)">About</button>
-        </div>
-
-        <div class="panels">
-            <!-- === TRANSLATOR === -->
-            <div class="panel on" id="panelMain">
-                <div class="ctl">
-                    <div class="lang-row">
-                        <div class="lang-grp">
-                            <div class="lang-lbl">Source</div>
-                            <select class="lang-sel" id="srcLang">
-                                <optgroup label="Arabic">
-                                    <option value="ar-SA">Arabic (Saudi)</option>
-                                    <option value="ar-EG">Arabic (Egyptian)</option>
-                                    <option value="ar-AE">Arabic (UAE)</option>
-                                    <option value="ar-MA">Arabic (Moroccan)</option>
-                                    <option value="ar-JO">Arabic (Jordanian)</option>
-                                    <option value="ar-LB">Arabic (Lebanese)</option>
-                                    <option value="ar-SY">Arabic (Syrian)</option>
-                                    <option value="ar-IQ">Arabic (Iraqi)</option>
-                                    <option value="ar-KW">Arabic (Kuwaiti)</option>
-                                </optgroup>
-                                <optgroup label="English">
-                                    <option value="en-US">English (US)</option>
-                                    <option value="en-GB">English (UK)</option>
-                                </optgroup>
-                                <optgroup label="South Asian">
-                                    <option value="ur-PK">Urdu (Pakistan)</option>
-                                    <option value="ur-IN">Urdu (India)</option>
-                                    <option value="hi-IN">Hindi</option>
-                                    <option value="bn-BD">Bengali (BD)</option>
-                                    <option value="bn-IN">Bengali (India)</option>
-                                    <option value="ta-IN">Tamil</option>
-                                    <option value="ml-IN">Malayalam</option>
-                                    <option value="gu-IN">Gujarati</option>
-                                </optgroup>
-                                <optgroup label="Southeast Asian">
-                                    <option value="id-ID">Indonesian</option>
-                                    <option value="ms-MY">Malay</option>
-                                    <option value="th-TH">Thai</option>
-                                    <option value="vi-VN">Vietnamese</option>
-                                </optgroup>
-                                <optgroup label="Turkish & Persian">
-                                    <option value="tr-TR">Turkish</option>
-                                    <option value="fa-IR">Farsi/Persian</option>
-                                </optgroup>
-                                <optgroup label="European">
-                                    <option value="fr-FR">French</option>
-                                    <option value="de-DE">German</option>
-                                    <option value="nl-NL">Dutch</option>
-                                    <option value="it-IT">Italian</option>
-                                    <option value="ru-RU">Russian</option>
-                                    <option value="es-ES">Spanish</option>
-                                    <option value="pt-BR">Portuguese</option>
-                                    <option value="pl-PL">Polish</option>
-                                    <option value="bs-BA">Bosnian</option>
-                                    <option value="sq-AL">Albanian</option>
-                                </optgroup>
-                                <optgroup label="East Asian">
-                                    <option value="zh-CN">Chinese (Mandarin)</option>
-                                    <option value="zh-HK">Chinese (Cantonese)</option>
-                                    <option value="ja-JP">Japanese</option>
-                                    <option value="ko-KR">Korean</option>
-                                </optgroup>
-                                <optgroup label="African">
-                                    <option value="sw-KE">Swahili</option>
-                                    <option value="am-ET">Amharic</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <div class="mic-wrap">
-                            <button class="mic idle" id="micBtn" onclick="toggleListen()">🎤</button>
-                        </div>
-                        <div class="lang-grp">
-                            <div class="lang-lbl">Translate to</div>
-                            <select class="lang-sel" id="tgtLang">
-                                <optgroup label="⭐ Most Common">
-                                    <option value="en">English</option>
-                                    <option value="ar">Arabic</option>
-                                    <option value="ur">Urdu</option>
-                                    <option value="id">Indonesian</option>
-                                    <option value="ms">Malay</option>
-                                    <option value="tr">Turkish</option>
-                                    <option value="fr">French</option>
-                                    <option value="es">Spanish</option>
-                                </optgroup>
-                                <optgroup label="South Asian">
-                                    <option value="hi">Hindi</option>
-                                    <option value="bn">Bengali</option>
-                                    <option value="ta">Tamil</option>
-                                    <option value="ml">Malayalam</option>
-                                    <option value="gu">Gujarati</option>
-                                    <option value="pa">Punjabi</option>
-                                </optgroup>
-                                <optgroup label="Southeast Asian">
-                                    <option value="tl">Filipino</option>
-                                    <option value="th">Thai</option>
-                                    <option value="vi">Vietnamese</option>
-                                </optgroup>
-                                <optgroup label="Middle East & Central Asia">
-                                    <option value="fa">Farsi/Persian</option>
-                                    <option value="ps">Pashto</option>
-                                    <option value="ku">Kurdish</option>
-                                    <option value="az">Azerbaijani</option>
-                                    <option value="uz">Uzbek</option>
-                                </optgroup>
-                                <optgroup label="African">
-                                    <option value="sw">Swahili</option>
-                                    <option value="ha">Hausa</option>
-                                    <option value="so">Somali</option>
-                                    <option value="am">Amharic</option>
-                                </optgroup>
-                                <optgroup label="European">
-                                    <option value="de">German</option>
-                                    <option value="nl">Dutch</option>
-                                    <option value="it">Italian</option>
-                                    <option value="ru">Russian</option>
-                                    <option value="pt">Portuguese</option>
-                                    <option value="pl">Polish</option>
-                                    <option value="bs">Bosnian</option>
-                                    <option value="sq">Albanian</option>
-                                </optgroup>
-                                <optgroup label="East Asian">
-                                    <option value="zh">Chinese</option>
-                                    <option value="ja">Japanese</option>
-                                    <option value="ko">Korean</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="viz" id="viz"></div>
-                    <div class="sts">
-                        <div class="sts-dot" id="stsDot"></div>
-                        <span class="sts-txt" id="stsTxt">Tap microphone to start</span>
-                    </div>
-                </div>
-                <div class="out-wrap">
-                    <div class="out-box" id="outBox">
-                        <div class="empty-msg">
-                            <span class="icon">🕌</span>
-                            Tap the microphone to begin<br>live translation of the Khutbah
-                        </div>
-                    </div>
-                </div>
-                <div class="bar">
-                    <div class="font-ctrl">
-                        <button class="font-btn" onclick="adjFont(-2)">−</button>
-                        <span class="font-val" id="fontVal">18px</span>
-                        <button class="font-btn" onclick="adjFont(2)">+</button>
-                    </div>
-                    <button class="bar-btn" onclick="clearAll()">🗑️ Clear</button>
-                    <button class="bar-btn primary" onclick="saveText()">💾 Save</button>
-                    <button class="bar-btn" id="recBtn" onclick="toggleRec()">⏺️ <span id="recTxt">Rec</span></button>
-                    <div class="api-badge" id="apiBadge">
-                        <div class="api-dot ok" id="apiDot"></div>
-                        <span id="apiLabel">API Ready</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- === QURAN === -->
-            <div class="panel" id="panelQuran">
-                <div class="quran-inner">
-                    <div class="quran-nav">
-                        <select id="surahSelect" onchange="loadSurah()">
-                            <!-- Populated by JS -->
-                        </select>
-                    </div>
-                    <div class="quran-controls">
-                        <button class="q-toggle on" id="qShowArabic" onclick="toggleQView(this)">Arabic</button>
-                        <button class="q-toggle on" id="qShowTranslit" onclick="toggleQView(this)">Transliteration</button>
-                        <button class="q-toggle on" id="qShowTrans" onclick="toggleQView(this)">Translation</button>
-                    </div>
-                    <div class="quran-audio-bar" id="quranAudioBar">
-                        <button class="qa-btn" id="qaPrev" onclick="qaPlayPrev()" title="Previous Ayah">⏮</button>
-                        <button class="qa-btn" id="qaPlayBtn" onclick="qaTogglePlay()" title="Play / Pause">▶</button>
-                        <button class="qa-btn" id="qaNext" onclick="qaPlayNext()" title="Next Ayah">⏭</button>
-                        <button class="qa-btn" id="qaStop" onclick="qaStop()" title="Stop">⏹</button>
-                        <div class="qa-progress" onclick="qaSeek(event)">
-                            <div class="qa-progress-fill" id="qaProgressFill"></div>
-                        </div>
-                        <div class="qa-info" id="qaInfo">—</div>
-                        <button class="qa-speed" id="qaSpeedBtn" onclick="qaCycleSpeed()" title="Playback Speed">1×</button>
-                        <select class="qa-reciter-select" id="qaReciterSelect" onchange="qaChangeReciter()">
-                            <option value="ar.alafasy">Mishary Alafasy</option>
-                            <option value="ar.abdulbasitmurattal">AbdulBasit (Murattal)</option>
-                            <option value="ar.hudhaify">Hudhaify</option>
-                            <option value="ar.minshawi">Minshawi</option>
-                            <option value="ar.abdurrahmaansudais">As-Sudais</option>
-                            <option value="ar.saaborehman">Saad Al-Ghamdi</option>
-                            <option value="ar.maaborehman">Maher Al-Muaiqly</option>
-                        </select>
-                    </div>
-                    <div id="quranContent">
-                        <div class="quran-loading">
-                            <div class="spinner"></div>
-                            Select a Surah to begin reading
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- === DU'A === -->
-            <div class="panel" id="panelDua">
-                <div class="dua-inner">
-                    <div class="dua-filter" id="duaFilterBar">
-                        <!-- Populated dynamically from duas.json categories -->
-                    </div>
-                    <div id="duaContent">
-                        <div class="quran-loading">
-                            <div class="spinner"></div>
-                            Loading Du'as...
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- === SETTINGS === -->
-            <div class="panel" id="panelSettings">
-                <div class="settings-inner">
-                    <div class="set-group">
-                        <div class="set-title">Translation</div>
-                        <label class="set-row"><input type="checkbox" id="sInstant" checked> Instant translate (sentence-by-sentence)</label>
-                        <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> Auto-scroll to latest</label>
-                        <label class="set-row"><input type="checkbox" id="sHighlight" checked> Highlight latest translation</label>
-                        <label class="set-row"><input type="checkbox" id="sShowOrig" > Show original text alongside</label>
-                    </div>
-                    <div class="set-group">
-                        <div class="set-title">Audio</div>
-                        <label class="set-row">
-                            Mic sensitivity: <span id="threshVal">15</span>
-                            <input type="range" id="sThresh" min="5" max="60" value="15" oninput="document.getElementById('threshVal').textContent=this.value">
-                        </label>
-                        <label class="set-row"><input type="checkbox" id="sWakeLock" checked> Keep screen on while listening</label>
-                    </div>
-                    <div class="set-group">
-                        <div class="set-title">Speech Flow</div>
-                        <label class="set-row">
-                            Max buffer time: <span id="bufferVal">8</span>s
-                            <input type="range" id="sBuffer" min="3" max="20" value="8" step="1" oninput="document.getElementById('bufferVal').textContent=this.value">
-                        </label>
-                        <div class="set-hint">Forces translation after this many seconds of continuous speech — even if the speaker doesn't pause. Lower = faster but shorter fragments. Higher = more complete sentences.</div>
-                        <label class="set-row">
-                            Silence wait: <span id="silenceVal">1.5</span>s
-                            <input type="range" id="sSilence" min="0.5" max="5" value="1.5" step="0.5" oninput="document.getElementById('silenceVal').textContent=this.value">
-                        </label>
-                        <div class="set-hint">How long to wait after the speaker pauses before translating. Shorter = more responsive but may split sentences.</div>
-                    </div>
-                    <div class="set-group">
-                        <div class="set-title">Translation Engine</div>
-                        <label class="set-row"><input type="radio" name="engine" value="auto" checked> Auto (Lingva → MyMemory → LibreTranslate)</label>
-                        <label class="set-row"><input type="radio" name="engine" value="lingva"> Lingva only (Google-powered)</label>
-                        <label class="set-row"><input type="radio" name="engine" value="mymemory"> MyMemory only</label>
-                    </div>
-                    <button class="set-save" onclick="saveSettings()">Save Settings ✓</button>
-                </div>
-            </div>
-
-            <!-- === ABOUT + CONTACT (Merged) === -->
-            <div class="panel" id="panelAbout">
-                <div class="about-inner">
-                    <h2>Khutbah Live Translator</h2>
-                    <div class="bismillah-hdr">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-
-                    <div class="about-text">
-                        This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
-                    </div>
-                    <div class="about-text">
-                        <strong>v3.0 Features:</strong><br>
-                        • Dual translation engine (Lingva + MyMemory fallback)<br>
-                        • Quran reader with Arabic, transliteration &amp; translation<br>
-                        • Du'a collection with categories and references<br>
-                        • Translation caching to reduce API usage<br>
-                        • Cross-platform PWA (Android + iOS ready)<br>
-                        • Dark theme for mosque-friendly use
-                    </div>
-
-                    <div class="dev-card">
-                        <h3>Developer</h3>
-                        <p><strong>Dr. Khaled Diab</strong><br>Senior Corporate Trainer &amp; Energy Systems Expert<br>Jeddah, Saudi Arabia</p>
-                        <p>This app is <strong>completely free</strong>, open-source, and made as Sadaqah Jariyah for the Muslim Ummah. Please share it with anyone who might benefit.</p>
-                    </div>
-
-                    <div class="section-divider"><span>Contact &amp; Support</span></div>
-
-                    <div class="c-card">
-                        <h3>Get in Touch</h3>
-                        <div class="c-item">
-                            <span class="c-icon">📧</span>
-                            <div class="c-info">
-                                <div class="c-lbl">Email</div>
-                                <a href="mailto:khaleddiab&#64;engineer.com">khaleddiab&#64;engineer.com</a>
-                            </div>
-                        </div>
-                        <div class="c-item">
-                            <span class="c-icon">💼</span>
-                            <div class="c-info">
-                                <div class="c-lbl">LinkedIn</div>
-                                <a href="https://linkedin.com/in/khaleddiab" target="_blank">linkedin.com/in/khaleddiab</a>
-                            </div>
-                        </div>
-                        <div class="c-item">
-                            <span class="c-icon">💻</span>
-                            <div class="c-info">
-                                <div class="c-lbl">GitHub</div>
-                                <a href="https://github.com/khalecl" target="_blank">github.com/khalecl</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="donate-box">
-                        <h3>صدقة جارية</h3>
-                        <p>This app is free and always will be. If you'd like to support its development, please make dua for us or share it with your community.</p>
-                    </div>
-
-                    <div class="c-card">
-                        <h3>Send Feedback</h3>
-                        <div class="fb-grp">
-                            <input id="fbName" class="fb-input" placeholder="Your name">
-                            <input id="fbEmail" class="fb-input" placeholder="Email address">
-                            <select id="fbType" class="fb-input">
-                                <option value="">Select feedback type...</option>
-                                <option value="bug">🐛 Bug Report</option>
-                                <option value="feature">✨ Feature Request</option>
-                                <option value="translation">🌍 Translation Issue</option>
-                                <option value="quran">📖 Quran/Du'a Issue</option>
-                                <option value="general">💬 General Feedback</option>
-                            </select>
-                            <textarea id="fbMsg" class="fb-input" placeholder="Your message..."></textarea>
-                            <button class="bar-btn primary" style="width:100%;justify-content:center" onclick="sendFB()">📤 Send via WhatsApp</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div style="text-align:center;padding:8px 0 4px;">
-            <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fkhalecl.github.io%2Ftools%2Fkhutbah.html&label=Visitors&icon=graph-up&color=%23d4a843" alt="Visitors" style="opacity:.5;height:18px">
-        </div>
+    <div style="text-align:center;padding:8px 0 4px;">
+        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fkhalecl.github.io%2Ftools%2Fkhutbah.html&label=Visitors&icon=graph-up&color=%23d4a843" alt="Visitors" style="opacity:.5;height:18px">
     </div>
+</div>
+```
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -1124,6 +1142,8 @@
 let recognition, isListening = false, isRecording = false;
 let mediaRecorder, audioChunks = [], translations = [];
 let currentFontSize = 18, audioCtx, analyser, stream = null, wakeLock = null;
+let processedStream = null; // cleaned audio stream for speech recognition
+let audioNodes = {};        // references to audio processing nodes
 let tutStep = 1;
 const TUT_TOTAL = 6;
 const RTL_LANGS = ['ar','ur','fa','ps','he','ku','sd','yi'];
@@ -1136,7 +1156,8 @@ let apiStats = { lingvaOk: 0, lingvaFail: 0, mmOk: 0, mmFail: 0, cacheHit: 0 };
 let cfg = {
     instant: true, autoScroll: true, highlight: true, showOrig: false,
     threshold: 15, wakeLock: true, engine: 'auto',
-    bufferTime: 8, silenceWait: 1.5
+    bufferTime: 8, silenceWait: 1.5,
+    noiseFilter: true, voiceGain: 1.5, noiseGate: 20
 };
 
 // ── Lingva instances (rotation for reliability) ──
@@ -1246,12 +1267,92 @@ function buildViz() {
         c.appendChild(b);
     }
 }
-function runViz(stream) {
+function runViz(rawStream) {
     try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(rawStream);
+
+        // ── Build audio processing chain ──
+        // source → highpass → lowpass → compressor → gate → gain → destination
+        let lastNode = source;
+
+        if (cfg.noiseFilter) {
+            // Highpass: remove low-frequency rumble (AC hum, traffic, fans)
+            const highpass = audioCtx.createBiquadFilter();
+            highpass.type = 'highpass';
+            highpass.frequency.value = 200;  // cut below 200Hz
+            highpass.Q.value = 0.7;
+            lastNode.connect(highpass);
+            lastNode = highpass;
+            audioNodes.highpass = highpass;
+
+            // Lowpass: remove high-frequency hiss/feedback
+            const lowpass = audioCtx.createBiquadFilter();
+            lowpass.type = 'lowpass';
+            lowpass.frequency.value = 5000;  // cut above 5kHz
+            lowpass.Q.value = 0.7;
+            lastNode.connect(lowpass);
+            lastNode = lowpass;
+            audioNodes.lowpass = lowpass;
+
+            // Presence boost: enhance speech clarity (1kHz-3kHz range)
+            const presence = audioCtx.createBiquadFilter();
+            presence.type = 'peaking';
+            presence.frequency.value = 2000;
+            presence.gain.value = 4;  // +4dB boost in speech range
+            presence.Q.value = 1;
+            lastNode.connect(presence);
+            lastNode = presence;
+            audioNodes.presence = presence;
+
+            // Dynamics compressor: normalize volume (loud/quiet speakers)
+            const compressor = audioCtx.createDynamicsCompressor();
+            compressor.threshold.value = -30;
+            compressor.knee.value = 15;
+            compressor.ratio.value = 8;
+            compressor.attack.value = 0.005;
+            compressor.release.value = 0.15;
+            lastNode.connect(compressor);
+            lastNode = compressor;
+            audioNodes.compressor = compressor;
+        }
+
+        // Gain boost
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = cfg.voiceGain;
+        lastNode.connect(gainNode);
+        lastNode = gainNode;
+        audioNodes.gain = gainNode;
+
+        // Noise gate via ScriptProcessor (mutes audio below threshold)
+        let gateNode = null;
+        if (cfg.noiseGate > 0) {
+            gateNode = audioCtx.createScriptProcessor(2048, 1, 1);
+            const gateThreshold = cfg.noiseGate / 100; // normalize 0-50 → 0-0.5
+            gateNode.onaudioprocess = (e) => {
+                const input = e.inputBuffer.getChannelData(0);
+                const output = e.outputBuffer.getChannelData(0);
+                let rms = 0;
+                for (let i = 0; i < input.length; i++) rms += input[i] * input[i];
+                rms = Math.sqrt(rms / input.length);
+                const gate = rms > gateThreshold ? 1 : 0;
+                for (let i = 0; i < input.length; i++) output[i] = input[i] * gate;
+            };
+            lastNode.connect(gateNode);
+            lastNode = gateNode;
+            audioNodes.gate = gateNode;
+        }
+
+        // Create processed stream for speech recognition
+        const destNode = audioCtx.createMediaStreamDestination();
+        lastNode.connect(destNode);
+        processedStream = destNode.stream;
+
+        // Also connect to analyser for visualization (from the processed chain)
         analyser = audioCtx.createAnalyser();
-        audioCtx.createMediaStreamSource(stream).connect(analyser);
         analyser.fftSize = 256;
+        lastNode.connect(analyser);
+
         const data = new Uint8Array(analyser.frequencyBinCount);
         const bars = document.querySelectorAll('.viz-bar');
         (function loop() {
@@ -1267,7 +1368,10 @@ function runViz(stream) {
             });
             requestAnimationFrame(loop);
         })();
-    } catch(e) {}
+    } catch(e) {
+        console.warn('Audio processing setup failed, using raw stream:', e);
+        processedStream = rawStream;
+    }
 }
 
 // ══════════════════════════════════════════════
@@ -1286,11 +1390,19 @@ async function startListen() {
     }
     try {
         stream = await navigator.mediaDevices.getUserMedia({
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+                // Advanced constraints for noisy environments
+                channelCount: 1,
+                sampleRate: { ideal: 16000 },
+                latency: { ideal: 0 }
+            }
         });
         if (cfg.wakeLock) await reqWakeLock();
         runViz(stream);
-        setupRecorder(stream);
+        setupRecorder(processedStream || stream);
 
         recognition = new SR();
         recognition.continuous = true;
@@ -1377,6 +1489,8 @@ function stopListen() {
     if (recognition) try { recognition.stop(); } catch(e){}
     if (audioCtx) try { audioCtx.close(); } catch(e){} audioCtx = null;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    if (processedStream) { processedStream.getTracks().forEach(t => t.stop()); processedStream = null; }
+    audioNodes = {};
     relWakeLock();
     updMicUI(false);
 }
@@ -1706,6 +1820,11 @@ function applySettings() {
     document.getElementById('sThresh').value = cfg.threshold;
     document.getElementById('threshVal').textContent = cfg.threshold;
     document.getElementById('sWakeLock').checked = cfg.wakeLock;
+    document.getElementById('sNoiseFilter').checked = cfg.noiseFilter;
+    document.getElementById('sGain').value = cfg.voiceGain;
+    document.getElementById('gainVal').textContent = cfg.voiceGain;
+    document.getElementById('sGate').value = cfg.noiseGate;
+    document.getElementById('gateVal').textContent = cfg.noiseGate;
     document.getElementById('sBuffer').value = cfg.bufferTime;
     document.getElementById('bufferVal').textContent = cfg.bufferTime;
     document.getElementById('sSilence').value = cfg.silenceWait;
@@ -1725,8 +1844,13 @@ function saveSettings() {
     cfg.engine = document.querySelector('input[name=engine]:checked')?.value || 'auto';
     cfg.bufferTime = parseInt(document.getElementById('sBuffer').value);
     cfg.silenceWait = parseFloat(document.getElementById('sSilence').value);
+    cfg.noiseFilter = document.getElementById('sNoiseFilter').checked;
+    cfg.voiceGain = parseFloat(document.getElementById('sGain').value);
+    cfg.noiseGate = parseInt(document.getElementById('sGate').value);
+    // Live-update gain if currently listening
+    if (audioNodes.gain) audioNodes.gain.gain.value = cfg.voiceGain;
     try { localStorage.setItem('kht_cfg_v3', JSON.stringify(cfg)); } catch(e) {}
-    alert('Settings saved ✓');
+    alert('Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.');
 }
 
 
@@ -2176,5 +2300,6 @@ function filterDua(cat, btn) {
 }
 
 </script>
+
 </body>
 </html>
