@@ -14,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
-    <title>Khutbah Live Translator v3.0</title>
+    <title>Khutbah Live Translator v4.0</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -697,6 +697,25 @@
         .lang-row{gap:6px}
         .bar-btn{padding:8px 12px;font-size:11px}
         .quran-nav{flex-direction:column}
+    /* === Prayer Times Tab === */
+    .prayer-panel{padding:16px;overflow-y:auto;flex:1}
+    .prayer-hijri{text-align:center;font-family:'Amiri',serif;font-size:clamp(16px,3.5vw,22px);color:var(--gold);margin-bottom:12px}
+    .prayer-hijri-sub{text-align:center;font-size:12px;color:var(--text-dim);margin-bottom:16px}
+    .prayer-grid{display:flex;flex-direction:column;gap:6px}
+    .prayer-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(212,168,67,.08);border-radius:var(--radius-sm);transition:all .3s}
+    .prayer-row.next{background:var(--gold-dim);border-color:rgba(212,168,67,.35)}
+    .prayer-row .p-name{font-weight:600;font-size:14px;color:var(--text)}
+    .prayer-row .p-time{font-size:16px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+    .prayer-row .p-icon{font-size:18px;margin-right:8px}
+    .prayer-method-sel{width:100%;margin-top:12px;padding:10px;border:1px solid rgba(212,168,67,.2);border-radius:var(--radius-sm);background:rgba(255,255,255,.04);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;-webkit-appearance:none;appearance:none}
+    .prayer-loc{text-align:center;font-size:11px;color:var(--text-dim);margin-top:8px}
+
+    /* === Native App Badge === */
+    .native-badge{display:none;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.5px}
+    .native-badge.on{display:inline-flex}
+    .native-badge.mlkit{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.25)}
+    .native-badge.offline{background:rgba(33,150,243,.15);color:#64b5f6;border:1px solid rgba(33,150,243,.25)}
+
     }
     @media(min-width:768px){
         .shell{max-width:700px}
@@ -763,7 +782,7 @@
 </div>
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
-<div class="ver">v3.0</div>
+<div class="ver">v4.0</div>
 
 <div class="shell">
     <div class="hdr">
@@ -775,6 +794,7 @@
         <button class="tab on" onclick="goTab('main',this)">Translator</button>
         <button class="tab" onclick="goTab('quran',this)">Quran</button>
         <button class="tab" onclick="goTab('dua',this)">Du'a</button>
+        <button class="tab" onclick="goTab('prayer',this)">🕌 Prayer</button>
         <button class="tab" onclick="goTab('settings',this)">Settings</button>
         <button class="tab" onclick="goTab('about',this)">About</button>
     </div>
@@ -993,6 +1013,40 @@
             </div>
         </div>
 
+        <!-- === PRAYER TIMES (NEW v4.0) === -->
+        <div class="panel" id="panelPrayer">
+            <div class="prayer-panel">
+                <div class="prayer-hijri" id="hijriDateDisplay">Loading...</div>
+                <div class="prayer-hijri-sub" id="hijriDateSub"></div>
+
+                <div class="prayer-grid" id="prayerGrid">
+                    <div class="prayer-row" data-prayer="Fajr"><span class="p-icon">🌅</span><span class="p-name">Fajr</span><span class="p-time" id="ptFajr">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Sunrise"><span class="p-icon">☀️</span><span class="p-name">Sunrise</span><span class="p-time" id="ptSunrise">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Dhuhr"><span class="p-icon">🕐</span><span class="p-name">Dhuhr</span><span class="p-time" id="ptDhuhr">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Asr"><span class="p-icon">🌤️</span><span class="p-name">Asr</span><span class="p-time" id="ptAsr">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Maghrib"><span class="p-icon">🌅</span><span class="p-name">Maghrib</span><span class="p-time" id="ptMaghrib">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Isha"><span class="p-icon">🌙</span><span class="p-name">Isha</span><span class="p-time" id="ptIsha">--:--</span></div>
+                </div>
+
+                <select class="prayer-method-sel" id="prayerMethod" onchange="fetchPrayerTimes()">
+                    <option value="4">Umm Al-Qura (Saudi Arabia)</option>
+                    <option value="5">Egyptian General Authority</option>
+                    <option value="3">Muslim World League</option>
+                    <option value="2">ISNA (North America)</option>
+                    <option value="1">University of Islamic Sciences, Karachi</option>
+                    <option value="7">Institute of Geophysics, Tehran</option>
+                    <option value="8">Gulf Region</option>
+                    <option value="9">Kuwait</option>
+                    <option value="10">Qatar</option>
+                    <option value="11">Majlis Ugama Islam Singapura</option>
+                    <option value="12">UOIF (France)</option>
+                    <option value="13">Diyanet İşleri Başkanlığı (Turkey)</option>
+                    <option value="14">Spiritual Administration of Muslims (Russia)</option>
+                </select>
+                <div class="prayer-loc" id="prayerLocation">📍 Detecting location...</div>
+            </div>
+        </div>
+
         <!-- === SETTINGS === -->
         <div class="panel" id="panelSettings">
             <div class="settings-inner">
@@ -1056,7 +1110,7 @@
                     This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
                 </div>
                 <div class="about-text">
-                    <strong>v3.0 Features:</strong><br>
+                    <strong>v4.0 Features:</strong><br>
                     • Dual translation engine (Lingva + MyMemory fallback)<br>
                     • Quran reader with Arabic, transliteration &amp; translation<br>
                     • Du'a collection with categories and references<br>
@@ -1132,7 +1186,7 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   KHUTBAH LIVE TRANSLATOR v3.0
+   KHUTBAH LIVE TRANSLATOR v4.0
    Cross-platform PWA — Android (Chrome) + iOS (Safari)
    Dual Translation Engine: Lingva (primary) + MyMemory (fallback)
    + Quran Reader + Du'a Collection
@@ -1161,7 +1215,7 @@ let cfg = {
 };
 
 // ── Lingva instances (rotation for reliability) ──
-// Updated v3.0: more reliable hosts + LibreTranslate fallback
+// Updated v4.0: more reliable hosts + LibreTranslate fallback
 const LINGVA_HOSTS = [
     'https://lingva.ml',
     'https://lingva.thedaviddelta.com',
@@ -1186,7 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     buildTutDots();
     initSurahList();
     loadDuasFromJSON();
-    if (!localStorage.getItem('kht_tut_v3')) setTimeout(showTut, 500);
+    if (!localStorage.getItem('kht_tut_v4')) setTimeout(showTut, 500);
     const savedSrc = localStorage.getItem('kht_src');
     const savedTgt = localStorage.getItem('kht_tgt');
     if (savedSrc) document.getElementById('srcLang').value = savedSrc;
@@ -1795,7 +1849,7 @@ function sendFB() {
     const type = document.getElementById('fbType').value;
     const msg = document.getElementById('fbMsg').value.trim();
     if (!name || !email || !type || !msg) { alert('Please fill all fields'); return; }
-    const body = `*Khutbah v3.0 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
+    const body = `*Khutbah v4.0 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
     window.open(`https://wa.me/201227822099?text=${body}`, '_blank');
     ['fbName','fbEmail','fbMsg'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fbType').value = '';
@@ -2298,6 +2352,189 @@ function filterDua(cat, btn) {
     btn.classList.add('on');
     renderDuas(cat);
 }
+
+// ══════════════════════════════════════════════
+// PRAYER TIMES (v4.0 — AlAdhan API)
+// ══════════════════════════════════════════════
+let prayerTimesData = null;
+let userCoords = null;
+
+async function fetchPrayerTimes() {
+    const method = document.getElementById('prayerMethod').value;
+    const locEl = document.getElementById('prayerLocation');
+
+    try {
+        // Get user location
+        if (!userCoords) {
+            locEl.textContent = '📍 Detecting location...';
+            const pos = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                    enableHighAccuracy: false, timeout: 10000, maximumAge: 300000
+                });
+            });
+            userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        }
+
+        // Fetch from AlAdhan API (free, no key needed)
+        const url = `https://api.aladhan.com/v1/timings?latitude=${userCoords.lat}&longitude=${userCoords.lng}&method=${method}`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        const data = await res.json();
+
+        if (data.code === 200) {
+            prayerTimesData = data.data;
+            renderPrayerTimes(data.data);
+
+            // Reverse geocode for display
+            try {
+                const geoRes = await fetch(`https://api.aladhan.com/v1/qibla/${userCoords.lat}/${userCoords.lng}`);
+                const geoData = await geoRes.json();
+                locEl.textContent = `📍 ${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}° • Qibla: ${geoData.data?.direction?.toFixed(1) || '—'}°`;
+            } catch(e) {
+                locEl.textContent = `📍 ${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}°`;
+            }
+        }
+    } catch (e) {
+        if (e.name === 'GeolocationPositionError' || e.message?.includes('Location')) {
+            locEl.textContent = '📍 Location access denied. Enable in settings.';
+        } else {
+            locEl.textContent = '⚠️ Could not load prayer times. Check internet.';
+        }
+        console.warn('Prayer times error:', e);
+    }
+}
+
+function renderPrayerTimes(data) {
+    const timings = data.timings;
+    const prayers = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
+
+    prayers.forEach(p => {
+        const el = document.getElementById('pt' + p);
+        if (el) el.textContent = timings[p] || '--:--';
+    });
+
+    // Highlight next prayer
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    let nextFound = false;
+    document.querySelectorAll('.prayer-row').forEach(row => {
+        row.classList.remove('next');
+        const pName = row.dataset.prayer;
+        const timeStr = timings[pName];
+        if (timeStr && !nextFound) {
+            const [h, m] = timeStr.split(':').map(Number);
+            if (h * 60 + m > nowMins) {
+                row.classList.add('next');
+                nextFound = true;
+            }
+        }
+    });
+
+    // Hijri date
+    if (data.date) {
+        const h = data.date.hijri;
+        const g = data.date.gregorian;
+        if (h) {
+            document.getElementById('hijriDateDisplay').textContent =
+                `${h.day} ${h.month.en} ${h.year} AH`;
+            document.getElementById('hijriDateSub').textContent =
+                `${h.month.ar} • ${g?.weekday?.en || ''}, ${g?.date || ''}`;
+        }
+    }
+}
+
+// Load prayer times when tab is first opened
+let prayerLoaded = false;
+const origGoTab = goTab;
+goTab = function(name, btn) {
+    origGoTab(name, btn);
+    if (name === 'prayer' && !prayerLoaded) {
+        prayerLoaded = true;
+        fetchPrayerTimes();
+    }
+};
+
+// ══════════════════════════════════════════════
+// NATIVE BRIDGE DETECTION (v4.0)
+// Enhances with ML Kit, Native STT, Foreground Service
+// when running inside the Android app (Option B).
+// Falls back gracefully to web APIs in browser.
+// ══════════════════════════════════════════════
+
+// Override translation to try ML Kit first (if native app)
+const _origDoTranslate = doTranslate;
+doTranslate = async function(text) {
+    // If running in native app with ML Kit available
+    if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) {
+        try {
+            const src = document.getElementById('srcLang').value.split('-')[0];
+            const tgt = document.getElementById('tgtLang').value;
+            if (src === tgt) { addEntry(text, text); return; }
+
+            const cacheKey = `${src}|${tgt}|${text.trim().toLowerCase()}`;
+            if (txCache.has(cacheKey)) {
+                apiStats.cacheHit++;
+                addEntry(text, txCache.get(cacheKey));
+                return;
+            }
+
+            const result = await window.KhutbahEnhanced.translate(text, src, tgt);
+            if (result && result.success && result.text) {
+                txCache.set(cacheKey, result.text);
+                addEntry(text, result.text);
+                return;
+            }
+        } catch (e) {
+            console.warn('[v4.0] ML Kit failed, using web fallback:', e.message);
+        }
+    }
+    // Fallback to original web translation
+    return _origDoTranslate(text);
+};
+
+// Override wake lock to use native when available
+const _origReqWakeLock = reqWakeLock;
+reqWakeLock = async function() {
+    if (window.KhutbahEnhanced) {
+        window.KhutbahEnhanced.acquireWakeLock();
+        window.KhutbahEnhanced.startForegroundService();
+    }
+    return _origReqWakeLock();
+};
+const _origRelWakeLock = relWakeLock;
+relWakeLock = async function() {
+    if (window.KhutbahEnhanced) {
+        window.KhutbahEnhanced.releaseWakeLock();
+        window.KhutbahEnhanced.stopForegroundService();
+    }
+    return _origRelWakeLock();
+};
+
+// Listen for native bridge ready event
+window.addEventListener('nativeBridgeReady', function(e) {
+    const f = e.detail;
+    console.log('[v4.0] Native bridge ready:', f);
+
+    // Update status text
+    const stsTxt = document.getElementById('stsTxt');
+    if (stsTxt && f.hasMLKit) {
+        stsTxt.textContent = '🟢 ML Kit Ready • Tap mic to start';
+    }
+
+    // Pre-download translation model for selected language pair
+    if (f.hasMLKit) {
+        const src = document.getElementById('srcLang').value.split('-')[0];
+        const tgt = document.getElementById('tgtLang').value;
+        window.KhutbahEnhanced.downloadModel(src, tgt).catch(() => {});
+    }
+});
+
+// Pre-download model when language changes (native only)
+document.getElementById('tgtLang').addEventListener('change', function() {
+    if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) {
+        const src = document.getElementById('srcLang').value.split('-')[0];
+        window.KhutbahEnhanced.downloadModel(src, this.value).catch(() => {});
+    }
+});
 
 </script>
 
