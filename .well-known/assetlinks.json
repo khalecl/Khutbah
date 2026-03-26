@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.khaleddiab.khutbah",
+    "sha256_cert_fingerprints": [
+      "DD:8C:C9:EC:8F:63:50:23:DE:39:D5:45:C5:DC:AE:DB:A6:89:04:C4:67:C9:CE:F0:FA:98:D0:EE:0A:08:C1:85"
+    ]
+  }
+}]
