@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Khutbah Live Translator</title>
+    <style>
+        :root { --gold: #d4a843; --dark: #0d0d1a; --card: #16213e; --text: #e8d5b0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--dark); color: var(--text);
+            line-height: 1.7; padding: 20px;
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { color: var(--gold); font-size: 1.6em; margin-bottom: 8px; text-align: center; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; font-size: 0.9em; }
+        h2 { color: var(--gold); font-size: 1.15em; margin: 24px 0 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
+        p { margin-bottom: 12px; }
+        .card { background: var(--card); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+        .highlight { background: rgba(212,168,67,0.1); border-left: 3px solid var(--gold); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+        a { color: var(--gold); }
+        .footer { text-align: center; margin-top: 40px; color: #666; font-size: 0.85em; }
+        .bismillah { text-align: center; font-size: 1.3em; color: var(--gold); margin-bottom: 20px; font-family: 'Traditional Arabic', serif; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+
+        <h1>🕌 Privacy Policy</h1>
+        <p class="subtitle">Khutbah Live Translator — Last updated: March 2026</p>
+
+        <div class="card">
+            <h2>Overview</h2>
+            <p>Khutbah Live Translator ("the App") is a free, open-source application created as Sadaqah Jariyah for the Muslim Ummah. We are committed to protecting your privacy. This app does not collect, store, or sell any personal data.</p>
+
+            <div class="highlight">
+                <strong>In short:</strong> Your data stays on your device. We don't track you, show you ads, or collect anything.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Microphone Access</h2>
+            <p>The App requests microphone permission to listen to and transcribe the khutbah (sermon) in real-time.</p>
+            <p><strong>How audio is processed:</strong></p>
+            <p>When using on-device speech recognition (native Android SpeechRecognizer or Vosk), all audio processing happens entirely on your device. No audio is recorded, stored, or transmitted to any server.</p>
+            <p>When using the Web Speech API (browser mode), audio may be processed by Google's speech recognition servers according to Google's own privacy policy. This is a standard browser feature and is not controlled by us.</p>
+            <p><strong>We never record, store, or transmit your audio.</strong></p>
+        </div>
+
+        <div class="card">
+            <h2>Translation</h2>
+            <p>The App translates the transcribed text using the following services:</p>
+            <p><strong>On-device (preferred):</strong> Google ML Kit Translation processes text entirely on your device. No data leaves your phone.</p>
+            <p><strong>Online fallback:</strong> When offline translation is unavailable, the transcribed text (not audio) may be sent to free translation APIs including Lingva Translate, MyMemory, or LibreTranslate. These are third-party services with their own privacy policies. Only the text to be translated is sent — no personal identifiers.</p>
+        </div>
+
+        <div class="card">
+            <h2>Location Data</h2>
+            <p>If you enable prayer time notifications, the App may request your location to calculate accurate prayer times via the AlAdhan API. Your coordinates are sent to <code>api.aladhan.com</code> to compute prayer times but are not stored by us. Location access is entirely optional.</p>
+        </div>
+
+        <div class="card">
+            <h2>Data Storage</h2>
+            <p>All app settings (language preferences, translation history, Quran bookmarks) are stored locally on your device using standard browser/app storage. This data is not transmitted anywhere and is deleted when you uninstall the App or clear its data.</p>
+        </div>
+
+        <div class="card">
+            <h2>No Advertising or Tracking</h2>
+            <p>The App contains no advertisements, no analytics trackers, no cookies for tracking purposes, and no third-party SDKs that collect user data. We do not use Google Analytics, Firebase Analytics, Facebook SDK, or any similar tracking tools.</p>
+        </div>
+
+        <div class="card">
+            <h2>No Data Collection</h2>
+            <p>We do not collect, process, or store any personally identifiable information (PII) including names, email addresses, phone numbers, device identifiers, IP addresses, or usage statistics.</p>
+        </div>
+
+        <div class="card">
+            <h2>Children's Privacy</h2>
+            <p>The App does not knowingly collect any data from children. Since we collect no data from anyone, this applies equally to users of all ages.</p>
+        </div>
+
+        <div class="card">
+            <h2>Open Source</h2>
+            <p>The App is open-source. You can review the complete source code to verify these privacy claims at: <a href="https://github.com/khalecl/Khutbah">github.com/khalecl/Khutbah</a></p>
+        </div>
+
+        <div class="card">
+            <h2>Contact</h2>
+            <p>If you have any questions about this Privacy Policy, please contact:</p>
+            <p><strong>Dr. Khaled Diab</strong><br>
+            Email: <a href="mailto:khaled.mohamed.rady@gmail.com">khaled.mohamed.rady@gmail.com</a><br>
+            GitHub: <a href="https://github.com/khalecl">github.com/khalecl</a></p>
+        </div>
+
+        <div class="card">
+            <h2>Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated revision date. Since we don't collect user data, we have no way to notify users directly — please check this page periodically.</p>
+        </div>
+
+        <div class="footer">
+            <p>جزاكم الله خيراً — May Allah reward you with goodness.</p>
+            <p>© 2026 Dr. Khaled Diab. This app is free and always will be.</p>
+        </div>
+    </div>
+</body>
+</html>
