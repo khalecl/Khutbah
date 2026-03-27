@@ -235,34 +235,6 @@
     }
     .empty-msg .icon{font-size:40px;margin-bottom:12px;display:block;opacity:.4}
 
-    /* === Translation Feedback === */
-    .sent-feedback{
-        display:flex;align-items:center;gap:2px;
-        margin-top:8px;padding-top:6px;
-        border-top:1px solid rgba(255,255,255,.04);
-    }
-    .fb-btn{
-        border:none;background:none;cursor:pointer;
-        font-size:14px;padding:4px 8px;border-radius:12px;
-        opacity:.35;transition:all .25s;
-        display:flex;align-items:center;gap:3px;
-    }
-    .fb-btn:hover,.fb-btn:focus{opacity:.7;background:rgba(255,255,255,.06)}
-    .fb-btn.voted{opacity:1 !important;pointer-events:none}
-    .fb-btn.voted.up{background:rgba(76,175,80,.15);color:#81c784}
-    .fb-btn.voted.down{background:rgba(244,67,54,.15);color:#ef9a9a}
-    .fb-btn .fb-label{font-size:10px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--text-dim)}
-    .fb-btn.voted .fb-label{color:inherit}
-    .sent.rtl .sent-feedback{direction:ltr;justify-content:flex-end}
-    .fb-toast{
-        position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-        padding:10px 20px;background:rgba(76,175,80,.9);color:#fff;
-        border-radius:20px;font-size:13px;font-weight:500;
-        z-index:300;animation:fade-up .3s ease;pointer-events:none;
-        font-family:'Outfit',sans-serif;
-    }
-    .fb-toast.err{background:rgba(244,67,54,.9)}
-
     /* === Font + Actions Bar === */
     .bar{
         display:flex;gap:8px;padding:clamp(10px,2vw,14px);
@@ -725,18 +697,176 @@
         .lang-row{gap:6px}
         .bar-btn{padding:8px 12px;font-size:11px}
         .quran-nav{flex-direction:column}
-    /* === Prayer Times Tab === */
-    .prayer-panel{padding:16px;overflow-y:auto;flex:1}
-    .prayer-hijri{text-align:center;font-family:'Amiri',serif;font-size:clamp(16px,3.5vw,22px);color:var(--gold);margin-bottom:12px}
-    .prayer-hijri-sub{text-align:center;font-size:12px;color:var(--text-dim);margin-bottom:16px}
-    .prayer-grid{display:flex;flex-direction:column;gap:6px}
-    .prayer-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(212,168,67,.08);border-radius:var(--radius-sm);transition:all .3s}
-    .prayer-row.next{background:var(--gold-dim);border-color:rgba(212,168,67,.35)}
-    .prayer-row .p-name{font-weight:600;font-size:14px;color:var(--text)}
-    .prayer-row .p-time{font-size:16px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
-    .prayer-row .p-icon{font-size:18px;margin-right:8px}
-    .prayer-method-sel{width:100%;margin-top:12px;padding:10px;border:1px solid rgba(212,168,67,.2);border-radius:var(--radius-sm);background:rgba(255,255,255,.04);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;-webkit-appearance:none;appearance:none}
-    .prayer-loc{text-align:center;font-size:11px;color:var(--text-dim);margin-top:8px}
+    /* ═══════════════════════════════════════════
+       PRAYER TIMES TAB — Redesigned v4.1
+       ═══════════════════════════════════════════ */
+    .prayer-panel{padding:0;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+
+    /* ── Hero: Next Prayer Countdown ── */
+    .prayer-hero{
+        position:relative;overflow:hidden;
+        padding:clamp(24px,5vw,36px) 20px clamp(20px,4vw,28px);
+        background:linear-gradient(160deg,rgba(212,168,67,.12) 0%,rgba(15,61,36,.6) 40%,rgba(10,40,24,.9) 100%);
+        text-align:center;
+    }
+    .prayer-hero::before{
+        content:'';position:absolute;inset:0;
+        background:radial-gradient(ellipse at 50% 0%,rgba(212,168,67,.08),transparent 70%);
+        pointer-events:none;
+    }
+    .prayer-hero-label{
+        font-size:11px;font-weight:600;letter-spacing:2px;
+        text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;
+    }
+    .prayer-hero-name{
+        font-family:'Amiri',serif;font-size:clamp(28px,7vw,40px);
+        color:var(--gold);line-height:1.2;margin-bottom:2px;
+    }
+    .prayer-hero-arabic{
+        font-family:'Amiri',serif;font-size:clamp(16px,3.5vw,22px);
+        color:rgba(212,168,67,.55);margin-bottom:14px;
+    }
+    .prayer-hero-countdown{
+        display:flex;align-items:baseline;justify-content:center;gap:4px;
+        margin-bottom:6px;
+    }
+    .prayer-hero-countdown .cd-num{
+        font-size:clamp(36px,9vw,54px);font-weight:700;
+        color:var(--cream);font-variant-numeric:tabular-nums;
+        letter-spacing:-1px;line-height:1;
+    }
+    .prayer-hero-countdown .cd-sep{
+        font-size:clamp(24px,6vw,36px);font-weight:300;
+        color:rgba(212,168,67,.4);margin:0 2px;
+        animation:cd-blink 1.5s ease-in-out infinite;
+    }
+    @keyframes cd-blink{0%,100%{opacity:1}50%{opacity:.25}}
+    .prayer-hero-countdown .cd-label{
+        font-size:10px;font-weight:600;color:var(--text-dim);
+        text-transform:uppercase;letter-spacing:1px;
+        display:block;margin-top:2px;
+    }
+    .prayer-hero-countdown .cd-unit{
+        display:flex;flex-direction:column;align-items:center;
+    }
+    .prayer-hero-at{
+        font-size:clamp(13px,2.5vw,15px);color:var(--text-dim);
+        font-variant-numeric:tabular-nums;
+    }
+    .prayer-hero-at span{color:var(--gold);font-weight:600}
+
+    /* ── Progress arc ── */
+    .prayer-progress{
+        width:clamp(100px,22vw,130px);height:clamp(100px,22vw,130px);
+        margin:0 auto 14px;position:relative;
+    }
+    .prayer-progress svg{width:100%;height:100%;transform:rotate(-90deg)}
+    .prayer-progress .track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:5}
+    .prayer-progress .fill{
+        fill:none;stroke:var(--gold);stroke-width:5;
+        stroke-linecap:round;transition:stroke-dashoffset 1s linear;
+    }
+    .prayer-progress .center-icon{
+        position:absolute;inset:0;display:flex;align-items:center;
+        justify-content:center;font-size:28px;
+    }
+
+    /* ── Hijri date bar ── */
+    .prayer-date-bar{
+        display:flex;align-items:center;justify-content:center;gap:10px;
+        padding:10px 16px;
+        background:rgba(212,168,67,.05);
+        border-bottom:1px solid rgba(212,168,67,.08);
+    }
+    .prayer-date-bar .pdb-hijri{
+        font-family:'Amiri',serif;font-size:clamp(14px,2.8vw,17px);
+        color:var(--gold);
+    }
+    .prayer-date-bar .pdb-dot{
+        width:4px;height:4px;border-radius:50%;
+        background:rgba(212,168,67,.3);flex-shrink:0;
+    }
+    .prayer-date-bar .pdb-greg{
+        font-size:clamp(11px,2.2vw,13px);color:var(--text-dim);
+    }
+
+    /* ── Prayer grid ── */
+    .prayer-grid{
+        display:flex;flex-direction:column;gap:0;
+        padding:8px 14px 12px;
+    }
+    .prayer-row{
+        display:grid;
+        grid-template-columns:28px 1fr auto auto;
+        gap:0 10px;
+        align-items:center;
+        padding:clamp(11px,2.2vw,15px) 10px;
+        border-bottom:1px solid rgba(255,255,255,.03);
+        transition:all .4s ease;
+        border-radius:var(--radius-sm);
+        position:relative;
+    }
+    .prayer-row:last-child{border-bottom:none}
+    .prayer-row .p-icon{
+        font-size:clamp(16px,3vw,20px);text-align:center;
+        opacity:.5;transition:opacity .3s;
+    }
+    .prayer-row .p-name{
+        font-weight:500;font-size:clamp(14px,2.6vw,16px);
+        color:var(--cream-dim);transition:color .3s;
+    }
+    .prayer-row .p-name .p-arabic{
+        display:block;font-family:'Amiri',serif;
+        font-size:clamp(11px,2vw,13px);color:var(--text-dim);
+        font-weight:400;margin-top:-1px;opacity:.6;
+    }
+    .prayer-row .p-time{
+        font-size:clamp(16px,3vw,19px);font-weight:700;
+        color:var(--text-dim);font-variant-numeric:tabular-nums;
+        text-align:right;transition:color .3s;letter-spacing:-.3px;
+    }
+    .prayer-row .p-iqama{
+        font-size:clamp(10px,1.8vw,11px);font-weight:500;
+        color:rgba(212,168,67,.4);text-align:right;
+        min-width:42px;
+    }
+
+    /* ── Next prayer highlight ── */
+    .prayer-row.next{
+        background:linear-gradient(135deg,rgba(212,168,67,.1),rgba(212,168,67,.04));
+        border-bottom-color:transparent;
+        margin:4px -4px;padding-left:14px;padding-right:14px;
+        border:1px solid rgba(212,168,67,.2);
+    }
+    .prayer-row.next .p-icon{opacity:1}
+    .prayer-row.next .p-name{color:var(--gold);font-weight:600}
+    .prayer-row.next .p-time{color:var(--gold)}
+    .prayer-row.next .p-iqama{color:var(--gold);opacity:.7}
+
+    /* ── Passed prayer dim ── */
+    .prayer-row.passed{opacity:.4}
+    .prayer-row.passed .p-time{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.15)}
+
+    /* ── Footer controls ── */
+    .prayer-footer{padding:0 14px 16px}
+    .prayer-method-sel{
+        width:100%;padding:11px 32px 11px 12px;
+        border:1px solid rgba(212,168,67,.15);border-radius:var(--radius-sm);
+        background:rgba(255,255,255,.03)
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
+            no-repeat right 12px center;
+        color:var(--text);font-family:'Outfit',sans-serif;
+        font-size:clamp(12px,2.2vw,13px);font-weight:400;
+        -webkit-appearance:none;appearance:none;
+        transition:border-color .2s;
+    }
+    .prayer-method-sel:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
+    .prayer-method-sel option{background:#1a1a1a;color:#eee}
+    .prayer-loc{
+        text-align:center;font-size:11px;color:var(--text-dim);
+        margin-top:8px;padding-bottom:4px;
+    }
+    .prayer-loc a{color:var(--gold);text-decoration:none}
 
     /* === Native App Badge === */
     .native-badge{display:none;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.5px}
@@ -1041,37 +1171,98 @@
             </div>
         </div>
 
-        <!-- === PRAYER TIMES (NEW v4.0) === -->
+        <!-- === PRAYER TIMES (Redesigned v4.1) === -->
         <div class="panel" id="panelPrayer">
             <div class="prayer-panel">
-                <div class="prayer-hijri" id="hijriDateDisplay">Loading...</div>
-                <div class="prayer-hijri-sub" id="hijriDateSub"></div>
-
-                <div class="prayer-grid" id="prayerGrid">
-                    <div class="prayer-row" data-prayer="Fajr"><span class="p-icon">🌅</span><span class="p-name">Fajr</span><span class="p-time" id="ptFajr">--:--</span></div>
-                    <div class="prayer-row" data-prayer="Sunrise"><span class="p-icon">☀️</span><span class="p-name">Sunrise</span><span class="p-time" id="ptSunrise">--:--</span></div>
-                    <div class="prayer-row" data-prayer="Dhuhr"><span class="p-icon">🕐</span><span class="p-name">Dhuhr</span><span class="p-time" id="ptDhuhr">--:--</span></div>
-                    <div class="prayer-row" data-prayer="Asr"><span class="p-icon">🌤️</span><span class="p-name">Asr</span><span class="p-time" id="ptAsr">--:--</span></div>
-                    <div class="prayer-row" data-prayer="Maghrib"><span class="p-icon">🌅</span><span class="p-name">Maghrib</span><span class="p-time" id="ptMaghrib">--:--</span></div>
-                    <div class="prayer-row" data-prayer="Isha"><span class="p-icon">🌙</span><span class="p-name">Isha</span><span class="p-time" id="ptIsha">--:--</span></div>
+                <!-- Hero: Next prayer countdown -->
+                <div class="prayer-hero" id="prayerHero">
+                    <div class="prayer-hero-label">Next Prayer</div>
+                    <div class="prayer-progress" id="prayerProgress">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="track" cx="50" cy="50" r="44"/>
+                            <circle class="fill" id="prayerArc" cx="50" cy="50" r="44"
+                                stroke-dasharray="276.46" stroke-dashoffset="276.46"/>
+                        </svg>
+                        <div class="center-icon" id="prayerHeroIcon">🕌</div>
+                    </div>
+                    <div class="prayer-hero-name" id="prayerHeroName">—</div>
+                    <div class="prayer-hero-arabic" id="prayerHeroArabic"></div>
+                    <div class="prayer-hero-countdown" id="prayerCountdown">
+                        <div class="cd-unit"><span class="cd-num" id="cdHours">--</span><span class="cd-label">hrs</span></div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-unit"><span class="cd-num" id="cdMins">--</span><span class="cd-label">min</span></div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-unit"><span class="cd-num" id="cdSecs">--</span><span class="cd-label">sec</span></div>
+                    </div>
+                    <div class="prayer-hero-at">Adhan at <span id="prayerHeroTime">--:--</span></div>
                 </div>
 
-                <select class="prayer-method-sel" id="prayerMethod" onchange="fetchPrayerTimes()">
-                    <option value="4">Umm Al-Qura (Saudi Arabia)</option>
-                    <option value="5">Egyptian General Authority</option>
-                    <option value="3">Muslim World League</option>
-                    <option value="2">ISNA (North America)</option>
-                    <option value="1">University of Islamic Sciences, Karachi</option>
-                    <option value="7">Institute of Geophysics, Tehran</option>
-                    <option value="8">Gulf Region</option>
-                    <option value="9">Kuwait</option>
-                    <option value="10">Qatar</option>
-                    <option value="11">Majlis Ugama Islam Singapura</option>
-                    <option value="12">UOIF (France)</option>
-                    <option value="13">Diyanet İşleri Başkanlığı (Turkey)</option>
-                    <option value="14">Spiritual Administration of Muslims (Russia)</option>
-                </select>
-                <div class="prayer-loc" id="prayerLocation">📍 Detecting location...</div>
+                <!-- Hijri / Gregorian date bar -->
+                <div class="prayer-date-bar">
+                    <span class="pdb-hijri" id="hijriDateDisplay">Loading...</span>
+                    <span class="pdb-dot"></span>
+                    <span class="pdb-greg" id="hijriDateSub"></span>
+                </div>
+
+                <!-- Prayer grid -->
+                <div class="prayer-grid" id="prayerGrid">
+                    <div class="prayer-row" data-prayer="Fajr">
+                        <span class="p-icon">🌅</span>
+                        <span class="p-name">Fajr<span class="p-arabic">الفجر</span></span>
+                        <span class="p-time" id="ptFajr">--:--</span>
+                        <span class="p-iqama" id="iqFajr"></span>
+                    </div>
+                    <div class="prayer-row" data-prayer="Sunrise">
+                        <span class="p-icon">☀️</span>
+                        <span class="p-name">Sunrise<span class="p-arabic">الشروق</span></span>
+                        <span class="p-time" id="ptSunrise">--:--</span>
+                        <span class="p-iqama"></span>
+                    </div>
+                    <div class="prayer-row" data-prayer="Dhuhr">
+                        <span class="p-icon">🌤️</span>
+                        <span class="p-name">Dhuhr<span class="p-arabic">الظهر</span></span>
+                        <span class="p-time" id="ptDhuhr">--:--</span>
+                        <span class="p-iqama" id="iqDhuhr"></span>
+                    </div>
+                    <div class="prayer-row" data-prayer="Asr">
+                        <span class="p-icon">🌇</span>
+                        <span class="p-name">Asr<span class="p-arabic">العصر</span></span>
+                        <span class="p-time" id="ptAsr">--:--</span>
+                        <span class="p-iqama" id="iqAsr"></span>
+                    </div>
+                    <div class="prayer-row" data-prayer="Maghrib">
+                        <span class="p-icon">🌆</span>
+                        <span class="p-name">Maghrib<span class="p-arabic">المغرب</span></span>
+                        <span class="p-time" id="ptMaghrib">--:--</span>
+                        <span class="p-iqama" id="iqMaghrib"></span>
+                    </div>
+                    <div class="prayer-row" data-prayer="Isha">
+                        <span class="p-icon">🌙</span>
+                        <span class="p-name">Isha<span class="p-arabic">العشاء</span></span>
+                        <span class="p-time" id="ptIsha">--:--</span>
+                        <span class="p-iqama" id="iqIsha"></span>
+                    </div>
+                </div>
+
+                <!-- Footer controls -->
+                <div class="prayer-footer">
+                    <select class="prayer-method-sel" id="prayerMethod" onchange="fetchPrayerTimes()">
+                        <option value="4">Umm Al-Qura (Saudi Arabia)</option>
+                        <option value="5">Egyptian General Authority</option>
+                        <option value="3">Muslim World League</option>
+                        <option value="2">ISNA (North America)</option>
+                        <option value="1">University of Islamic Sciences, Karachi</option>
+                        <option value="7">Institute of Geophysics, Tehran</option>
+                        <option value="8">Gulf Region</option>
+                        <option value="9">Kuwait</option>
+                        <option value="10">Qatar</option>
+                        <option value="11">Majlis Ugama Islam Singapura</option>
+                        <option value="12">UOIF (France)</option>
+                        <option value="13">Diyanet İşleri Başkanlığı (Turkey)</option>
+                        <option value="14">Spiritual Administration of Muslims (Russia)</option>
+                    </select>
+                    <div class="prayer-loc" id="prayerLocation">📍 Detecting location...</div>
+                </div>
             </div>
         </div>
 
@@ -1753,13 +1944,9 @@ function updApiUI() {
 function addEntry(orig, trans) {
     if (translations.some(t => t.orig === orig.trim() && t.text === trans.trim())) return;
     translations.push({
-        id: Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         orig: orig.trim(),
         text: trans.trim(),
-        time: new Date().toLocaleTimeString(),
-        srcLang: document.getElementById('srcLang').value,
-        tgtLang: document.getElementById('tgtLang').value,
-        feedback: null // null = no vote, 'up' or 'down'
+        time: new Date().toLocaleTimeString()
     });
     renderTranslations();
 }
@@ -1781,14 +1968,6 @@ function renderTranslations() {
         if (cfg.showOrig && t.orig !== t.text) {
             html = `<div style="opacity:.45;font-size:.85em;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:6px">${t.orig}</div>${t.text}`;
         }
-        // Feedback buttons
-        const upCls = t.feedback === 'up' ? ' voted up' : '';
-        const dnCls = t.feedback === 'down' ? ' voted down' : '';
-        const disabled = t.feedback ? 'style="pointer-events:none"' : '';
-        html += `<div class="sent-feedback">
-            <button class="fb-btn${upCls}" onclick="voteFeedback(${i},'up')" title="Good translation" ${t.feedback && t.feedback !== 'up' ? 'style="display:none"' : ''}>👍<span class="fb-label">${t.feedback === 'up' ? 'Thanks!' : ''}</span></button>
-            <button class="fb-btn${dnCls}" onclick="voteFeedback(${i},'down')" title="Bad translation" ${t.feedback && t.feedback !== 'down' ? 'style="display:none"' : ''}>👎<span class="fb-label">${t.feedback === 'down' ? 'Reported' : ''}</span></button>
-        </div>`;
         return `<div class="${cls}">${html}</div>`;
     }).join('');
 
@@ -2447,27 +2626,115 @@ function renderPrayerTimes(data) {
     const timings = data.timings;
     const prayers = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
 
+    // Arabic names mapping
+    const arabicNames = {
+        Fajr: 'الفجر', Sunrise: 'الشروق', Dhuhr: 'الظهر',
+        Asr: 'العصر', Maghrib: 'المغرب', Isha: 'العشاء'
+    };
+
+    // Icons for hero section
+    const prayerIcons = {
+        Fajr: '🌅', Sunrise: '☀️', Dhuhr: '🌤️',
+        Asr: '🌇', Maghrib: '🌆', Isha: '🌙'
+    };
+
+    // Default iqama offsets in minutes (after adhan)
+    // Users could customize these later; for now sensible mosque defaults
+    const iqamaOffsets = {
+        Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 5, Isha: 15
+    };
+
+    // Populate times
     prayers.forEach(p => {
         const el = document.getElementById('pt' + p);
         if (el) el.textContent = timings[p] || '--:--';
+
+        // Iqama time (adhan + offset)
+        const iqEl = document.getElementById('iq' + p);
+        if (iqEl && iqamaOffsets[p] && timings[p]) {
+            const [h, m] = timings[p].split(':').map(Number);
+            const iqMins = h * 60 + m + iqamaOffsets[p];
+            const iqH = Math.floor(iqMins / 60) % 24;
+            const iqM = iqMins % 60;
+            iqEl.textContent = 'Iqama ' + String(iqH).padStart(2,'0') + ':' + String(iqM).padStart(2,'0');
+        }
     });
 
-    // Highlight next prayer
+    // Determine next prayer and highlight
     const now = new Date();
     const nowMins = now.getHours() * 60 + now.getMinutes();
-    let nextFound = false;
+    let nextPrayer = null, nextPrayerMins = null, prevPrayerMins = null;
+
+    // Build sorted list of prayer minutes
+    const prayerMins = {};
+    prayers.forEach(p => {
+        if (timings[p]) {
+            const [h, m] = timings[p].split(':').map(Number);
+            prayerMins[p] = h * 60 + m;
+        }
+    });
+
     document.querySelectorAll('.prayer-row').forEach(row => {
-        row.classList.remove('next');
+        row.classList.remove('next', 'passed');
         const pName = row.dataset.prayer;
-        const timeStr = timings[pName];
-        if (timeStr && !nextFound) {
-            const [h, m] = timeStr.split(':').map(Number);
-            if (h * 60 + m > nowMins) {
-                row.classList.add('next');
-                nextFound = true;
+        if (prayerMins[pName] !== undefined) {
+            if (prayerMins[pName] <= nowMins && !nextPrayer) {
+                row.classList.add('passed');
             }
         }
     });
+
+    // Find next prayer
+    for (const p of prayers) {
+        if (prayerMins[p] !== undefined && prayerMins[p] > nowMins) {
+            nextPrayer = p;
+            nextPrayerMins = prayerMins[p];
+            break;
+        }
+    }
+
+    // If no next prayer today, next is Fajr tomorrow
+    if (!nextPrayer) {
+        nextPrayer = 'Fajr';
+        nextPrayerMins = prayerMins['Fajr'] + 24 * 60;
+    }
+
+    // Find previous prayer for progress arc
+    const prayerKeys = Object.keys(prayerMins);
+    for (let i = prayerKeys.length - 1; i >= 0; i--) {
+        if (prayerMins[prayerKeys[i]] <= nowMins) {
+            prevPrayerMins = prayerMins[prayerKeys[i]];
+            break;
+        }
+    }
+    if (prevPrayerMins === null) prevPrayerMins = prayerMins['Isha'] ? prayerMins['Isha'] - 24 * 60 : nowMins;
+
+    // Mark passed and next
+    document.querySelectorAll('.prayer-row').forEach(row => {
+        row.classList.remove('next', 'passed');
+        const pName = row.dataset.prayer;
+        if (pName === nextPrayer) {
+            row.classList.add('next');
+        } else if (prayerMins[pName] !== undefined && prayerMins[pName] <= nowMins) {
+            row.classList.add('passed');
+        }
+    });
+
+    // Update hero
+    document.getElementById('prayerHeroName').textContent = nextPrayer;
+    document.getElementById('prayerHeroArabic').textContent = arabicNames[nextPrayer] || '';
+    document.getElementById('prayerHeroIcon').textContent = prayerIcons[nextPrayer] || '🕌';
+    document.getElementById('prayerHeroTime').textContent = timings[nextPrayer] || '--:--';
+
+    // Store for countdown
+    window._nextPrayerMins = nextPrayerMins;
+    window._prevPrayerMins = prevPrayerMins;
+    window._prayerTimings = timings;
+
+    // Start countdown
+    if (window._prayerCountdownInterval) clearInterval(window._prayerCountdownInterval);
+    updatePrayerCountdown();
+    window._prayerCountdownInterval = setInterval(updatePrayerCountdown, 1000);
 
     // Hijri date
     if (data.date) {
@@ -2477,8 +2744,52 @@ function renderPrayerTimes(data) {
             document.getElementById('hijriDateDisplay').textContent =
                 `${h.day} ${h.month.en} ${h.year} AH`;
             document.getElementById('hijriDateSub').textContent =
-                `${h.month.ar} • ${g?.weekday?.en || ''}, ${g?.date || ''}`;
+                `${g?.weekday?.en || ''}, ${g?.date || ''}`;
         }
+    }
+}
+
+function updatePrayerCountdown() {
+    const now = new Date();
+    const nowTotalSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    let targetSecs = (window._nextPrayerMins || 0) * 60;
+
+    // Handle next-day Fajr
+    if (targetSecs > 24 * 3600) {
+        // target is tomorrow
+    }
+    let diff = targetSecs - nowTotalSecs;
+    if (diff < 0) diff += 24 * 3600;
+
+    const hours = Math.floor(diff / 3600);
+    const mins = Math.floor((diff % 3600) / 60);
+    const secs = diff % 60;
+
+    const cdH = document.getElementById('cdHours');
+    const cdM = document.getElementById('cdMins');
+    const cdS = document.getElementById('cdSecs');
+    if (cdH) cdH.textContent = String(hours).padStart(2, '0');
+    if (cdM) cdM.textContent = String(mins).padStart(2, '0');
+    if (cdS) cdS.textContent = String(secs).padStart(2, '0');
+
+    // Update progress arc
+    const prevSecs = (window._prevPrayerMins || 0) * 60;
+    let totalSpan = targetSecs - prevSecs;
+    if (totalSpan <= 0) totalSpan += 24 * 3600;
+    let elapsed = nowTotalSecs - prevSecs;
+    if (elapsed < 0) elapsed += 24 * 3600;
+    const pct = Math.min(1, Math.max(0, elapsed / totalSpan));
+
+    const arc = document.getElementById('prayerArc');
+    if (arc) {
+        const circumference = 2 * Math.PI * 44; // r=44
+        arc.style.strokeDashoffset = circumference * (1 - pct);
+    }
+
+    // If countdown hits zero, refresh prayer times
+    if (diff <= 0) {
+        clearInterval(window._prayerCountdownInterval);
+        setTimeout(fetchPrayerTimes, 2000);
     }
 }
 
@@ -2575,114 +2886,6 @@ document.getElementById('tgtLang').addEventListener('change', function() {
         window.KhutbahEnhanced.downloadModel(src, this.value).catch(() => {});
     }
 });
-
-// ══════════════════════════════════════════════
-// TRANSLATION FEEDBACK SYSTEM
-// Sends thumbs up/down ratings to Google Sheets
-// via a Google Apps Script web app endpoint.
-// ══════════════════════════════════════════════
-
-// ── CONFIGURE: Your Google Apps Script Web App URL ──
-// Deploy the script below as a web app and paste the URL here:
-const FEEDBACK_ENDPOINT = 'https://script.google.com/macros/s/AKfycby0aTAbLUZy0Bw7Rs_Yl6KClp6xoI0K97yks_jAd6GsJspKWgirgdrnxDg1CiuoMR6R/exec';// Leave empty to queue feedback locally (sent when endpoint is configured)
-
-// Feedback queue for offline/batched sending
-let feedbackQueue = [];
-try {
-    const saved = localStorage.getItem('kht_fb_queue');
-    if (saved) feedbackQueue = JSON.parse(saved);
-} catch(e) {}
-
-function voteFeedback(index, vote) {
-    if (index < 0 || index >= translations.length) return;
-    const t = translations[index];
-    if (t.feedback) return; // already voted
-
-    t.feedback = vote;
-    renderTranslations();
-
-    // Show toast
-    showFbToast(vote === 'up' ? '✓ Thanks for the feedback!' : '✓ Reported — helps us improve!', vote === 'down');
-
-    // Build feedback payload
-    const payload = {
-        id: t.id,
-        timestamp: new Date().toISOString(),
-        srcLang: t.srcLang || document.getElementById('srcLang').value,
-        tgtLang: t.tgtLang || document.getElementById('tgtLang').value,
-        original: t.orig,
-        translated: t.text,
-        rating: vote, // 'up' or 'down'
-        engine: cfg.engine,
-        appVersion: '4.0',
-        userAgent: navigator.userAgent.substring(0, 120)
-    };
-
-    // Try to send immediately
-    if (FEEDBACK_ENDPOINT) {
-        sendFeedback(payload);
-    } else {
-        // Queue locally
-        feedbackQueue.push(payload);
-        saveFbQueue();
-    }
-
-    // Track local stats
-    if (!window._fbStats) window._fbStats = { up: 0, down: 0 };
-    window._fbStats[vote]++;
-}
-
-async function sendFeedback(payload) {
-    try {
-        const res = await fetch(FEEDBACK_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            mode: 'no-cors', // Google Apps Script requires this
-            signal: AbortSignal.timeout(10000)
-        });
-        // no-cors means we can't read the response, but it still sends
-        return true;
-    } catch(e) {
-        console.warn('[Feedback] Send failed, queuing:', e.message);
-        feedbackQueue.push(payload);
-        saveFbQueue();
-        return false;
-    }
-}
-
-function saveFbQueue() {
-    try {
-        localStorage.setItem('kht_fb_queue', JSON.stringify(feedbackQueue));
-    } catch(e) {}
-}
-
-// Flush queued feedback when endpoint is available
-async function flushFeedbackQueue() {
-    if (!FEEDBACK_ENDPOINT || !feedbackQueue.length) return;
-    const batch = [...feedbackQueue];
-    feedbackQueue = [];
-    saveFbQueue();
-
-    for (const payload of batch) {
-        const ok = await sendFeedback(payload);
-        if (!ok) break; // stop if sending fails, remaining are re-queued
-    }
-}
-
-// Try flushing queue periodically
-setInterval(flushFeedbackQueue, 60000);
-
-function showFbToast(msg, isErr) {
-    const existing = document.querySelector('.fb-toast');
-    if (existing) existing.remove();
-
-    const el = document.createElement('div');
-    el.className = 'fb-toast' + (isErr ? '' : ''); // green for both, subtle difference
-    el.textContent = msg;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 2500);
-}
 
 </script>
 
