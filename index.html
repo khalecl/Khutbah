@@ -235,6 +235,34 @@
     }
     .empty-msg .icon{font-size:40px;margin-bottom:12px;display:block;opacity:.4}
 
+    /* === Translation Feedback === */
+    .sent-feedback{
+        display:flex;align-items:center;gap:2px;
+        margin-top:8px;padding-top:6px;
+        border-top:1px solid rgba(255,255,255,.04);
+    }
+    .fb-btn{
+        border:none;background:none;cursor:pointer;
+        font-size:14px;padding:4px 8px;border-radius:12px;
+        opacity:.35;transition:all .25s;
+        display:flex;align-items:center;gap:3px;
+    }
+    .fb-btn:hover,.fb-btn:focus{opacity:.7;background:rgba(255,255,255,.06)}
+    .fb-btn.voted{opacity:1 !important;pointer-events:none}
+    .fb-btn.voted.up{background:rgba(76,175,80,.15);color:#81c784}
+    .fb-btn.voted.down{background:rgba(244,67,54,.15);color:#ef9a9a}
+    .fb-btn .fb-label{font-size:10px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--text-dim)}
+    .fb-btn.voted .fb-label{color:inherit}
+    .sent.rtl .sent-feedback{direction:ltr;justify-content:flex-end}
+    .fb-toast{
+        position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+        padding:10px 20px;background:rgba(76,175,80,.9);color:#fff;
+        border-radius:20px;font-size:13px;font-weight:500;
+        z-index:300;animation:fade-up .3s ease;pointer-events:none;
+        font-family:'Outfit',sans-serif;
+    }
+    .fb-toast.err{background:rgba(244,67,54,.9)}
+
     /* === Font + Actions Bar === */
     .bar{
         display:flex;gap:8px;padding:clamp(10px,2vw,14px);
@@ -1725,9 +1753,13 @@ function updApiUI() {
 function addEntry(orig, trans) {
     if (translations.some(t => t.orig === orig.trim() && t.text === trans.trim())) return;
     translations.push({
+        id: Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         orig: orig.trim(),
         text: trans.trim(),
-        time: new Date().toLocaleTimeString()
+        time: new Date().toLocaleTimeString(),
+        srcLang: document.getElementById('srcLang').value,
+        tgtLang: document.getElementById('tgtLang').value,
+        feedback: null // null = no vote, 'up' or 'down'
     });
     renderTranslations();
 }
@@ -1749,6 +1781,14 @@ function renderTranslations() {
         if (cfg.showOrig && t.orig !== t.text) {
             html = `<div style="opacity:.45;font-size:.85em;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:6px">${t.orig}</div>${t.text}`;
         }
+        // Feedback buttons
+        const upCls = t.feedback === 'up' ? ' voted up' : '';
+        const dnCls = t.feedback === 'down' ? ' voted down' : '';
+        const disabled = t.feedback ? 'style="pointer-events:none"' : '';
+        html += `<div class="sent-feedback">
+            <button class="fb-btn${upCls}" onclick="voteFeedback(${i},'up')" title="Good translation" ${t.feedback && t.feedback !== 'up' ? 'style="display:none"' : ''}>👍<span class="fb-label">${t.feedback === 'up' ? 'Thanks!' : ''}</span></button>
+            <button class="fb-btn${dnCls}" onclick="voteFeedback(${i},'down')" title="Bad translation" ${t.feedback && t.feedback !== 'down' ? 'style="display:none"' : ''}>👎<span class="fb-label">${t.feedback === 'down' ? 'Reported' : ''}</span></button>
+        </div>`;
         return `<div class="${cls}">${html}</div>`;
     }).join('');
 
@@ -2535,6 +2575,114 @@ document.getElementById('tgtLang').addEventListener('change', function() {
         window.KhutbahEnhanced.downloadModel(src, this.value).catch(() => {});
     }
 });
+
+// ══════════════════════════════════════════════
+// TRANSLATION FEEDBACK SYSTEM
+// Sends thumbs up/down ratings to Google Sheets
+// via a Google Apps Script web app endpoint.
+// ══════════════════════════════════════════════
+
+// ── CONFIGURE: Your Google Apps Script Web App URL ──
+// Deploy the script below as a web app and paste the URL here:
+const FEEDBACK_ENDPOINT = 'https://script.google.com/macros/s/AKfycby0aTAbLUZy0Bw7Rs_Yl6KClp6xoI0K97yks_jAd6GsJspKWgirgdrnxDg1CiuoMR6R/exec';// Leave empty to queue feedback locally (sent when endpoint is configured)
+
+// Feedback queue for offline/batched sending
+let feedbackQueue = [];
+try {
+    const saved = localStorage.getItem('kht_fb_queue');
+    if (saved) feedbackQueue = JSON.parse(saved);
+} catch(e) {}
+
+function voteFeedback(index, vote) {
+    if (index < 0 || index >= translations.length) return;
+    const t = translations[index];
+    if (t.feedback) return; // already voted
+
+    t.feedback = vote;
+    renderTranslations();
+
+    // Show toast
+    showFbToast(vote === 'up' ? '✓ Thanks for the feedback!' : '✓ Reported — helps us improve!', vote === 'down');
+
+    // Build feedback payload
+    const payload = {
+        id: t.id,
+        timestamp: new Date().toISOString(),
+        srcLang: t.srcLang || document.getElementById('srcLang').value,
+        tgtLang: t.tgtLang || document.getElementById('tgtLang').value,
+        original: t.orig,
+        translated: t.text,
+        rating: vote, // 'up' or 'down'
+        engine: cfg.engine,
+        appVersion: '4.0',
+        userAgent: navigator.userAgent.substring(0, 120)
+    };
+
+    // Try to send immediately
+    if (FEEDBACK_ENDPOINT) {
+        sendFeedback(payload);
+    } else {
+        // Queue locally
+        feedbackQueue.push(payload);
+        saveFbQueue();
+    }
+
+    // Track local stats
+    if (!window._fbStats) window._fbStats = { up: 0, down: 0 };
+    window._fbStats[vote]++;
+}
+
+async function sendFeedback(payload) {
+    try {
+        const res = await fetch(FEEDBACK_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            mode: 'no-cors', // Google Apps Script requires this
+            signal: AbortSignal.timeout(10000)
+        });
+        // no-cors means we can't read the response, but it still sends
+        return true;
+    } catch(e) {
+        console.warn('[Feedback] Send failed, queuing:', e.message);
+        feedbackQueue.push(payload);
+        saveFbQueue();
+        return false;
+    }
+}
+
+function saveFbQueue() {
+    try {
+        localStorage.setItem('kht_fb_queue', JSON.stringify(feedbackQueue));
+    } catch(e) {}
+}
+
+// Flush queued feedback when endpoint is available
+async function flushFeedbackQueue() {
+    if (!FEEDBACK_ENDPOINT || !feedbackQueue.length) return;
+    const batch = [...feedbackQueue];
+    feedbackQueue = [];
+    saveFbQueue();
+
+    for (const payload of batch) {
+        const ok = await sendFeedback(payload);
+        if (!ok) break; // stop if sending fails, remaining are re-queued
+    }
+}
+
+// Try flushing queue periodically
+setInterval(flushFeedbackQueue, 60000);
+
+function showFbToast(msg, isErr) {
+    const existing = document.querySelector('.fb-toast');
+    if (existing) existing.remove();
+
+    const el = document.createElement('div');
+    el.className = 'fb-toast' + (isErr ? '' : ''); // green for both, subtle difference
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
+}
 
 </script>
 
