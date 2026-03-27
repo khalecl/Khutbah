@@ -38,7 +38,6 @@
             -webkit-font-smoothing:antialiased;
         }
 
-```
     /* === Geometric Islamic pattern overlay === */
     body::before{
         content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -697,8 +696,10 @@
         .lang-row{gap:6px}
         .bar-btn{padding:8px 12px;font-size:11px}
         .quran-nav{flex-direction:column}
+    }
+
     /* ═══════════════════════════════════════════
-       PRAYER TIMES TAB — Redesigned v4.1
+       PRAYER TIMES TAB — v4.1
        ═══════════════════════════════════════════ */
     .prayer-panel{padding:0;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
 
@@ -866,7 +867,6 @@
         text-align:center;font-size:11px;color:var(--text-dim);
         margin-top:8px;padding-bottom:4px;
     }
-    .prayer-loc a{color:var(--gold);text-decoration:none}
 
     /* === Native App Badge === */
     .native-badge{display:none;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.5px}
@@ -874,18 +874,15 @@
     .native-badge.mlkit{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.25)}
     .native-badge.offline{background:rgba(33,150,243,.15);color:#64b5f6;border:1px solid rgba(33,150,243,.25)}
 
-    }
     @media(min-width:768px){
         .shell{max-width:700px}
     }
 </style>
-```
 
 </head>
 <body>
     <div class="loader" id="loader"><div class="loader-ring"></div></div>
 
-```
 <!-- Tutorial -->
 <div class="tut-overlay" id="tutOverlay">
     <div class="tut-card">
@@ -1171,7 +1168,7 @@
             </div>
         </div>
 
-        <!-- === PRAYER TIMES (Redesigned v4.1) === -->
+        <!-- === PRAYER TIMES (v4.1) === -->
         <div class="panel" id="panelPrayer">
             <div class="prayer-panel">
                 <!-- Hero: Next prayer countdown -->
@@ -1401,7 +1398,6 @@
         <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fkhalecl.github.io%2Ftools%2Fkhutbah.html&label=Visitors&icon=graph-up&color=%23d4a843" alt="Visitors" style="opacity:.5;height:18px">
     </div>
 </div>
-```
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -2639,7 +2635,6 @@ function renderPrayerTimes(data) {
     };
 
     // Default iqama offsets in minutes (after adhan)
-    // Users could customize these later; for now sensible mosque defaults
     const iqamaOffsets = {
         Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 5, Isha: 15
     };
@@ -2671,16 +2666,6 @@ function renderPrayerTimes(data) {
         if (timings[p]) {
             const [h, m] = timings[p].split(':').map(Number);
             prayerMins[p] = h * 60 + m;
-        }
-    });
-
-    document.querySelectorAll('.prayer-row').forEach(row => {
-        row.classList.remove('next', 'passed');
-        const pName = row.dataset.prayer;
-        if (prayerMins[pName] !== undefined) {
-            if (prayerMins[pName] <= nowMins && !nextPrayer) {
-                row.classList.add('passed');
-            }
         }
     });
 
@@ -2754,10 +2739,6 @@ function updatePrayerCountdown() {
     const nowTotalSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
     let targetSecs = (window._nextPrayerMins || 0) * 60;
 
-    // Handle next-day Fajr
-    if (targetSecs > 24 * 3600) {
-        // target is tomorrow
-    }
     let diff = targetSecs - nowTotalSecs;
     if (diff < 0) diff += 24 * 3600;
 
