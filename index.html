@@ -937,7 +937,7 @@
 </div>
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
-<div class="ver">v4.5.1</div>
+<div class="ver">v4.5.2</div>
 
 <div class="shell">
     <div class="hdr">
@@ -1951,8 +1951,42 @@ function stopFakeViz() {
 // ══════════════════════════════════════════════
 async function doTranslate(text) {
     if (!text?.trim()) return;
+    text = text.trim();
     const last = translations[translations.length - 1];
-    if (last?.orig === text.trim()) return;
+    if (last?.orig === text) return;
+
+    // v4.5.2: Prevent overlap from split Android recognition sessions.
+    // If >40% of words in new text were already in the last translation,
+    // merge by keeping only the NEW words appended to previous.
+    if (IS_ANDROID && last?.orig) {
+        const prevWords = last.orig.split(/\s+/);
+        const newWords = text.split(/\s+/);
+        // Count how many words from new text appear at end of previous
+        let overlap = 0;
+        for (let i = 0; i < Math.min(prevWords.length, newWords.length); i++) {
+            if (prevWords[prevWords.length - 1 - i] === newWords[i]) overlap++;
+            else break;
+        }
+        if (overlap > 0 && overlap >= newWords.length * 0.4) {
+            // Strip overlapping prefix, keep only genuinely new words
+            const uniqueNew = newWords.slice(overlap).join(' ').trim();
+            if (!uniqueNew) return; // entirely overlapping, skip
+            text = uniqueNew;
+            console.log('[v4.5.2] Stripped', overlap, 'overlapping words, translating:', text);
+        }
+        // Also skip if new text is a subset of previous
+        if (last.orig.includes(text) || text.includes(last.orig)) {
+            if (text.length <= last.orig.length) return; // skip shorter/equal duplicate
+            // If new is longer, only translate the extra part
+            const extra = text.replace(last.orig, '').trim();
+            if (extra && extra.split(/\s+/).length >= 2) {
+                text = extra;
+                console.log('[v4.5.2] Subset detected, translating extra:', text);
+            } else {
+                return; // too short to bother
+            }
+        }
+    }
 
     const src = document.getElementById('srcLang').value.split('-')[0];
     const tgt = document.getElementById('tgtLang').value;
