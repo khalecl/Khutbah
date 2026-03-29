@@ -14,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
-    <title>Khutbah Live Translator v4.5</title>
+    <title>Khutbah Live Translator v4.1</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -38,6 +38,7 @@
             -webkit-font-smoothing:antialiased;
         }
 
+```
     /* === Geometric Islamic pattern overlay === */
     body::before{
         content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -696,177 +697,18 @@
         .lang-row{gap:6px}
         .bar-btn{padding:8px 12px;font-size:11px}
         .quran-nav{flex-direction:column}
-    }
-
-    /* ═══════════════════════════════════════════
-       PRAYER TIMES TAB — v4.1
-       ═══════════════════════════════════════════ */
-    .prayer-panel{padding:0;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
-
-    /* ── Hero: Next Prayer Countdown ── */
-    .prayer-hero{
-        position:relative;overflow:hidden;
-        padding:clamp(24px,5vw,36px) 20px clamp(20px,4vw,28px);
-        background:linear-gradient(160deg,rgba(212,168,67,.12) 0%,rgba(15,61,36,.6) 40%,rgba(10,40,24,.9) 100%);
-        text-align:center;
-    }
-    .prayer-hero::before{
-        content:'';position:absolute;inset:0;
-        background:radial-gradient(ellipse at 50% 0%,rgba(212,168,67,.08),transparent 70%);
-        pointer-events:none;
-    }
-    .prayer-hero-label{
-        font-size:11px;font-weight:600;letter-spacing:2px;
-        text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;
-    }
-    .prayer-hero-name{
-        font-family:'Amiri',serif;font-size:clamp(28px,7vw,40px);
-        color:var(--gold);line-height:1.2;margin-bottom:2px;
-    }
-    .prayer-hero-arabic{
-        font-family:'Amiri',serif;font-size:clamp(16px,3.5vw,22px);
-        color:rgba(212,168,67,.55);margin-bottom:14px;
-    }
-    .prayer-hero-countdown{
-        display:flex;align-items:baseline;justify-content:center;gap:4px;
-        margin-bottom:6px;
-    }
-    .prayer-hero-countdown .cd-num{
-        font-size:clamp(36px,9vw,54px);font-weight:700;
-        color:var(--cream);font-variant-numeric:tabular-nums;
-        letter-spacing:-1px;line-height:1;
-    }
-    .prayer-hero-countdown .cd-sep{
-        font-size:clamp(24px,6vw,36px);font-weight:300;
-        color:rgba(212,168,67,.4);margin:0 2px;
-        animation:cd-blink 1.5s ease-in-out infinite;
-    }
-    @keyframes cd-blink{0%,100%{opacity:1}50%{opacity:.25}}
-    .prayer-hero-countdown .cd-label{
-        font-size:10px;font-weight:600;color:var(--text-dim);
-        text-transform:uppercase;letter-spacing:1px;
-        display:block;margin-top:2px;
-    }
-    .prayer-hero-countdown .cd-unit{
-        display:flex;flex-direction:column;align-items:center;
-    }
-    .prayer-hero-at{
-        font-size:clamp(13px,2.5vw,15px);color:var(--text-dim);
-        font-variant-numeric:tabular-nums;
-    }
-    .prayer-hero-at span{color:var(--gold);font-weight:600}
-
-    /* ── Progress arc ── */
-    .prayer-progress{
-        width:clamp(100px,22vw,130px);height:clamp(100px,22vw,130px);
-        margin:0 auto 14px;position:relative;
-    }
-    .prayer-progress svg{width:100%;height:100%;transform:rotate(-90deg)}
-    .prayer-progress .track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:5}
-    .prayer-progress .fill{
-        fill:none;stroke:var(--gold);stroke-width:5;
-        stroke-linecap:round;transition:stroke-dashoffset 1s linear;
-    }
-    .prayer-progress .center-icon{
-        position:absolute;inset:0;display:flex;align-items:center;
-        justify-content:center;font-size:28px;
-    }
-
-    /* ── Hijri date bar ── */
-    .prayer-date-bar{
-        display:flex;align-items:center;justify-content:center;gap:10px;
-        padding:10px 16px;
-        background:rgba(212,168,67,.05);
-        border-bottom:1px solid rgba(212,168,67,.08);
-    }
-    .prayer-date-bar .pdb-hijri{
-        font-family:'Amiri',serif;font-size:clamp(14px,2.8vw,17px);
-        color:var(--gold);
-    }
-    .prayer-date-bar .pdb-dot{
-        width:4px;height:4px;border-radius:50%;
-        background:rgba(212,168,67,.3);flex-shrink:0;
-    }
-    .prayer-date-bar .pdb-greg{
-        font-size:clamp(11px,2.2vw,13px);color:var(--text-dim);
-    }
-
-    /* ── Prayer grid ── */
-    .prayer-grid{
-        display:flex;flex-direction:column;gap:0;
-        padding:8px 14px 12px;
-    }
-    .prayer-row{
-        display:grid;
-        grid-template-columns:28px 1fr auto auto;
-        gap:0 10px;
-        align-items:center;
-        padding:clamp(11px,2.2vw,15px) 10px;
-        border-bottom:1px solid rgba(255,255,255,.03);
-        transition:all .4s ease;
-        border-radius:var(--radius-sm);
-        position:relative;
-    }
-    .prayer-row:last-child{border-bottom:none}
-    .prayer-row .p-icon{
-        font-size:clamp(16px,3vw,20px);text-align:center;
-        opacity:.5;transition:opacity .3s;
-    }
-    .prayer-row .p-name{
-        font-weight:500;font-size:clamp(14px,2.6vw,16px);
-        color:var(--cream-dim);transition:color .3s;
-    }
-    .prayer-row .p-name .p-arabic{
-        display:block;font-family:'Amiri',serif;
-        font-size:clamp(11px,2vw,13px);color:var(--text-dim);
-        font-weight:400;margin-top:-1px;opacity:.6;
-    }
-    .prayer-row .p-time{
-        font-size:clamp(16px,3vw,19px);font-weight:700;
-        color:var(--text-dim);font-variant-numeric:tabular-nums;
-        text-align:right;transition:color .3s;letter-spacing:-.3px;
-    }
-    .prayer-row .p-iqama{
-        font-size:clamp(10px,1.8vw,11px);font-weight:500;
-        color:rgba(212,168,67,.4);text-align:right;
-        min-width:42px;
-    }
-
-    /* ── Next prayer highlight ── */
-    .prayer-row.next{
-        background:linear-gradient(135deg,rgba(212,168,67,.1),rgba(212,168,67,.04));
-        border-bottom-color:transparent;
-        margin:4px -4px;padding-left:14px;padding-right:14px;
-        border:1px solid rgba(212,168,67,.2);
-    }
-    .prayer-row.next .p-icon{opacity:1}
-    .prayer-row.next .p-name{color:var(--gold);font-weight:600}
-    .prayer-row.next .p-time{color:var(--gold)}
-    .prayer-row.next .p-iqama{color:var(--gold);opacity:.7}
-
-    /* ── Passed prayer dim ── */
-    .prayer-row.passed{opacity:.4}
-    .prayer-row.passed .p-time{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.15)}
-
-    /* ── Footer controls ── */
-    .prayer-footer{padding:0 14px 16px}
-    .prayer-method-sel{
-        width:100%;padding:11px 32px 11px 12px;
-        border:1px solid rgba(212,168,67,.15);border-radius:var(--radius-sm);
-        background:rgba(255,255,255,.03)
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
-            no-repeat right 12px center;
-        color:var(--text);font-family:'Outfit',sans-serif;
-        font-size:clamp(12px,2.2vw,13px);font-weight:400;
-        -webkit-appearance:none;appearance:none;
-        transition:border-color .2s;
-    }
-    .prayer-method-sel:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
-    .prayer-method-sel option{background:#1a1a1a;color:#eee}
-    .prayer-loc{
-        text-align:center;font-size:11px;color:var(--text-dim);
-        margin-top:8px;padding-bottom:4px;
-    }
+    /* === Prayer Times Tab === */
+    .prayer-panel{padding:16px;overflow-y:auto;flex:1}
+    .prayer-hijri{text-align:center;font-family:'Amiri',serif;font-size:clamp(16px,3.5vw,22px);color:var(--gold);margin-bottom:12px}
+    .prayer-hijri-sub{text-align:center;font-size:12px;color:var(--text-dim);margin-bottom:16px}
+    .prayer-grid{display:flex;flex-direction:column;gap:6px}
+    .prayer-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(212,168,67,.08);border-radius:var(--radius-sm);transition:all .3s}
+    .prayer-row.next{background:var(--gold-dim);border-color:rgba(212,168,67,.35)}
+    .prayer-row .p-name{font-weight:600;font-size:14px;color:var(--text)}
+    .prayer-row .p-time{font-size:16px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+    .prayer-row .p-icon{font-size:18px;margin-right:8px}
+    .prayer-method-sel{width:100%;margin-top:12px;padding:10px;border:1px solid rgba(212,168,67,.2);border-radius:var(--radius-sm);background:rgba(255,255,255,.04);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;-webkit-appearance:none;appearance:none}
+    .prayer-loc{text-align:center;font-size:11px;color:var(--text-dim);margin-top:8px}
 
     /* === Native App Badge === */
     .native-badge{display:none;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.5px}
@@ -874,15 +716,18 @@
     .native-badge.mlkit{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.25)}
     .native-badge.offline{background:rgba(33,150,243,.15);color:#64b5f6;border:1px solid rgba(33,150,243,.25)}
 
+    }
     @media(min-width:768px){
         .shell{max-width:700px}
     }
 </style>
+```
 
 </head>
 <body>
     <div class="loader" id="loader"><div class="loader-ring"></div></div>
 
+```
 <!-- Tutorial -->
 <div class="tut-overlay" id="tutOverlay">
     <div class="tut-card">
@@ -937,7 +782,7 @@
 </div>
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
-<div class="ver">v4.5.2</div>
+<div class="ver">v4.1</div>
 
 <div class="shell">
     <div class="hdr">
@@ -1168,98 +1013,37 @@
             </div>
         </div>
 
-        <!-- === PRAYER TIMES (v4.1) === -->
+        <!-- === PRAYER TIMES (NEW v4.0) === -->
         <div class="panel" id="panelPrayer">
             <div class="prayer-panel">
-                <!-- Hero: Next prayer countdown -->
-                <div class="prayer-hero" id="prayerHero">
-                    <div class="prayer-hero-label">Next Prayer</div>
-                    <div class="prayer-progress" id="prayerProgress">
-                        <svg viewBox="0 0 100 100">
-                            <circle class="track" cx="50" cy="50" r="44"/>
-                            <circle class="fill" id="prayerArc" cx="50" cy="50" r="44"
-                                stroke-dasharray="276.46" stroke-dashoffset="276.46"/>
-                        </svg>
-                        <div class="center-icon" id="prayerHeroIcon">🕌</div>
-                    </div>
-                    <div class="prayer-hero-name" id="prayerHeroName">—</div>
-                    <div class="prayer-hero-arabic" id="prayerHeroArabic"></div>
-                    <div class="prayer-hero-countdown" id="prayerCountdown">
-                        <div class="cd-unit"><span class="cd-num" id="cdHours">--</span><span class="cd-label">hrs</span></div>
-                        <span class="cd-sep">:</span>
-                        <div class="cd-unit"><span class="cd-num" id="cdMins">--</span><span class="cd-label">min</span></div>
-                        <span class="cd-sep">:</span>
-                        <div class="cd-unit"><span class="cd-num" id="cdSecs">--</span><span class="cd-label">sec</span></div>
-                    </div>
-                    <div class="prayer-hero-at">Adhan at <span id="prayerHeroTime">--:--</span></div>
-                </div>
+                <div class="prayer-hijri" id="hijriDateDisplay">Loading...</div>
+                <div class="prayer-hijri-sub" id="hijriDateSub"></div>
 
-                <!-- Hijri / Gregorian date bar -->
-                <div class="prayer-date-bar">
-                    <span class="pdb-hijri" id="hijriDateDisplay">Loading...</span>
-                    <span class="pdb-dot"></span>
-                    <span class="pdb-greg" id="hijriDateSub"></span>
-                </div>
-
-                <!-- Prayer grid -->
                 <div class="prayer-grid" id="prayerGrid">
-                    <div class="prayer-row" data-prayer="Fajr">
-                        <span class="p-icon">🌅</span>
-                        <span class="p-name">Fajr<span class="p-arabic">الفجر</span></span>
-                        <span class="p-time" id="ptFajr">--:--</span>
-                        <span class="p-iqama" id="iqFajr"></span>
-                    </div>
-                    <div class="prayer-row" data-prayer="Sunrise">
-                        <span class="p-icon">☀️</span>
-                        <span class="p-name">Sunrise<span class="p-arabic">الشروق</span></span>
-                        <span class="p-time" id="ptSunrise">--:--</span>
-                        <span class="p-iqama"></span>
-                    </div>
-                    <div class="prayer-row" data-prayer="Dhuhr">
-                        <span class="p-icon">🌤️</span>
-                        <span class="p-name">Dhuhr<span class="p-arabic">الظهر</span></span>
-                        <span class="p-time" id="ptDhuhr">--:--</span>
-                        <span class="p-iqama" id="iqDhuhr"></span>
-                    </div>
-                    <div class="prayer-row" data-prayer="Asr">
-                        <span class="p-icon">🌇</span>
-                        <span class="p-name">Asr<span class="p-arabic">العصر</span></span>
-                        <span class="p-time" id="ptAsr">--:--</span>
-                        <span class="p-iqama" id="iqAsr"></span>
-                    </div>
-                    <div class="prayer-row" data-prayer="Maghrib">
-                        <span class="p-icon">🌆</span>
-                        <span class="p-name">Maghrib<span class="p-arabic">المغرب</span></span>
-                        <span class="p-time" id="ptMaghrib">--:--</span>
-                        <span class="p-iqama" id="iqMaghrib"></span>
-                    </div>
-                    <div class="prayer-row" data-prayer="Isha">
-                        <span class="p-icon">🌙</span>
-                        <span class="p-name">Isha<span class="p-arabic">العشاء</span></span>
-                        <span class="p-time" id="ptIsha">--:--</span>
-                        <span class="p-iqama" id="iqIsha"></span>
-                    </div>
+                    <div class="prayer-row" data-prayer="Fajr"><span class="p-icon">🌅</span><span class="p-name">Fajr</span><span class="p-time" id="ptFajr">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Sunrise"><span class="p-icon">☀️</span><span class="p-name">Sunrise</span><span class="p-time" id="ptSunrise">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Dhuhr"><span class="p-icon">🕐</span><span class="p-name">Dhuhr</span><span class="p-time" id="ptDhuhr">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Asr"><span class="p-icon">🌤️</span><span class="p-name">Asr</span><span class="p-time" id="ptAsr">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Maghrib"><span class="p-icon">🌅</span><span class="p-name">Maghrib</span><span class="p-time" id="ptMaghrib">--:--</span></div>
+                    <div class="prayer-row" data-prayer="Isha"><span class="p-icon">🌙</span><span class="p-name">Isha</span><span class="p-time" id="ptIsha">--:--</span></div>
                 </div>
 
-                <!-- Footer controls -->
-                <div class="prayer-footer">
-                    <select class="prayer-method-sel" id="prayerMethod" onchange="fetchPrayerTimes()">
-                        <option value="4">Umm Al-Qura (Saudi Arabia)</option>
-                        <option value="5">Egyptian General Authority</option>
-                        <option value="3">Muslim World League</option>
-                        <option value="2">ISNA (North America)</option>
-                        <option value="1">University of Islamic Sciences, Karachi</option>
-                        <option value="7">Institute of Geophysics, Tehran</option>
-                        <option value="8">Gulf Region</option>
-                        <option value="9">Kuwait</option>
-                        <option value="10">Qatar</option>
-                        <option value="11">Majlis Ugama Islam Singapura</option>
-                        <option value="12">UOIF (France)</option>
-                        <option value="13">Diyanet İşleri Başkanlığı (Turkey)</option>
-                        <option value="14">Spiritual Administration of Muslims (Russia)</option>
-                    </select>
-                    <div class="prayer-loc" id="prayerLocation">📍 Detecting location...</div>
-                </div>
+                <select class="prayer-method-sel" id="prayerMethod" onchange="fetchPrayerTimes()">
+                    <option value="4">Umm Al-Qura (Saudi Arabia)</option>
+                    <option value="5">Egyptian General Authority</option>
+                    <option value="3">Muslim World League</option>
+                    <option value="2">ISNA (North America)</option>
+                    <option value="1">University of Islamic Sciences, Karachi</option>
+                    <option value="7">Institute of Geophysics, Tehran</option>
+                    <option value="8">Gulf Region</option>
+                    <option value="9">Kuwait</option>
+                    <option value="10">Qatar</option>
+                    <option value="11">Majlis Ugama Islam Singapura</option>
+                    <option value="12">UOIF (France)</option>
+                    <option value="13">Diyanet İşleri Başkanlığı (Turkey)</option>
+                    <option value="14">Spiritual Administration of Muslims (Russia)</option>
+                </select>
+                <div class="prayer-loc" id="prayerLocation">📍 Detecting location...</div>
             </div>
         </div>
 
@@ -1326,14 +1110,13 @@
                     This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
                 </div>
                 <div class="about-text">
-                    <strong>v4.5 Features:</strong><br>
+                    <strong>v4.0 Features:</strong><br>
                     • Dual translation engine (Lingva + MyMemory fallback)<br>
                     • Quran reader with Arabic, transliteration &amp; translation<br>
                     • Du'a collection with categories and references<br>
                     • Translation caching to reduce API usage<br>
                     • Cross-platform PWA (Android + iOS ready)<br>
-                    • Dark theme for mosque-friendly use<br>
-                    • Android Chrome mic conflict fix (v4.2)
+                    • Dark theme for mosque-friendly use
                 </div>
 
                 <div class="dev-card">
@@ -1396,45 +1179,24 @@
     </div>
 
     <div style="text-align:center;padding:8px 0 4px;">
-        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fkhalecl.github.io%2Ftools%2Fkhutbah.html&label=Visitors&icon=graph-up&color=%23d4a843" alt="Visitors" style="opacity:.5;height:18px">
+        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fkhalecl.github.io%2FKhutbah%2F&label=Visitors&icon=graph-up&color=%23d4a843" alt="Visitors" style="opacity:.5;height:18px">
     </div>
 </div>
+```
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   KHUTBAH LIVE TRANSLATOR v4.5
-   
-   v4.5: Debounce Android isFinal (600ms), replace dead Lingva hosts
-   v4.4: Skip getUserMedia on Android (kills recognition)
-   v4.3: Deferred recognition.start(), re-apply config on restart
+   KHUTBAH LIVE TRANSLATOR v4.0
+   Cross-platform PWA — Android (Chrome) + iOS (Safari)
+   Dual Translation Engine: Lingva (primary) + MyMemory (fallback)
+   + Quran Reader + Du'a Collection
    ═══════════════════════════════════════════════════════════════ */
-
-// ── Platform Detection (v4.1) ──
-const IS_ANDROID = /Android/i.test(navigator.userAgent);
-const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-const IS_CHROME = /Chrome/i.test(navigator.userAgent) && !/Edge|OPR/i.test(navigator.userAgent);
-const RESTART_DELAY = IS_ANDROID ? 500 : 100; // Android needs longer delay between recognition restarts
-
-// ── Cross-browser fetch with timeout (replaces AbortSignal.timeout) ──
-function fetchWithTimeout(url, options = {}, timeoutMs = 6000) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    const mergedOptions = { ...options, signal: controller.signal };
-    return fetch(url, mergedOptions).then(res => {
-        clearTimeout(timer);
-        return res;
-    }).catch(err => {
-        clearTimeout(timer);
-        throw err;
-    });
-}
 
 // ── State ──
 let recognition, isListening = false, isRecording = false;
-let recognitionRestarting = false; // v4.1: guard against double-start on Android
 let mediaRecorder, audioChunks = [], translations = [];
 let currentFontSize = 18, audioCtx, analyser, stream = null, wakeLock = null;
-let processedStream = null; // cleaned audio stream for visualization only (NOT for speech recognition)
+let processedStream = null; // cleaned audio stream for speech recognition
 let audioNodes = {};        // references to audio processing nodes
 let tutStep = 1;
 const TUT_TOTAL = 6;
@@ -1452,16 +1214,110 @@ let cfg = {
     noiseFilter: true, voiceGain: 1.5, noiseGate: 20
 };
 
-// ── Lingva instances (v4.5: updated to working instances) ──
+// ── Lingva instances (rotation for reliability) ──
+// Updated v4.0: more reliable hosts + LibreTranslate fallback
 const LINGVA_HOSTS = [
     'https://lingva.ml',
-    'https://translate.plausibility.cloud',
+    'https://lingva.thedaviddelta.com',
+    'https://lingva.lunar.icu',
+    'https://lingva.garuber.eu',
 ];
 let lingvaIdx = 0;
+
+// ═══════════════════════════════════════════════
+// OFFLINE CACHE SYSTEM (v4.1)
+// Stores prayer times, duas, and quran text in
+// localStorage so the app works without internet.
+// Data auto-refreshes when connectivity returns.
+// ═══════════════════════════════════════════════
+const CACHE_KEYS = {
+    PRAYER_DATA: 'kht_cache_prayer',
+    PRAYER_COORDS: 'kht_cache_coords',
+    PRAYER_METHOD: 'kht_cache_method',
+    DUAS: 'kht_cache_duas',
+    QURAN_PREFIX: 'kht_cache_quran_',  // + surah number
+    QURAN_INDEX: 'kht_cache_quran_idx', // list of cached surah numbers
+};
+
+// Cross-browser fetch with timeout (replaces AbortSignal.timeout)
+function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(url, { ...options, signal: controller.signal })
+        .then(res => { clearTimeout(timer); return res; })
+        .catch(err => { clearTimeout(timer); throw err; });
+}
+
+// ── Generic cache helpers ──
+function cacheSet(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
+    } catch (e) {
+        // localStorage full — evict oldest quran caches
+        console.warn('[Cache] Storage full, evicting old quran caches');
+        evictOldQuranCache();
+        try { localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch(e2) {}
+    }
+}
+function cacheGet(key, maxAgeMs) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (maxAgeMs && (Date.now() - parsed.ts > maxAgeMs)) return null; // expired
+        return parsed.data;
+    } catch(e) { return null; }
+}
+function evictOldQuranCache() {
+    // Remove cached surahs beyond the 20 most recently accessed
+    try {
+        const idx = JSON.parse(localStorage.getItem(CACHE_KEYS.QURAN_INDEX) || '[]');
+        while (idx.length > 20) {
+            const old = idx.shift();
+            localStorage.removeItem(CACHE_KEYS.QURAN_PREFIX + old);
+        }
+        localStorage.setItem(CACHE_KEYS.QURAN_INDEX, JSON.stringify(idx));
+    } catch(e) {}
+}
+
+// Track cached quran surah numbers
+function quranCacheTrack(surahNum) {
+    try {
+        let idx = JSON.parse(localStorage.getItem(CACHE_KEYS.QURAN_INDEX) || '[]');
+        idx = idx.filter(n => n !== surahNum); // remove if already present
+        idx.push(surahNum); // add to end (most recent)
+        if (idx.length > 30) {
+            const old = idx.shift();
+            localStorage.removeItem(CACHE_KEYS.QURAN_PREFIX + old);
+        }
+        localStorage.setItem(CACHE_KEYS.QURAN_INDEX, JSON.stringify(idx));
+    } catch(e) {}
+}
+
+// ── Online/Offline status ──
+let isOnline = navigator.onLine;
+window.addEventListener('online', () => {
+    isOnline = true;
+    console.log('[Cache] Back online — refreshing stale data');
+    // Silently refresh prayer times if tab was loaded
+    if (typeof prayerLoaded !== 'undefined' && prayerLoaded && prayerTimesData) {
+        fetchPrayerTimes(true); // true = silent refresh, don't show loading
+    }
+    // Silently refresh duas
+    if (duaData && duaData.duas && duaData.duas.length > 0) {
+        fetchDuasFromNetwork(true);
+    }
+});
+window.addEventListener('offline', () => {
+    isOnline = false;
+    console.log('[Cache] Offline — serving from cache');
+});
 
 // LibreTranslate public instances (third fallback engine)
 const LIBRE_HOSTS = [
     'https://libretranslate.com',
+    'https://translate.terraprint.co',
+    'https://trans.zillyhuhn.com',
 ];
 
 // ══════════════════════════════════════════════
@@ -1478,10 +1334,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTgt = localStorage.getItem('kht_tgt');
     if (savedSrc) document.getElementById('srcLang').value = savedSrc;
     if (savedTgt) document.getElementById('tgtLang').value = savedTgt;
-
-    // v4.1: Log platform for debugging
-    console.log('[v4.5] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
-        IS_CHROME ? 'Chrome' : 'Other', '| Restart delay:', RESTART_DELAY + 'ms');
 });
 
 // Save language selections on change
@@ -1490,7 +1342,7 @@ document.getElementById('srcLang').addEventListener('change', function() {
     if (recognition && isListening) {
         recognition.lang = this.value;
         try { recognition.stop(); } catch(e){}
-        setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY);
+        setTimeout(() => { if (isListening) try { recognition.start(); } catch(e){} }, 200);
     }
 });
 document.getElementById('tgtLang').addEventListener('change', function() {
@@ -1564,38 +1416,39 @@ function runViz(rawStream) {
         const source = audioCtx.createMediaStreamSource(rawStream);
 
         // ── Build audio processing chain ──
+        // source → highpass → lowpass → compressor → gate → gain → destination
         let lastNode = source;
 
         if (cfg.noiseFilter) {
-            // Highpass: remove low-frequency rumble
+            // Highpass: remove low-frequency rumble (AC hum, traffic, fans)
             const highpass = audioCtx.createBiquadFilter();
             highpass.type = 'highpass';
-            highpass.frequency.value = 200;
+            highpass.frequency.value = 200;  // cut below 200Hz
             highpass.Q.value = 0.7;
             lastNode.connect(highpass);
             lastNode = highpass;
             audioNodes.highpass = highpass;
 
-            // Lowpass: remove high-frequency hiss
+            // Lowpass: remove high-frequency hiss/feedback
             const lowpass = audioCtx.createBiquadFilter();
             lowpass.type = 'lowpass';
-            lowpass.frequency.value = 5000;
+            lowpass.frequency.value = 5000;  // cut above 5kHz
             lowpass.Q.value = 0.7;
             lastNode.connect(lowpass);
             lastNode = lowpass;
             audioNodes.lowpass = lowpass;
 
-            // Presence boost: enhance speech clarity
+            // Presence boost: enhance speech clarity (1kHz-3kHz range)
             const presence = audioCtx.createBiquadFilter();
             presence.type = 'peaking';
             presence.frequency.value = 2000;
-            presence.gain.value = 4;
+            presence.gain.value = 4;  // +4dB boost in speech range
             presence.Q.value = 1;
             lastNode.connect(presence);
             lastNode = presence;
             audioNodes.presence = presence;
 
-            // Dynamics compressor
+            // Dynamics compressor: normalize volume (loud/quiet speakers)
             const compressor = audioCtx.createDynamicsCompressor();
             compressor.threshold.value = -30;
             compressor.knee.value = 15;
@@ -1614,10 +1467,11 @@ function runViz(rawStream) {
         lastNode = gainNode;
         audioNodes.gain = gainNode;
 
-        // v4.1: Skip ScriptProcessor noise gate on Android (deprecated API, causes issues)
-        if (cfg.noiseGate > 0 && !IS_ANDROID) {
-            const gateNode = audioCtx.createScriptProcessor(2048, 1, 1);
-            const gateThreshold = cfg.noiseGate / 100;
+        // Noise gate via ScriptProcessor (mutes audio below threshold)
+        let gateNode = null;
+        if (cfg.noiseGate > 0) {
+            gateNode = audioCtx.createScriptProcessor(2048, 1, 1);
+            const gateThreshold = cfg.noiseGate / 100; // normalize 0-50 → 0-0.5
             gateNode.onaudioprocess = (e) => {
                 const input = e.inputBuffer.getChannelData(0);
                 const output = e.outputBuffer.getChannelData(0);
@@ -1632,13 +1486,12 @@ function runViz(rawStream) {
             audioNodes.gate = gateNode;
         }
 
-        // v4.1: processedStream is for visualization + recording ONLY
-        // SpeechRecognition uses its own internal mic — we cannot feed it a custom stream
+        // Create processed stream for speech recognition
         const destNode = audioCtx.createMediaStreamDestination();
         lastNode.connect(destNode);
         processedStream = destNode.stream;
 
-        // Analyser for visualization
+        // Also connect to analyser for visualization (from the processed chain)
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 256;
         lastNode.connect(analyser);
@@ -1659,46 +1512,14 @@ function runViz(rawStream) {
             requestAnimationFrame(loop);
         })();
     } catch(e) {
-        console.warn('[v4.5] Audio processing setup failed:', e);
+        console.warn('Audio processing setup failed, using raw stream:', e);
         processedStream = rawStream;
     }
 }
 
 // ══════════════════════════════════════════════
-// SPEECH RECOGNITION (v4.1 — Android-safe)
+// SPEECH RECOGNITION
 // ══════════════════════════════════════════════
-
-// v4.1: Safe start that prevents InvalidStateError on Android Chrome
-function safeStartRecognition() {
-    if (!recognition || !isListening || recognitionRestarting) return;
-    recognitionRestarting = true;
-
-    // v4.3: Re-apply config before every restart — Android Chrome
-    // can lose these properties between recognition sessions
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = document.getElementById('srcLang').value;
-    if (IS_ANDROID) recognition.maxAlternatives = 1;
-
-    const doStart = () => {
-        try {
-            recognition.start();
-        } catch(e) {
-            if (e.name !== 'InvalidStateError') {
-                console.warn('[v4.5] Recognition restart failed:', e.message);
-            }
-        }
-        setTimeout(() => { recognitionRestarting = false; }, RESTART_DELAY);
-    };
-
-    // v4.3: Deferred start on Android (same reason as initial start)
-    if (IS_ANDROID) {
-        setTimeout(doStart, 50);
-    } else {
-        doStart();
-    }
-}
-
 async function toggleListen() {
     if (!isListening) await startListen();
     else stopListen();
@@ -1711,54 +1532,31 @@ async function startListen() {
         return;
     }
     try {
-        // v4.2 FIX: On Android Chrome, getUserMedia and SpeechRecognition BOTH
-        // try to access the mic. If getUserMedia grabs it first, recognition.start()
-        // gets blocked or receives no audio. Solution: start recognition FIRST on Android,
-        // then optionally open getUserMedia for visualization after a delay.
+        stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+                // Advanced constraints for noisy environments
+                channelCount: 1,
+                sampleRate: { ideal: 16000 },
+                latency: { ideal: 0 }
+            }
+        });
+        if (cfg.wakeLock) await reqWakeLock();
+        runViz(stream);
+        setupRecorder(processedStream || stream);
 
         recognition = new SR();
         recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = document.getElementById('srcLang').value;
 
-        // v4.1: Android Chrome needs maxAlternatives for stability
-        if (IS_ANDROID) {
-            recognition.maxAlternatives = 1;
-        }
-
-        // On non-Android: get mic stream first (for viz + recording)
-        if (!IS_ANDROID) {
-            const audioConstraints = {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
-                channelCount: 1,
-                sampleRate: { ideal: 16000 },
-                latency: { ideal: 0 }
-            };
-            stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
-            runViz(stream);
-            setupRecorder(processedStream || stream);
-        }
-
-        if (cfg.wakeLock) await reqWakeLock();
-
         let transcript = '', silenceTimer, bufferFlushTimer, restarts = 0;
 
         recognition.onstart = () => {
             isListening = true; restarts = 0;
-            recognitionRestarting = false;
             updMicUI(true);
-            console.log('[v4.5] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS');
-
-            // v4.4: On Android, DO NOT open getUserMedia AT ALL.
-            // Confirmed via remote debugging: even opening getUserMedia AFTER
-            // recognition.start() kills the recognition audio stream.
-            // The standalone test (no getUserMedia) works perfectly.
-            // Trade-off: no visualizer bars on Android, but recognition works.
-            if (IS_ANDROID && !stream) {
-                console.log('[v4.5] Android: skipping getUserMedia (conflicts with recognition)');
-            }
         };
 
         recognition.onresult = (e) => {
@@ -1769,53 +1567,25 @@ async function startListen() {
                 if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
                 else interim = e.results[i][0].transcript;
             }
-            // v4.5.1: On Android, each progressive isFinal already contains the
-            // full text so far ("الرحمن" → "الرحمن الرحيم" → "الرحمن الرحيم مالك").
-            // Appending causes duplication. Replace instead.
-            if (final) {
-                if (IS_ANDROID) {
-                    transcript = final; // replace — Android finals are cumulative
-                } else {
-                    transcript += final; // append — desktop finals are incremental
-                }
-            }
+            if (final) transcript += final;
             document.getElementById('stsTxt').textContent = interim ? '🎤 Speech detected...' : '🎤 Listening...';
 
-            // v4.5: On Android, every progressive recognition fires as isFinal
-            // (e.g. "الرحمن" → "الرحمن الرحيم" → "الرحمن الرحيم مالك")
-            // Each would trigger a separate translation = duplicates + API spam.
-            // Fix: debounce — wait 600ms after last isFinal before translating.
             if (cfg.instant && final && transcript.trim()) {
                 clearTimeout(bufferFlushTimer);
-                clearTimeout(silenceTimer);
-
-                if (IS_ANDROID) {
-                    // Debounce: only translate after 600ms of no new isFinal
-                    silenceTimer = setTimeout(() => {
-                        if (transcript.trim()) {
-                            doTranslate(transcript.trim());
-                            transcript = '';
-                        }
-                    }, 600);
-                } else {
-                    // Desktop/iOS: translate immediately on isFinal (works correctly)
-                    bufferFlushTimer = null;
-                    doTranslate(transcript.trim());
-                    transcript = '';
-                }
+                doTranslate(transcript.trim());
+                transcript = '';
             } else if (!cfg.instant && (transcript + interim).trim()) {
-                clearTimeout(silenceTimer);
+                // Silence-based flush
                 silenceTimer = setTimeout(() => {
                     if (transcript.trim()) {
                         clearTimeout(bufferFlushTimer);
-                        bufferFlushTimer = null;
                         doTranslate(transcript.trim());
                         transcript = '';
                     }
                 }, cfg.silenceWait * 1000);
             }
 
-            // Forced buffer flush (long continuous speech without pauses)
+            // Forced buffer flush — handles continuous speech without pauses
             if (transcript.trim() && !bufferFlushTimer) {
                 bufferFlushTimer = setTimeout(() => {
                     bufferFlushTimer = null;
@@ -1828,77 +1598,37 @@ async function startListen() {
             }
         };
 
-        // v4.2: Handle onnomatch — Android fires this when the language code
-        // doesn't match well. Log it but don't stop; recognition will retry.
-        recognition.onnomatch = () => {
-            console.warn('[v4.5] No match — speech not recognized for current language');
-            document.getElementById('stsTxt').textContent = '🎤 No match — try speaking louder...';
-        };
-
         recognition.onerror = (e) => {
-            console.warn('[v4.5] Recognition error:', e.error, e.message || '');
-            if ((e.error === 'no-speech' || e.error === 'audio-capture' || e.error === 'network') && isListening && restarts < 15) {
+            if ((e.error === 'no-speech' || e.error === 'audio-capture') && isListening && restarts < 15) {
                 restarts++;
-                setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 2);
+                setTimeout(() => { if (isListening) try { recognition.start(); } catch(er){} }, 300);
             } else if (e.error === 'not-allowed') {
                 alert('Microphone permission denied. Please allow access in your browser settings.');
                 stopListen();
             } else if (e.error === 'language-not-supported') {
                 alert('This language is not supported for speech recognition on your device. Please try a different source language.');
                 stopListen();
-            } else if (e.error === 'aborted') {
-                if (isListening && restarts < 15) {
-                    restarts++;
-                    setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 3);
-                }
             }
         };
 
         recognition.onend = () => {
-            console.log('[v4.5] Recognition ended, isListening:', isListening);
             if (transcript.trim()) {
                 doTranslate(transcript.trim());
                 transcript = '';
             }
             if (isListening) {
-                // v4.1: Use platform-appropriate delay and safe start
-                setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY);
+                setTimeout(() => { if (isListening) try { recognition.start(); } catch(e){} }, 100);
             }
         };
 
-        // v4.3: Log exact config before starting (debug Android issues)
-        console.log('[v4.5] Recognition config:', {
-            lang: recognition.lang,
-            continuous: recognition.continuous,
-            interimResults: recognition.interimResults,
-            maxAlternatives: recognition.maxAlternatives
-        });
-
-        // v4.3: On Android, defer start() to next tick so the engine
-        // registers all properties. The test script worked because the
-        // user clicked a button (natural tick boundary). Direct start()
-        // in the same synchronous flow causes Android to ignore config.
-        if (IS_ANDROID) {
-            setTimeout(() => {
-                try {
-                    recognition.start();
-                    console.log('[v4.5] Android: recognition.start() called (deferred)');
-                } catch(e) {
-                    console.error('[v4.5] Android start failed:', e);
-                }
-            }, 50);
-        } else {
-            recognition.start();
-        }
+        recognition.start();
     } catch (e) {
-        console.error('[v4.5] startListen error:', e);
         alert('Microphone access denied.\n\nPlease allow microphone permission in your browser/device settings.');
     }
 }
 
 function stopListen() {
     isListening = false;
-    recognitionRestarting = false;
     if (recognition) try { recognition.stop(); } catch(e){}
     if (audioCtx) try { audioCtx.close(); } catch(e){} audioCtx = null;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
@@ -1915,78 +1645,23 @@ function updMicUI(on) {
     if (on) {
         btn.className = 'mic live'; btn.textContent = '⏹️';
         dot.classList.add('on'); txt.textContent = '🎤 Listening...';
-        // v4.4: On Android, run a simple CSS-animated fake visualizer
-        // since we can't use getUserMedia (it kills recognition)
-        if (IS_ANDROID) startFakeViz();
     } else {
         btn.className = 'mic idle'; btn.textContent = '🎤';
         dot.classList.remove('on'); dot.style.boxShadow = 'none';
         txt.textContent = 'Tap microphone to start';
-        if (IS_ANDROID) stopFakeViz();
         document.querySelectorAll('.viz-bar').forEach(b => {
             b.style.height = '8px'; b.style.background = 'rgba(212,168,67,.3)';
         });
     }
 }
 
-// v4.4: Fake animated visualizer for Android (no getUserMedia needed)
-let fakeVizInterval = null;
-function startFakeViz() {
-    const bars = document.querySelectorAll('.viz-bar');
-    fakeVizInterval = setInterval(() => {
-        bars.forEach(bar => {
-            const h = 6 + Math.random() * 28;
-            bar.style.height = h + 'px';
-            bar.style.background = h > 15 ? 'var(--gold)' : 'rgba(212,168,67,.3)';
-        });
-    }, 150);
-}
-function stopFakeViz() {
-    clearInterval(fakeVizInterval);
-    fakeVizInterval = null;
-}
-
 // ══════════════════════════════════════════════
-// TRANSLATION ENGINE (v4.1 — AbortSignal.timeout replaced)
+// TRANSLATION ENGINE
 // ══════════════════════════════════════════════
 async function doTranslate(text) {
     if (!text?.trim()) return;
-    text = text.trim();
     const last = translations[translations.length - 1];
-    if (last?.orig === text) return;
-
-    // v4.5.2: Prevent overlap from split Android recognition sessions.
-    // If >40% of words in new text were already in the last translation,
-    // merge by keeping only the NEW words appended to previous.
-    if (IS_ANDROID && last?.orig) {
-        const prevWords = last.orig.split(/\s+/);
-        const newWords = text.split(/\s+/);
-        // Count how many words from new text appear at end of previous
-        let overlap = 0;
-        for (let i = 0; i < Math.min(prevWords.length, newWords.length); i++) {
-            if (prevWords[prevWords.length - 1 - i] === newWords[i]) overlap++;
-            else break;
-        }
-        if (overlap > 0 && overlap >= newWords.length * 0.4) {
-            // Strip overlapping prefix, keep only genuinely new words
-            const uniqueNew = newWords.slice(overlap).join(' ').trim();
-            if (!uniqueNew) return; // entirely overlapping, skip
-            text = uniqueNew;
-            console.log('[v4.5.2] Stripped', overlap, 'overlapping words, translating:', text);
-        }
-        // Also skip if new text is a subset of previous
-        if (last.orig.includes(text) || text.includes(last.orig)) {
-            if (text.length <= last.orig.length) return; // skip shorter/equal duplicate
-            // If new is longer, only translate the extra part
-            const extra = text.replace(last.orig, '').trim();
-            if (extra && extra.split(/\s+/).length >= 2) {
-                text = extra;
-                console.log('[v4.5.2] Subset detected, translating extra:', text);
-            } else {
-                return; // too short to bother
-            }
-        }
-    }
+    if (last?.orig === text.trim()) return;
 
     const src = document.getElementById('srcLang').value.split('-')[0];
     const tgt = document.getElementById('tgtLang').value;
@@ -2012,7 +1687,7 @@ async function doTranslate(text) {
     if (!result && (engine === 'auto' || engine === 'mymemory')) {
         result = await tryMyMemory(text, src, tgt);
     }
-    // Engine 3: LibreTranslate
+    // Engine 3: LibreTranslate (auto-fallback when engine=auto)
     if (!result && engine === 'auto') {
         result = await tryLibre(text, src, tgt);
     }
@@ -2032,6 +1707,7 @@ async function doTranslate(text) {
     updApiUI();
 }
 
+// Truncate text for Lingva URL length limits
 function truncateForUrl(text, maxChars) {
     if (text.length <= maxChars) return text;
     const trimmed = text.substring(0, maxChars);
@@ -2040,14 +1716,17 @@ function truncateForUrl(text, maxChars) {
 }
 
 async function tryLingva(text, src, tgt) {
+    // Lingva uses text in URL path, so we must keep URL length reasonable
     const safeText = truncateForUrl(text, 800);
 
     for (let attempt = 0; attempt < LINGVA_HOSTS.length; attempt++) {
         const host = LINGVA_HOSTS[(lingvaIdx + attempt) % LINGVA_HOSTS.length];
         try {
             const url = `${host}/api/v1/${src}/${tgt}/${encodeURIComponent(safeText)}`;
-            // v4.1: Use fetchWithTimeout instead of AbortSignal.timeout
-            const res = await fetchWithTimeout(url, { mode: 'cors' }, 6000);
+            const res = await fetch(url, {
+                signal: AbortSignal.timeout(6000),
+                mode: 'cors'
+            });
             if (!res.ok) throw new Error(res.status);
             const data = await res.json();
             if (data.translation && data.translation.trim()) {
@@ -2065,8 +1744,7 @@ async function tryLingva(text, src, tgt) {
 async function tryMyMemory(text, src, tgt) {
     try {
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${src}|${tgt}&de=khutbah.app@translator.net`;
-        // v4.1: Use fetchWithTimeout
-        const res = await fetchWithTimeout(url, {}, 8000);
+        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
         const data = await res.json();
         if (data.responseStatus === 200 && data.responseData?.translatedText) {
             const trans = data.responseData.translatedText;
@@ -2090,16 +1768,16 @@ async function tryMyMemory(text, src, tgt) {
 async function tryLibre(text, src, tgt) {
     for (const host of LIBRE_HOSTS) {
         try {
-            // v4.1: Use fetchWithTimeout
-            const res = await fetchWithTimeout(`${host}/translate`, {
+            const res = await fetch(`${host}/translate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ q: text, source: src, target: tgt, format: 'text' })
-            }, 8000);
+                body: JSON.stringify({ q: text, source: src, target: tgt, format: 'text' }),
+                signal: AbortSignal.timeout(8000)
+            });
             if (!res.ok) continue;
             const data = await res.json();
             if (data.translatedText && data.translatedText.trim()) {
-                apiStats.lingvaOk++;
+                apiStats.lingvaOk++; // count as successful
                 return data.translatedText;
             }
         } catch(e) { /* try next host */ }
@@ -2250,10 +1928,6 @@ async function relWakeLock() {
 document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState === 'visible' && isListening && cfg.wakeLock) {
         await reqWakeLock();
-        // v4.1: Also restart recognition on Android when returning to foreground
-        if (IS_ANDROID && recognition) {
-            setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY);
-        }
     }
 });
 
@@ -2264,7 +1938,7 @@ function sendFB() {
     const type = document.getElementById('fbType').value;
     const msg = document.getElementById('fbMsg').value.trim();
     if (!name || !email || !type || !msg) { alert('Please fill all fields'); return; }
-    const body = `*Khutbah v4.5 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
+    const body = `*Khutbah v4.0 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
     window.open(`https://wa.me/201227822099?text=${body}`, '_blank');
     ['fbName','fbEmail','fbMsg'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fbType').value = '';
@@ -2316,6 +1990,7 @@ function saveSettings() {
     cfg.noiseFilter = document.getElementById('sNoiseFilter').checked;
     cfg.voiceGain = parseFloat(document.getElementById('sGain').value);
     cfg.noiseGate = parseInt(document.getElementById('sGate').value);
+    // Live-update gain if currently listening
     if (audioNodes.gain) audioNodes.gain.gain.value = cfg.voiceGain;
     try { localStorage.setItem('kht_cfg_v3', JSON.stringify(cfg)); } catch(e) {}
     alert('Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.');
@@ -2326,6 +2001,7 @@ function saveSettings() {
 // QURAN TAB — Uses Al-Quran Cloud API
 // ══════════════════════════════════════════════
 
+// Surah list (114 surahs)
 const SURAH_LIST = [
     "Al-Fatiha","Al-Baqarah","Aal-Imran","An-Nisa","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Tawbah","Yunus",
     "Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra","Al-Kahf","Maryam","Taha",
@@ -2353,6 +2029,7 @@ function initSurahList() {
         opt.textContent = `${i + 1}. ${name}`;
         sel.appendChild(opt);
     });
+    // Default to Al-Fatiha
     sel.value = '1';
     loadSurah();
 }
@@ -2363,18 +2040,40 @@ async function loadSurah() {
 
     const container = document.getElementById('quranContent');
 
+    // Check in-memory cache first
     if (quranCache[num]) {
         renderSurah(quranCache[num]);
         return;
     }
 
-    container.innerHTML = '<div class="quran-loading"><div class="spinner"></div>Loading Surah...</div>';
+    // Check localStorage cache (works offline)
+    const cached = cacheGet(CACHE_KEYS.QURAN_PREFIX + num);
+    if (cached) {
+        quranCache[num] = cached;
+        renderSurah(cached);
+        console.log('[Cache] Quran surah', num, 'loaded from offline cache');
+        // If online, silently refresh in background
+        if (isOnline) fetchSurahFromAPI(num, true);
+        return;
+    }
 
+    // No cache — must fetch from network
+    if (!isOnline) {
+        container.innerHTML = '<div class="quran-loading">📴 You\'re offline.<br><small style="color:var(--text-dim)">This surah hasn\'t been cached yet. Open it once while online and it will be available offline.</small></div>';
+        return;
+    }
+
+    container.innerHTML = '<div class="quran-loading"><div class="spinner"></div>Loading Surah...</div>';
+    await fetchSurahFromAPI(num, false);
+}
+
+async function fetchSurahFromAPI(num, silent) {
+    const container = document.getElementById('quranContent');
     try {
         const [arRes, enRes, trRes] = await Promise.all([
-            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}`, {}, 10000),
-            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`, {}, 10000),
-            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.transliteration`, {}, 10000)
+            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}`, {}, 12000),
+            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`, {}, 12000),
+            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.transliteration`, {}, 12000)
         ]);
 
         const arData = await arRes.json();
@@ -2397,12 +2096,19 @@ async function loadSurah() {
             };
 
             quranCache[num] = surahData;
-            renderSurah(surahData);
-        } else {
+            // Persist to localStorage for offline access
+            cacheSet(CACHE_KEYS.QURAN_PREFIX + num, surahData);
+            quranCacheTrack(num);
+            console.log('[Cache] Quran surah', num, 'saved to offline cache');
+
+            if (!silent) renderSurah(surahData);
+        } else if (!silent) {
             container.innerHTML = '<div class="quran-loading">Failed to load. Please try again.</div>';
         }
     } catch (e) {
-        container.innerHTML = '<div class="quran-loading">Network error. Please check your connection.</div>';
+        if (!silent) {
+            container.innerHTML = '<div class="quran-loading">Network error. Please check your connection.</div>';
+        }
     }
 }
 
@@ -2433,6 +2139,7 @@ function renderSurah(data) {
     });
 
     container.innerHTML = html;
+    // Re-highlight if currently playing this surah
     if (qaState.playing && qaState.surahNum == document.getElementById('surahSelect').value) {
         qaHighlightAyah(qaState.currentAyah);
     }
@@ -2460,7 +2167,7 @@ const qaState = {
     surahNum: null,
     currentAyah: 0,
     totalAyahs: 0,
-    audioUrls: [],
+    audioUrls: [],   // per-ayah audio URLs
     audio: new Audio(),
     reciter: 'ar.alafasy',
     speed: 1,
@@ -2469,12 +2176,13 @@ const qaState = {
 
 const QA_SPEEDS = [0.75, 1, 1.25, 1.5];
 
+// Fetch audio URLs for a surah from AlQuran.cloud
 async function qaFetchAudio(surahNum, reciter) {
     const cacheKey = `audio_${surahNum}_${reciter}`;
     if (quranCache[cacheKey]) return quranCache[cacheKey];
 
     try {
-        const res = await fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${surahNum}/${reciter}`, {}, 10000);
+        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}/${reciter}`);
         const data = await res.json();
         if (data.code === 200) {
             const urls = data.data.ayahs.map(a => a.audio);
@@ -2487,6 +2195,7 @@ async function qaFetchAudio(surahNum, reciter) {
     return null;
 }
 
+// Start playing from a specific ayah number (1-based)
 async function qaPlayFromAyah(ayahNum) {
     const surahNum = document.getElementById('surahSelect').value;
     if (!surahNum) return;
@@ -2495,6 +2204,7 @@ async function qaPlayFromAyah(ayahNum) {
     qaState.reciter = reciter;
     qaState.surahNum = surahNum;
 
+    // Show loading
     document.getElementById('qaInfo').textContent = 'Loading audio...';
     document.getElementById('qaPlayBtn').disabled = true;
 
@@ -2528,6 +2238,7 @@ function qaPlayCurrent() {
     qaState.playing = true;
     qaState.paused = false;
 
+    // UI updates
     const playBtn = document.getElementById('qaPlayBtn');
     playBtn.textContent = '⏸';
     playBtn.classList.add('playing');
@@ -2535,9 +2246,11 @@ function qaPlayCurrent() {
     qaHighlightAyah(qaState.currentAyah);
     qaUpdateInfo();
 
+    // Progress tracking
     clearInterval(qaState.progressTimer);
     qaState.progressTimer = setInterval(qaUpdateProgress, 200);
 
+    // When ayah finishes, play next
     qaState.audio.onended = () => {
         if (qaState.currentAyah < qaState.totalAyahs) {
             qaState.currentAyah++;
@@ -2562,6 +2275,7 @@ function qaPlayCurrent() {
 
 function qaTogglePlay() {
     if (!qaState.playing && !qaState.paused) {
+        // Start from ayah 1 if not already playing
         qaPlayFromAyah(1);
         return;
     }
@@ -2595,6 +2309,7 @@ function qaStop() {
     document.getElementById('qaProgressFill').style.width = '0%';
     document.getElementById('qaInfo').textContent = '—';
 
+    // Remove all highlights
     document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => {
         el.classList.remove('ayah-playing');
     });
@@ -2617,12 +2332,14 @@ function qaPlayPrev() {
 }
 
 function qaHighlightAyah(ayahNum) {
+    // Remove previous highlights
     document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => {
         el.classList.remove('ayah-playing');
     });
     const card = document.getElementById(`ayah-${ayahNum}`);
     if (card) {
         card.classList.add('ayah-playing');
+        // Smooth scroll into view
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
@@ -2665,6 +2382,7 @@ function qaChangeReciter() {
         qaState.playing = false;
         qaState.paused = false;
         clearInterval(qaState.progressTimer);
+        // Re-start with new reciter
         qaPlayFromAyah(currentAyah);
     }
 }
@@ -2674,6 +2392,7 @@ function qaChangeReciter() {
 // DU'A TAB — Loaded from external duas.json
 // ══════════════════════════════════════════════
 
+// ── CONFIGURE THIS: Path to your duas.json file ──
 const DUAS_JSON_URL = 'duas.json';
 
 let duaData = { categories: [], duas: [] };
@@ -2683,36 +2402,83 @@ async function loadDuasFromJSON() {
     const container = document.getElementById('duaContent');
     const filterBar = document.getElementById('duaFilterBar');
 
+    // Try loading from localStorage cache first
+    const cached = cacheGet(CACHE_KEYS.DUAS);
+    if (cached) {
+        duaData = cached;
+        buildDuaUI(filterBar);
+        renderDuas('all');
+        console.log('[Cache] Du\'as loaded from offline cache');
+        // If online, silently refresh in background
+        if (isOnline) fetchDuasFromNetwork(true);
+        return;
+    }
+
+    // No cache — fetch from network
+    if (!isOnline) {
+        container.innerHTML = `
+            <div class="quran-loading">
+                📴 You're offline and Du'as haven't been cached yet.<br>
+                <small style="color:var(--text-dim)">They'll be cached automatically when you open this tab online.</small>
+            </div>`;
+        return;
+    }
+
+    await fetchDuasFromNetwork(false);
+}
+
+async function fetchDuasFromNetwork(silent) {
+    const container = document.getElementById('duaContent');
+    const filterBar = document.getElementById('duaFilterBar');
+
     try {
         const res = await fetchWithTimeout(DUAS_JSON_URL, {}, 10000);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         duaData = await res.json();
 
-        let filterHTML = '<button class="dua-tag on" onclick="filterDua(\'all\',this)">All</button>';
-        duaData.categories.forEach(cat => {
-            filterHTML += `<button class="dua-tag" onclick="filterDua('${cat.id}',this)">${cat.icon || ''} ${cat.label}</button>`;
-        });
-        filterBar.innerHTML = filterHTML;
+        // Save to localStorage for offline
+        cacheSet(CACHE_KEYS.DUAS, duaData);
+        console.log('[Cache] Du\'as saved to offline cache');
 
-        renderDuas('all');
-
+        if (!silent) {
+            buildDuaUI(filterBar);
+            renderDuas('all');
+        }
     } catch (e) {
-        console.warn('Failed to load duas.json, using built-in fallback:', e.message);
-        container.innerHTML = `
-            <div class="quran-loading">
-                Could not load Du'as file.<br>
-                <small style="color:var(--text-dim)">Make sure <strong>duas.json</strong> is in the same folder as this HTML file.</small><br><br>
-                <button class="bar-btn" onclick="loadDuasFromJSON()" style="margin:0 auto">🔄 Retry</button>
-            </div>
-        `;
-        filterBar.innerHTML = `
-            <button class="dua-tag on" onclick="filterDua('all',this)">All</button>
-            <button class="dua-tag" onclick="filterDua('daily',this)">Daily</button>
-            <button class="dua-tag" onclick="filterDua('salah',this)">Salah</button>
-            <button class="dua-tag" onclick="filterDua('morning',this)">Morning</button>
-            <button class="dua-tag" onclick="filterDua('evening',this)">Evening</button>
-        `;
+        console.warn('Failed to load duas.json:', e.message);
+        if (!silent) {
+            // Check cache one more time (maybe it was saved in a previous session)
+            const fallback = cacheGet(CACHE_KEYS.DUAS);
+            if (fallback) {
+                duaData = fallback;
+                buildDuaUI(filterBar);
+                renderDuas('all');
+                return;
+            }
+            container.innerHTML = `
+                <div class="quran-loading">
+                    Could not load Du'as file.<br>
+                    <small style="color:var(--text-dim)">Make sure <strong>duas.json</strong> is in the same folder as this HTML file.</small><br><br>
+                    <button class="bar-btn" onclick="loadDuasFromJSON()" style="margin:0 auto">🔄 Retry</button>
+                </div>
+            `;
+            filterBar.innerHTML = `
+                <button class="dua-tag on" onclick="filterDua('all',this)">All</button>
+                <button class="dua-tag" onclick="filterDua('daily',this)">Daily</button>
+                <button class="dua-tag" onclick="filterDua('salah',this)">Salah</button>
+                <button class="dua-tag" onclick="filterDua('morning',this)">Morning</button>
+                <button class="dua-tag" onclick="filterDua('evening',this)">Evening</button>
+            `;
+        }
     }
+}
+
+function buildDuaUI(filterBar) {
+    let filterHTML = '<button class="dua-tag on" onclick="filterDua(\'all\',this)">All</button>';
+    duaData.categories.forEach(cat => {
+        filterHTML += `<button class="dua-tag" onclick="filterDua('${cat.id}',this)">${cat.icon || ''} ${cat.label}</button>`;
+    });
+    filterBar.innerHTML = filterHTML;
 }
 
 function renderDuas(filter) {
@@ -2747,34 +2513,74 @@ function filterDua(cat, btn) {
 }
 
 // ══════════════════════════════════════════════
-// PRAYER TIMES (v4.1 — AlAdhan API)
+// PRAYER TIMES (v4.0 — AlAdhan API)
 // ══════════════════════════════════════════════
 let prayerTimesData = null;
 let userCoords = null;
 
-async function fetchPrayerTimes() {
+async function fetchPrayerTimes(silentRefresh) {
     const method = document.getElementById('prayerMethod').value;
     const locEl = document.getElementById('prayerLocation');
 
+    // If offline, serve from cache immediately
+    if (!isOnline && !silentRefresh) {
+        const cachedPrayer = cacheGet(CACHE_KEYS.PRAYER_DATA);
+        const cachedCoords = cacheGet(CACHE_KEYS.PRAYER_COORDS);
+        if (cachedPrayer) {
+            prayerTimesData = cachedPrayer;
+            if (cachedCoords) userCoords = cachedCoords;
+            renderPrayerTimes(cachedPrayer);
+            locEl.textContent = '📴 Offline — showing cached prayer times';
+            console.log('[Cache] Prayer times loaded from offline cache');
+            return;
+        }
+        locEl.textContent = '📴 Offline — no cached prayer data yet.';
+        return;
+    }
+
     try {
+        // Get user location
         if (!userCoords) {
-            locEl.textContent = '📍 Detecting location...';
-            const pos = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
-                    enableHighAccuracy: false, timeout: 10000, maximumAge: 300000
+            // Try cached coords first
+            const cachedCoords = cacheGet(CACHE_KEYS.PRAYER_COORDS);
+            if (cachedCoords) {
+                userCoords = cachedCoords;
+                console.log('[Cache] Using cached coordinates');
+            } else {
+                if (!navigator.geolocation) {
+                    locEl.textContent = '📍 Geolocation not supported.';
+                    // Try cache as last resort
+                    const cachedPrayer = cacheGet(CACHE_KEYS.PRAYER_DATA);
+                    if (cachedPrayer) { prayerTimesData = cachedPrayer; renderPrayerTimes(cachedPrayer); }
+                    return;
+                }
+                if (!silentRefresh) locEl.textContent = '📍 Detecting location...';
+                const pos = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: false, timeout: 10000, maximumAge: 300000
+                    });
                 });
-            });
-            userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                // Cache the coordinates
+                cacheSet(CACHE_KEYS.PRAYER_COORDS, userCoords);
+            }
         }
 
+        // Fetch from AlAdhan API
         const url = `https://api.aladhan.com/v1/timings?latitude=${userCoords.lat}&longitude=${userCoords.lng}&method=${method}`;
         const res = await fetchWithTimeout(url, {}, 10000);
         const data = await res.json();
 
         if (data.code === 200) {
             prayerTimesData = data.data;
+            // Cache prayer data for offline
+            cacheSet(CACHE_KEYS.PRAYER_DATA, data.data);
+            cacheSet(CACHE_KEYS.PRAYER_METHOD, method);
+            console.log('[Cache] Prayer times saved to offline cache');
+
             renderPrayerTimes(data.data);
 
+            // Qibla direction
             try {
                 const geoRes = await fetchWithTimeout(`https://api.aladhan.com/v1/qibla/${userCoords.lat}/${userCoords.lng}`, {}, 8000);
                 const geoData = await geoRes.json();
@@ -2784,12 +2590,35 @@ async function fetchPrayerTimes() {
             }
         }
     } catch (e) {
-        if (e.name === 'GeolocationPositionError' || e.message?.includes('Location')) {
-            locEl.textContent = '📍 Location access denied. Enable in settings.';
-        } else {
-            locEl.textContent = '⚠️ Could not load prayer times. Check internet.';
-        }
         console.warn('Prayer times error:', e);
+
+        // GeolocationPositionError uses .code (1=denied, 2=unavailable, 3=timeout)
+        if (e.code === 1 || e.code === 2 || e.code === 3) {
+            const msgs = {
+                1: '📍 Location denied. Enable in browser/device settings.',
+                2: '📍 Location unavailable. Check GPS/network.',
+                3: '📍 Location timed out. Try again.'
+            };
+            locEl.textContent = msgs[e.code] || '📍 Location error.';
+            // Even with location error, try cached coords
+            const cachedCoords = cacheGet(CACHE_KEYS.PRAYER_COORDS);
+            if (cachedCoords && !userCoords) {
+                userCoords = cachedCoords;
+                locEl.textContent += ' Using last known location.';
+                return fetchPrayerTimes(silentRefresh); // retry with cached coords
+            }
+        } else {
+            locEl.textContent = '⚠️ Could not load prayer times.';
+        }
+
+        // Serve from cache as fallback
+        const cachedPrayer = cacheGet(CACHE_KEYS.PRAYER_DATA);
+        if (cachedPrayer && !silentRefresh) {
+            prayerTimesData = cachedPrayer;
+            renderPrayerTimes(cachedPrayer);
+            locEl.textContent += ' (cached)';
+            console.log('[Cache] Prayer fallback from offline cache');
+        }
     }
 }
 
@@ -2797,91 +2626,29 @@ function renderPrayerTimes(data) {
     const timings = data.timings;
     const prayers = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
 
-    const arabicNames = {
-        Fajr: 'الفجر', Sunrise: 'الشروق', Dhuhr: 'الظهر',
-        Asr: 'العصر', Maghrib: 'المغرب', Isha: 'العشاء'
-    };
-
-    const prayerIcons = {
-        Fajr: '🌅', Sunrise: '☀️', Dhuhr: '🌤️',
-        Asr: '🌇', Maghrib: '🌆', Isha: '🌙'
-    };
-
-    const iqamaOffsets = {
-        Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 5, Isha: 15
-    };
-
     prayers.forEach(p => {
         const el = document.getElementById('pt' + p);
         if (el) el.textContent = timings[p] || '--:--';
-
-        const iqEl = document.getElementById('iq' + p);
-        if (iqEl && iqamaOffsets[p] && timings[p]) {
-            const [h, m] = timings[p].split(':').map(Number);
-            const iqMins = h * 60 + m + iqamaOffsets[p];
-            const iqH = Math.floor(iqMins / 60) % 24;
-            const iqM = iqMins % 60;
-            iqEl.textContent = 'Iqama ' + String(iqH).padStart(2,'0') + ':' + String(iqM).padStart(2,'0');
-        }
     });
 
+    // Highlight next prayer
     const now = new Date();
     const nowMins = now.getHours() * 60 + now.getMinutes();
-    let nextPrayer = null, nextPrayerMins = null, prevPrayerMins = null;
-
-    const prayerMins = {};
-    prayers.forEach(p => {
-        if (timings[p]) {
-            const [h, m] = timings[p].split(':').map(Number);
-            prayerMins[p] = h * 60 + m;
-        }
-    });
-
-    for (const p of prayers) {
-        if (prayerMins[p] !== undefined && prayerMins[p] > nowMins) {
-            nextPrayer = p;
-            nextPrayerMins = prayerMins[p];
-            break;
-        }
-    }
-
-    if (!nextPrayer) {
-        nextPrayer = 'Fajr';
-        nextPrayerMins = prayerMins['Fajr'] + 24 * 60;
-    }
-
-    const prayerKeys = Object.keys(prayerMins);
-    for (let i = prayerKeys.length - 1; i >= 0; i--) {
-        if (prayerMins[prayerKeys[i]] <= nowMins) {
-            prevPrayerMins = prayerMins[prayerKeys[i]];
-            break;
-        }
-    }
-    if (prevPrayerMins === null) prevPrayerMins = prayerMins['Isha'] ? prayerMins['Isha'] - 24 * 60 : nowMins;
-
+    let nextFound = false;
     document.querySelectorAll('.prayer-row').forEach(row => {
-        row.classList.remove('next', 'passed');
+        row.classList.remove('next');
         const pName = row.dataset.prayer;
-        if (pName === nextPrayer) {
-            row.classList.add('next');
-        } else if (prayerMins[pName] !== undefined && prayerMins[pName] <= nowMins) {
-            row.classList.add('passed');
+        const timeStr = timings[pName];
+        if (timeStr && !nextFound) {
+            const [h, m] = timeStr.split(':').map(Number);
+            if (h * 60 + m > nowMins) {
+                row.classList.add('next');
+                nextFound = true;
+            }
         }
     });
 
-    document.getElementById('prayerHeroName').textContent = nextPrayer;
-    document.getElementById('prayerHeroArabic').textContent = arabicNames[nextPrayer] || '';
-    document.getElementById('prayerHeroIcon').textContent = prayerIcons[nextPrayer] || '🕌';
-    document.getElementById('prayerHeroTime').textContent = timings[nextPrayer] || '--:--';
-
-    window._nextPrayerMins = nextPrayerMins;
-    window._prevPrayerMins = prevPrayerMins;
-    window._prayerTimings = timings;
-
-    if (window._prayerCountdownInterval) clearInterval(window._prayerCountdownInterval);
-    updatePrayerCountdown();
-    window._prayerCountdownInterval = setInterval(updatePrayerCountdown, 1000);
-
+    // Hijri date
     if (data.date) {
         const h = data.date.hijri;
         const g = data.date.gregorian;
@@ -2889,46 +2656,8 @@ function renderPrayerTimes(data) {
             document.getElementById('hijriDateDisplay').textContent =
                 `${h.day} ${h.month.en} ${h.year} AH`;
             document.getElementById('hijriDateSub').textContent =
-                `${g?.weekday?.en || ''}, ${g?.date || ''}`;
+                `${h.month.ar} • ${g?.weekday?.en || ''}, ${g?.date || ''}`;
         }
-    }
-}
-
-function updatePrayerCountdown() {
-    const now = new Date();
-    const nowTotalSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-    let targetSecs = (window._nextPrayerMins || 0) * 60;
-
-    let diff = targetSecs - nowTotalSecs;
-    if (diff < 0) diff += 24 * 3600;
-
-    const hours = Math.floor(diff / 3600);
-    const mins = Math.floor((diff % 3600) / 60);
-    const secs = diff % 60;
-
-    const cdH = document.getElementById('cdHours');
-    const cdM = document.getElementById('cdMins');
-    const cdS = document.getElementById('cdSecs');
-    if (cdH) cdH.textContent = String(hours).padStart(2, '0');
-    if (cdM) cdM.textContent = String(mins).padStart(2, '0');
-    if (cdS) cdS.textContent = String(secs).padStart(2, '0');
-
-    const prevSecs = (window._prevPrayerMins || 0) * 60;
-    let totalSpan = targetSecs - prevSecs;
-    if (totalSpan <= 0) totalSpan += 24 * 3600;
-    let elapsed = nowTotalSecs - prevSecs;
-    if (elapsed < 0) elapsed += 24 * 3600;
-    const pct = Math.min(1, Math.max(0, elapsed / totalSpan));
-
-    const arc = document.getElementById('prayerArc');
-    if (arc) {
-        const circumference = 2 * Math.PI * 44;
-        arc.style.strokeDashoffset = circumference * (1 - pct);
-    }
-
-    if (diff <= 0) {
-        clearInterval(window._prayerCountdownInterval);
-        setTimeout(fetchPrayerTimes, 2000);
     }
 }
 
@@ -2944,11 +2673,16 @@ goTab = function(name, btn) {
 };
 
 // ══════════════════════════════════════════════
-// NATIVE BRIDGE DETECTION (v4.1)
+// NATIVE BRIDGE DETECTION (v4.0)
+// Enhances with ML Kit, Native STT, Foreground Service
+// when running inside the Android app (Option B).
+// Falls back gracefully to web APIs in browser.
 // ══════════════════════════════════════════════
 
+// Override translation to try ML Kit first (if native app)
 const _origDoTranslate = doTranslate;
 doTranslate = async function(text) {
+    // If running in native app with ML Kit available
     if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) {
         try {
             const src = document.getElementById('srcLang').value.split('-')[0];
@@ -2969,12 +2703,14 @@ doTranslate = async function(text) {
                 return;
             }
         } catch (e) {
-            console.warn('[v4.5] ML Kit failed, using web fallback:', e.message);
+            console.warn('[v4.0] ML Kit failed, using web fallback:', e.message);
         }
     }
+    // Fallback to original web translation
     return _origDoTranslate(text);
 };
 
+// Override wake lock to use native when available
 const _origReqWakeLock = reqWakeLock;
 reqWakeLock = async function() {
     if (window.KhutbahEnhanced) {
@@ -2992,15 +2728,18 @@ relWakeLock = async function() {
     return _origRelWakeLock();
 };
 
+// Listen for native bridge ready event
 window.addEventListener('nativeBridgeReady', function(e) {
     const f = e.detail;
-    console.log('[v4.5] Native bridge ready:', f);
+    console.log('[v4.0] Native bridge ready:', f);
 
+    // Update status text
     const stsTxt = document.getElementById('stsTxt');
     if (stsTxt && f.hasMLKit) {
         stsTxt.textContent = '🟢 ML Kit Ready • Tap mic to start';
     }
 
+    // Pre-download translation model for selected language pair
     if (f.hasMLKit) {
         const src = document.getElementById('srcLang').value.split('-')[0];
         const tgt = document.getElementById('tgtLang').value;
@@ -3008,6 +2747,7 @@ window.addEventListener('nativeBridgeReady', function(e) {
     }
 });
 
+// Pre-download model when language changes (native only)
 document.getElementById('tgtLang').addEventListener('change', function() {
     if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) {
         const src = document.getElementById('srcLang').value.split('-')[0];
