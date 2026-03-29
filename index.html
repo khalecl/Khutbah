@@ -14,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
-    <title>Khutbah Live Translator v4.2</title>
+    <title>Khutbah Live Translator v4.3</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -937,7 +937,7 @@
 </div>
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
-<div class="ver">v4.2</div>
+<div class="ver">v4.3</div>
 
 <div class="shell">
     <div class="hdr">
@@ -1326,7 +1326,7 @@
                     This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
                 </div>
                 <div class="about-text">
-                    <strong>v4.2 Features:</strong><br>
+                    <strong>v4.3 Features:</strong><br>
                     • Dual translation engine (Lingva + MyMemory fallback)<br>
                     • Quran reader with Arabic, transliteration &amp; translation<br>
                     • Du'a collection with categories and references<br>
@@ -1402,20 +1402,19 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   KHUTBAH LIVE TRANSLATOR v4.2
+   KHUTBAH LIVE TRANSLATOR v4.3
    Cross-platform PWA — Android (Chrome) + iOS (Safari)
-   Dual Translation Engine: Lingva (primary) + MyMemory (fallback)
-   + Quran Reader + Du'a Collection
    
-   v4.2 FIXES (Android Chrome):
-   - getUserMedia now opens AFTER recognition.start() on Android (prevents mic conflict)
-   - If getUserMedia fails on Android, recognition still works (no visualizer is OK)
-   - Added onnomatch handler for Android speech recognition
+   v4.3 FIXES (Android Chrome — confirmed via remote debugging):
+   - recognition.start() deferred to next tick on Android (setTimeout 50ms)
+     Root cause: Android Chrome ignores .continuous/.interimResults/.lang
+     when start() is called in the same synchronous flow as property assignment.
+     The standalone test worked because button click provided natural tick boundary.
+   - safeStartRecognition() re-applies ALL config before every restart
+     (Android Chrome can lose properties between recognition sessions)
+   - getUserMedia opens AFTER recognition.start() on Android (mic conflict fix)
    - AbortSignal.timeout() replaced with manual AbortController
-   - Increased SpeechRecognition restart delay (500ms vs 100ms)
-   - Removed unsupported getUserMedia constraints (sampleRate, latency)
-   - Recognition state guard prevents InvalidStateError
-   - Skipped deprecated ScriptProcessor noise gate on Android
+   - Deprecated ScriptProcessor skipped on Android
    ═══════════════════════════════════════════════════════════════ */
 
 // ── Platform Detection (v4.1) ──
@@ -1493,7 +1492,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedTgt) document.getElementById('tgtLang').value = savedTgt;
 
     // v4.1: Log platform for debugging
-    console.log('[v4.2] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
+    console.log('[v4.3] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
         IS_CHROME ? 'Chrome' : 'Other', '| Restart delay:', RESTART_DELAY + 'ms');
 });
 
@@ -1672,7 +1671,7 @@ function runViz(rawStream) {
             requestAnimationFrame(loop);
         })();
     } catch(e) {
-        console.warn('[v4.2] Audio processing setup failed:', e);
+        console.warn('[v4.3] Audio processing setup failed:', e);
         processedStream = rawStream;
     }
 }
@@ -1685,17 +1684,31 @@ function runViz(rawStream) {
 function safeStartRecognition() {
     if (!recognition || !isListening || recognitionRestarting) return;
     recognitionRestarting = true;
-    try {
-        recognition.start();
-    } catch(e) {
-        console.warn('[v4.2] Recognition start failed:', e.message);
-        // If already started, that's fine — Android sometimes reports this
-        if (e.name === 'InvalidStateError') {
-            // Already running, ignore
+
+    // v4.3: Re-apply config before every restart — Android Chrome
+    // can lose these properties between recognition sessions
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = document.getElementById('srcLang').value;
+    if (IS_ANDROID) recognition.maxAlternatives = 1;
+
+    const doStart = () => {
+        try {
+            recognition.start();
+        } catch(e) {
+            if (e.name !== 'InvalidStateError') {
+                console.warn('[v4.3] Recognition restart failed:', e.message);
+            }
         }
+        setTimeout(() => { recognitionRestarting = false; }, RESTART_DELAY);
+    };
+
+    // v4.3: Deferred start on Android (same reason as initial start)
+    if (IS_ANDROID) {
+        setTimeout(doStart, 50);
+    } else {
+        doStart();
     }
-    // Clear the guard after a safe window
-    setTimeout(() => { recognitionRestarting = false; }, RESTART_DELAY);
 }
 
 async function toggleListen() {
@@ -1748,7 +1761,7 @@ async function startListen() {
             isListening = true; restarts = 0;
             recognitionRestarting = false;
             updMicUI(true);
-            console.log('[v4.2] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS');
+            console.log('[v4.3] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS');
 
             // v4.2: On Android, open getUserMedia AFTER recognition has started
             // This avoids the mic conflict. Delay ensures recognition has the mic lock.
@@ -1765,11 +1778,11 @@ async function startListen() {
                         });
                         runViz(stream);
                         setupRecorder(processedStream || stream);
-                        console.log('[v4.2] Android: visualizer stream opened after recognition');
+                        console.log('[v4.3] Android: visualizer stream opened after recognition');
                     } catch(vizErr) {
                         // If getUserMedia fails on Android, that's OK — recognition still works
                         // Just no visualizer bars. Better than broken recognition.
-                        console.warn('[v4.2] Android: visualizer stream failed (recognition still active):', vizErr.message);
+                        console.warn('[v4.3] Android: visualizer stream failed (recognition still active):', vizErr.message);
                     }
                 }, 1000);
             }
@@ -1818,12 +1831,12 @@ async function startListen() {
         // v4.2: Handle onnomatch — Android fires this when the language code
         // doesn't match well. Log it but don't stop; recognition will retry.
         recognition.onnomatch = () => {
-            console.warn('[v4.2] No match — speech not recognized for current language');
+            console.warn('[v4.3] No match — speech not recognized for current language');
             document.getElementById('stsTxt').textContent = '🎤 No match — try speaking louder...';
         };
 
         recognition.onerror = (e) => {
-            console.warn('[v4.2] Recognition error:', e.error, e.message || '');
+            console.warn('[v4.3] Recognition error:', e.error, e.message || '');
             if ((e.error === 'no-speech' || e.error === 'audio-capture' || e.error === 'network') && isListening && restarts < 15) {
                 restarts++;
                 setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 2);
@@ -1842,7 +1855,7 @@ async function startListen() {
         };
 
         recognition.onend = () => {
-            console.log('[v4.2] Recognition ended, isListening:', isListening);
+            console.log('[v4.3] Recognition ended, isListening:', isListening);
             if (transcript.trim()) {
                 doTranslate(transcript.trim());
                 transcript = '';
@@ -1853,9 +1866,32 @@ async function startListen() {
             }
         };
 
-        recognition.start();
+        // v4.3: Log exact config before starting (debug Android issues)
+        console.log('[v4.3] Recognition config:', {
+            lang: recognition.lang,
+            continuous: recognition.continuous,
+            interimResults: recognition.interimResults,
+            maxAlternatives: recognition.maxAlternatives
+        });
+
+        // v4.3: On Android, defer start() to next tick so the engine
+        // registers all properties. The test script worked because the
+        // user clicked a button (natural tick boundary). Direct start()
+        // in the same synchronous flow causes Android to ignore config.
+        if (IS_ANDROID) {
+            setTimeout(() => {
+                try {
+                    recognition.start();
+                    console.log('[v4.3] Android: recognition.start() called (deferred)');
+                } catch(e) {
+                    console.error('[v4.3] Android start failed:', e);
+                }
+            }, 50);
+        } else {
+            recognition.start();
+        }
     } catch (e) {
-        console.error('[v4.2] startListen error:', e);
+        console.error('[v4.3] startListen error:', e);
         alert('Microphone access denied.\n\nPlease allow microphone permission in your browser/device settings.');
     }
 }
@@ -2173,7 +2209,7 @@ function sendFB() {
     const type = document.getElementById('fbType').value;
     const msg = document.getElementById('fbMsg').value.trim();
     if (!name || !email || !type || !msg) { alert('Please fill all fields'); return; }
-    const body = `*Khutbah v4.2 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
+    const body = `*Khutbah v4.3 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
     window.open(`https://wa.me/201227822099?text=${body}`, '_blank');
     ['fbName','fbEmail','fbMsg'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fbType').value = '';
@@ -2878,7 +2914,7 @@ doTranslate = async function(text) {
                 return;
             }
         } catch (e) {
-            console.warn('[v4.2] ML Kit failed, using web fallback:', e.message);
+            console.warn('[v4.3] ML Kit failed, using web fallback:', e.message);
         }
     }
     return _origDoTranslate(text);
@@ -2903,7 +2939,7 @@ relWakeLock = async function() {
 
 window.addEventListener('nativeBridgeReady', function(e) {
     const f = e.detail;
-    console.log('[v4.2] Native bridge ready:', f);
+    console.log('[v4.3] Native bridge ready:', f);
 
     const stsTxt = document.getElementById('stsTxt');
     if (stsTxt && f.hasMLKit) {
