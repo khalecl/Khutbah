@@ -710,6 +710,114 @@
     .prayer-method-sel{width:100%;margin-top:12px;padding:10px;border:1px solid rgba(212,168,67,.2);border-radius:var(--radius-sm);background:rgba(255,255,255,.04);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;-webkit-appearance:none;appearance:none}
     .prayer-loc{text-align:center;font-size:11px;color:var(--text-dim);margin-top:8px}
 
+    /* === Qibla Compass === */
+    .qibla-section{
+        padding:16px;text-align:center;
+    }
+    .qibla-toggle{
+        width:100%;padding:14px;border:1px solid rgba(212,168,67,.2);
+        border-radius:var(--radius-sm);background:rgba(212,168,67,.06);
+        color:var(--gold);font-family:'Outfit',sans-serif;
+        font-size:14px;font-weight:600;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;gap:8px;
+        transition:all .3s;
+    }
+    .qibla-toggle:active{transform:scale(.97)}
+    .qibla-toggle.active{
+        background:rgba(212,168,67,.15);border-color:rgba(212,168,67,.4);
+    }
+    .qibla-compass-wrap{
+        display:none;flex-direction:column;align-items:center;
+        padding:20px 0 10px;animation:fade-up .4s ease;
+    }
+    .qibla-compass-wrap.on{display:flex}
+    .qibla-compass{
+        width:clamp(220px,55vw,280px);height:clamp(220px,55vw,280px);
+        position:relative;margin:0 auto;
+    }
+    .qibla-compass-ring{
+        width:100%;height:100%;border-radius:50%;
+        border:3px solid rgba(212,168,67,.2);
+        background:radial-gradient(circle,rgba(15,61,36,.9) 0%,rgba(10,40,24,.95) 100%);
+        position:relative;
+        transition:transform .15s ease-out;
+        box-shadow:0 0 40px rgba(0,0,0,.5),inset 0 0 30px rgba(0,0,0,.3);
+    }
+    /* Cardinal direction markers on the rotating ring */
+    .qibla-cardinal{
+        position:absolute;font-size:clamp(11px,2.5vw,14px);
+        font-weight:700;color:var(--text-dim);
+        width:30px;text-align:center;
+    }
+    .qibla-cardinal.north{top:8px;left:50%;transform:translateX(-50%);color:var(--gold)}
+    .qibla-cardinal.south{bottom:8px;left:50%;transform:translateX(-50%)}
+    .qibla-cardinal.east{right:8px;top:50%;transform:translateY(-50%)}
+    .qibla-cardinal.west{left:8px;top:50%;transform:translateY(-50%)}
+    /* Degree tick marks */
+    .qibla-ticks{position:absolute;inset:0}
+    .qibla-tick{
+        position:absolute;top:0;left:50%;width:1px;
+        transform-origin:bottom center;
+        background:rgba(212,168,67,.15);
+    }
+    .qibla-tick.major{height:12px;width:2px;background:rgba(212,168,67,.35)}
+    .qibla-tick.minor{height:6px}
+    /* Kaaba needle (static — always points to Qibla) */
+    .qibla-needle{
+        position:absolute;top:50%;left:50%;
+        width:4px;height:42%;
+        transform:translate(-50%,-100%);
+        transform-origin:bottom center;
+        z-index:5;
+    }
+    .qibla-needle-body{
+        width:100%;height:100%;
+        background:linear-gradient(to top,rgba(212,168,67,.6),var(--gold));
+        border-radius:2px 2px 0 0;
+        position:relative;
+    }
+    .qibla-needle-body::after{
+        content:'';position:absolute;top:-6px;left:50%;
+        transform:translateX(-50%);
+        width:0;height:0;
+        border-left:7px solid transparent;
+        border-right:7px solid transparent;
+        border-bottom:10px solid var(--gold);
+    }
+    /* Kaaba icon at center */
+    .qibla-center{
+        position:absolute;top:50%;left:50%;
+        transform:translate(-50%,-50%);z-index:10;
+        width:clamp(44px,10vw,56px);height:clamp(44px,10vw,56px);
+        background:rgba(10,40,24,.95);border:2px solid rgba(212,168,67,.3);
+        border-radius:50%;display:flex;align-items:center;
+        justify-content:center;font-size:clamp(22px,5vw,28px);
+        box-shadow:0 0 20px rgba(0,0,0,.5);
+    }
+    /* North indicator (red dot, fixed outside ring) */
+    .qibla-north-dot{
+        position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+        width:12px;height:12px;background:#e53935;
+        border-radius:50%;border:2px solid rgba(10,40,24,.9);
+        z-index:6;box-shadow:0 0 8px rgba(229,57,53,.5);
+    }
+    .qibla-degree{
+        font-size:clamp(28px,6vw,36px);font-weight:700;
+        color:var(--gold);margin-top:14px;
+        font-variant-numeric:tabular-nums;
+    }
+    .qibla-degree-label{
+        font-size:12px;color:var(--text-dim);margin-top:2px;
+    }
+    .qibla-status{
+        font-size:11px;color:var(--text-dim);
+        margin-top:10px;padding:6px 14px;
+        background:rgba(255,255,255,.03);border-radius:20px;
+        display:inline-block;
+    }
+    .qibla-status.ok{color:#81c784}
+    .qibla-status.warn{color:#ffb74d}
+
     /* === Native App Badge === */
     .native-badge{display:none;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.5px}
     .native-badge.on{display:inline-flex}
@@ -1026,6 +1134,34 @@
                     <div class="prayer-row" data-prayer="Asr"><span class="p-icon">🌤️</span><span class="p-name">Asr</span><span class="p-time" id="ptAsr">--:--</span></div>
                     <div class="prayer-row" data-prayer="Maghrib"><span class="p-icon">🌅</span><span class="p-name">Maghrib</span><span class="p-time" id="ptMaghrib">--:--</span></div>
                     <div class="prayer-row" data-prayer="Isha"><span class="p-icon">🌙</span><span class="p-name">Isha</span><span class="p-time" id="ptIsha">--:--</span></div>
+                </div>
+
+                <!-- Qibla Compass -->
+                <div class="qibla-section">
+                    <button class="qibla-toggle" id="qiblaToggle" onclick="toggleQibla()">
+                        🕋 Show Qibla Compass
+                    </button>
+                    <div class="qibla-compass-wrap" id="qiblaWrap">
+                        <div class="qibla-compass">
+                            <div class="qibla-north-dot"></div>
+                            <div class="qibla-compass-ring" id="qiblaRing">
+                                <!-- Tick marks generated by JS -->
+                                <div class="qibla-ticks" id="qiblaTicks"></div>
+                                <span class="qibla-cardinal north">N</span>
+                                <span class="qibla-cardinal south">S</span>
+                                <span class="qibla-cardinal east">E</span>
+                                <span class="qibla-cardinal west">W</span>
+                                <!-- Qibla needle -->
+                                <div class="qibla-needle" id="qiblaNeedle">
+                                    <div class="qibla-needle-body"></div>
+                                </div>
+                            </div>
+                            <div class="qibla-center">🕋</div>
+                        </div>
+                        <div class="qibla-degree" id="qiblaDegree">—°</div>
+                        <div class="qibla-degree-label">Qibla Direction from North</div>
+                        <div class="qibla-status" id="qiblaStatus">Initializing compass...</div>
+                    </div>
                 </div>
 
                 <select class="prayer-method-sel" id="prayerMethod" onchange="fetchPrayerTimes()">
@@ -2659,6 +2795,235 @@ function renderPrayerTimes(data) {
                 `${h.month.ar} • ${g?.weekday?.en || ''}, ${g?.date || ''}`;
         }
     }
+}
+
+// ══════════════════════════════════════════════
+// QIBLA COMPASS (v4.1)
+// Uses DeviceOrientation API for real compass,
+// falls back to static direction display.
+// ══════════════════════════════════════════════
+let qiblaAngle = null;        // Qibla bearing from true north (degrees)
+let deviceHeading = null;     // Current device compass heading
+let qiblaActive = false;
+let qiblaOrientationHandler = null;
+
+// Kaaba coordinates
+const KAABA_LAT = 21.4225;
+const KAABA_LNG = 39.8262;
+
+// Calculate Qibla bearing using the great circle formula
+function calcQiblaBearing(lat, lng) {
+    const toRad = d => d * Math.PI / 180;
+    const toDeg = r => r * 180 / Math.PI;
+    const lat1 = toRad(lat), lng1 = toRad(lng);
+    const lat2 = toRad(KAABA_LAT), lng2 = toRad(KAABA_LNG);
+    const dLng = lng2 - lng1;
+    const x = Math.sin(dLng) * Math.cos(lat2);
+    const y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+    let bearing = toDeg(Math.atan2(x, y));
+    return (bearing + 360) % 360;
+}
+
+// Build tick marks on compass ring
+function buildQiblaTicks() {
+    const container = document.getElementById('qiblaTicks');
+    if (!container) return;
+    let html = '';
+    for (let deg = 0; deg < 360; deg += 10) {
+        const isMajor = deg % 30 === 0;
+        const h = isMajor ? 12 : 6;
+        html += `<div class="qibla-tick ${isMajor ? 'major' : 'minor'}" style="left:calc(50% - ${isMajor ? 1 : 0.5}px);height:${h}px;transform:rotate(${deg}deg) translateY(0);transform-origin:center ${container.offsetHeight ? container.offsetHeight/2 : 110}px"></div>`;
+    }
+    container.innerHTML = html;
+}
+
+// Simpler tick approach using absolute positioning on circle edge
+function buildQiblaTicksSVG() {
+    // Use a lightweight approach — skip individual tick divs for mobile performance
+    // The cardinal letters (N/S/E/W) + degree display is sufficient
+}
+
+function toggleQibla() {
+    const wrap = document.getElementById('qiblaWrap');
+    const btn = document.getElementById('qiblaToggle');
+    qiblaActive = !qiblaActive;
+
+    if (qiblaActive) {
+        wrap.classList.add('on');
+        btn.classList.add('active');
+        btn.innerHTML = '🕋 Hide Qibla Compass';
+        startQiblaCompass();
+    } else {
+        wrap.classList.remove('on');
+        btn.classList.remove('active');
+        btn.innerHTML = '🕋 Show Qibla Compass';
+        stopQiblaCompass();
+    }
+}
+
+async function startQiblaCompass() {
+    const statusEl = document.getElementById('qiblaStatus');
+    const degreeEl = document.getElementById('qiblaDegree');
+
+    // Calculate Qibla angle from user coords
+    if (userCoords) {
+        qiblaAngle = calcQiblaBearing(userCoords.lat, userCoords.lng);
+    } else {
+        // Try cached coords
+        const cached = cacheGet(CACHE_KEYS.PRAYER_COORDS);
+        if (cached) {
+            userCoords = cached;
+            qiblaAngle = calcQiblaBearing(cached.lat, cached.lng);
+        } else {
+            // Try to get location
+            try {
+                statusEl.textContent = 'Getting location...';
+                statusEl.className = 'qibla-status warn';
+                const pos = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true, timeout: 10000, maximumAge: 300000
+                    });
+                });
+                userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                cacheSet(CACHE_KEYS.PRAYER_COORDS, userCoords);
+                qiblaAngle = calcQiblaBearing(userCoords.lat, userCoords.lng);
+            } catch(e) {
+                statusEl.textContent = 'Location unavailable — cannot determine Qibla';
+                statusEl.className = 'qibla-status warn';
+                return;
+            }
+        }
+    }
+
+    degreeEl.textContent = qiblaAngle.toFixed(1) + '°';
+
+    // Set static needle position (Qibla angle relative to north)
+    const needle = document.getElementById('qiblaNeedle');
+    needle.style.transform = `translate(-50%,-100%) rotate(${qiblaAngle}deg)`;
+
+    // Try to start device compass
+    const hasOrientation = await requestCompassPermission();
+    if (hasOrientation) {
+        statusEl.textContent = 'Compass active — rotate your device';
+        statusEl.className = 'qibla-status ok';
+    } else {
+        statusEl.textContent = `Qibla is ${qiblaAngle.toFixed(1)}° from North (no compass sensor)`;
+        statusEl.className = 'qibla-status warn';
+    }
+}
+
+async function requestCompassPermission() {
+    // iOS 13+ requires explicit permission for DeviceOrientationEvent
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+            const perm = await DeviceOrientationEvent.requestPermission();
+            if (perm !== 'granted') return false;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    // Check if the event fires with a compass heading
+    return new Promise((resolve) => {
+        let resolved = false;
+        const timeout = setTimeout(() => {
+            if (!resolved) { resolved = true; resolve(false); }
+            window.removeEventListener('deviceorientationabsolute', testHandler);
+            window.removeEventListener('deviceorientation', testHandler);
+        }, 2000);
+
+        const testHandler = (e) => {
+            const heading = getHeadingFromEvent(e);
+            if (heading !== null && !resolved) {
+                resolved = true;
+                clearTimeout(timeout);
+                window.removeEventListener('deviceorientationabsolute', testHandler);
+                window.removeEventListener('deviceorientation', testHandler);
+                // Compass works — start the real handler
+                startCompassListener();
+                resolve(true);
+            }
+        };
+
+        // Prefer absolute orientation (gives true north on Android)
+        window.addEventListener('deviceorientationabsolute', testHandler);
+        window.addEventListener('deviceorientation', testHandler);
+    });
+}
+
+function getHeadingFromEvent(e) {
+    // iOS: webkitCompassHeading (degrees from magnetic north, 0=North)
+    if (typeof e.webkitCompassHeading === 'number') {
+        return e.webkitCompassHeading;
+    }
+    // Android absolute: alpha gives compass heading
+    // When absolute=true, alpha is degrees from true north
+    if (e.absolute && typeof e.alpha === 'number') {
+        return (360 - e.alpha) % 360;
+    }
+    // Android fallback: alpha without absolute flag
+    if (typeof e.alpha === 'number') {
+        return (360 - e.alpha) % 360;
+    }
+    return null;
+}
+
+function startCompassListener() {
+    qiblaOrientationHandler = (e) => {
+        const heading = getHeadingFromEvent(e);
+        if (heading === null || qiblaAngle === null) return;
+        deviceHeading = heading;
+        updateCompassUI(heading);
+    };
+    // Prefer absolute (true north) over relative
+    if ('ondeviceorientationabsolute' in window) {
+        window.addEventListener('deviceorientationabsolute', qiblaOrientationHandler);
+    } else {
+        window.addEventListener('deviceorientation', qiblaOrientationHandler);
+    }
+}
+
+function updateCompassUI(heading) {
+    // Rotate the compass ring so that North on the ring aligns with real north
+    // When heading=0 (facing north), ring rotation=0
+    // When heading=90 (facing east), ring should rotate -90 so N stays at top-right
+    const ring = document.getElementById('qiblaRing');
+    if (ring) {
+        ring.style.transform = `rotate(${-heading}deg)`;
+    }
+
+    // The needle stays fixed at the Qibla angle (relative to ring's north)
+    // So as the ring rotates, the needle visually points to the real Qibla direction
+
+    // Update status with relative direction
+    let relativeQibla = (qiblaAngle - heading + 360) % 360;
+    const statusEl = document.getElementById('qiblaStatus');
+    if (statusEl) {
+        let dirHint = '';
+        if (relativeQibla > 350 || relativeQibla < 10) {
+            dirHint = '✅ You are facing the Qibla!';
+            statusEl.className = 'qibla-status ok';
+        } else if (relativeQibla <= 180) {
+            dirHint = `Turn right ${relativeQibla.toFixed(0)}°`;
+            statusEl.className = 'qibla-status warn';
+        } else {
+            dirHint = `Turn left ${(360 - relativeQibla).toFixed(0)}°`;
+            statusEl.className = 'qibla-status warn';
+        }
+        statusEl.textContent = dirHint;
+    }
+}
+
+function stopQiblaCompass() {
+    if (qiblaOrientationHandler) {
+        window.removeEventListener('deviceorientationabsolute', qiblaOrientationHandler);
+        window.removeEventListener('deviceorientation', qiblaOrientationHandler);
+        qiblaOrientationHandler = null;
+    }
+    // Reset ring rotation
+    const ring = document.getElementById('qiblaRing');
+    if (ring) ring.style.transform = '';
 }
 
 // Load prayer times when tab is first opened
