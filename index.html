@@ -14,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
-    <title>Khutbah Live Translator v4.4</title>
+    <title>Khutbah Live Translator v4.5</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -937,7 +937,7 @@
 </div>
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
-<div class="ver">v4.4</div>
+<div class="ver">v4.5</div>
 
 <div class="shell">
     <div class="hdr">
@@ -1326,7 +1326,7 @@
                     This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
                 </div>
                 <div class="about-text">
-                    <strong>v4.4 Features:</strong><br>
+                    <strong>v4.5 Features:</strong><br>
                     • Dual translation engine (Lingva + MyMemory fallback)<br>
                     • Quran reader with Arabic, transliteration &amp; translation<br>
                     • Du'a collection with categories and references<br>
@@ -1402,17 +1402,11 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   KHUTBAH LIVE TRANSLATOR v4.4
+   KHUTBAH LIVE TRANSLATOR v4.5
    
-   v4.4 FIX (confirmed via Android Chrome remote debugging):
-   - getUserMedia COMPLETELY DISABLED on Android Chrome.
-     Root cause: Android Chrome only allows ONE audio capture at a time.
-     getUserMedia and SpeechRecognition both capture the mic.
-     Even opening getUserMedia AFTER recognition.start() kills recognition.
-     Proven: standalone test (no getUserMedia) works; app (with getUserMedia) fails.
-   - Fake CSS-animated visualizer on Android (no mic stream needed)
-   - recognition.start() deferred 50ms on Android for config registration
-   - safeStartRecognition() re-applies config before every restart
+   v4.5: Debounce Android isFinal (600ms), replace dead Lingva hosts
+   v4.4: Skip getUserMedia on Android (kills recognition)
+   v4.3: Deferred recognition.start(), re-apply config on restart
    ═══════════════════════════════════════════════════════════════ */
 
 // ── Platform Detection (v4.1) ──
@@ -1458,20 +1452,16 @@ let cfg = {
     noiseFilter: true, voiceGain: 1.5, noiseGate: 20
 };
 
-// ── Lingva instances (rotation for reliability) ──
+// ── Lingva instances (v4.5: updated to working instances) ──
 const LINGVA_HOSTS = [
     'https://lingva.ml',
-    'https://lingva.thedaviddelta.com',
-    'https://lingva.lunar.icu',
-    'https://lingva.garuber.eu',
+    'https://translate.plausibility.cloud',
 ];
 let lingvaIdx = 0;
 
 // LibreTranslate public instances (third fallback engine)
 const LIBRE_HOSTS = [
     'https://libretranslate.com',
-    'https://translate.terraprint.co',
-    'https://trans.zillyhuhn.com',
 ];
 
 // ══════════════════════════════════════════════
@@ -1490,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedTgt) document.getElementById('tgtLang').value = savedTgt;
 
     // v4.1: Log platform for debugging
-    console.log('[v4.4] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
+    console.log('[v4.5] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
         IS_CHROME ? 'Chrome' : 'Other', '| Restart delay:', RESTART_DELAY + 'ms');
 });
 
@@ -1669,7 +1659,7 @@ function runViz(rawStream) {
             requestAnimationFrame(loop);
         })();
     } catch(e) {
-        console.warn('[v4.4] Audio processing setup failed:', e);
+        console.warn('[v4.5] Audio processing setup failed:', e);
         processedStream = rawStream;
     }
 }
@@ -1695,7 +1685,7 @@ function safeStartRecognition() {
             recognition.start();
         } catch(e) {
             if (e.name !== 'InvalidStateError') {
-                console.warn('[v4.4] Recognition restart failed:', e.message);
+                console.warn('[v4.5] Recognition restart failed:', e.message);
             }
         }
         setTimeout(() => { recognitionRestarting = false; }, RESTART_DELAY);
@@ -1759,7 +1749,7 @@ async function startListen() {
             isListening = true; restarts = 0;
             recognitionRestarting = false;
             updMicUI(true);
-            console.log('[v4.4] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS');
+            console.log('[v4.5] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS');
 
             // v4.4: On Android, DO NOT open getUserMedia AT ALL.
             // Confirmed via remote debugging: even opening getUserMedia AFTER
@@ -1767,7 +1757,7 @@ async function startListen() {
             // The standalone test (no getUserMedia) works perfectly.
             // Trade-off: no visualizer bars on Android, but recognition works.
             if (IS_ANDROID && !stream) {
-                console.log('[v4.4] Android: skipping getUserMedia (conflicts with recognition)');
+                console.log('[v4.5] Android: skipping getUserMedia (conflicts with recognition)');
             }
         };
 
@@ -1782,12 +1772,30 @@ async function startListen() {
             if (final) transcript += final;
             document.getElementById('stsTxt').textContent = interim ? '🎤 Speech detected...' : '🎤 Listening...';
 
+            // v4.5: On Android, every progressive recognition fires as isFinal
+            // (e.g. "الرحمن" → "الرحمن الرحيم" → "الرحمن الرحيم مالك")
+            // Each would trigger a separate translation = duplicates + API spam.
+            // Fix: debounce — wait 600ms after last isFinal before translating.
             if (cfg.instant && final && transcript.trim()) {
                 clearTimeout(bufferFlushTimer);
-                bufferFlushTimer = null;
-                doTranslate(transcript.trim());
-                transcript = '';
+                clearTimeout(silenceTimer);
+
+                if (IS_ANDROID) {
+                    // Debounce: only translate after 600ms of no new isFinal
+                    silenceTimer = setTimeout(() => {
+                        if (transcript.trim()) {
+                            doTranslate(transcript.trim());
+                            transcript = '';
+                        }
+                    }, 600);
+                } else {
+                    // Desktop/iOS: translate immediately on isFinal (works correctly)
+                    bufferFlushTimer = null;
+                    doTranslate(transcript.trim());
+                    transcript = '';
+                }
             } else if (!cfg.instant && (transcript + interim).trim()) {
+                clearTimeout(silenceTimer);
                 silenceTimer = setTimeout(() => {
                     if (transcript.trim()) {
                         clearTimeout(bufferFlushTimer);
@@ -1798,7 +1806,7 @@ async function startListen() {
                 }, cfg.silenceWait * 1000);
             }
 
-            // Forced buffer flush
+            // Forced buffer flush (long continuous speech without pauses)
             if (transcript.trim() && !bufferFlushTimer) {
                 bufferFlushTimer = setTimeout(() => {
                     bufferFlushTimer = null;
@@ -1814,12 +1822,12 @@ async function startListen() {
         // v4.2: Handle onnomatch — Android fires this when the language code
         // doesn't match well. Log it but don't stop; recognition will retry.
         recognition.onnomatch = () => {
-            console.warn('[v4.4] No match — speech not recognized for current language');
+            console.warn('[v4.5] No match — speech not recognized for current language');
             document.getElementById('stsTxt').textContent = '🎤 No match — try speaking louder...';
         };
 
         recognition.onerror = (e) => {
-            console.warn('[v4.4] Recognition error:', e.error, e.message || '');
+            console.warn('[v4.5] Recognition error:', e.error, e.message || '');
             if ((e.error === 'no-speech' || e.error === 'audio-capture' || e.error === 'network') && isListening && restarts < 15) {
                 restarts++;
                 setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 2);
@@ -1838,7 +1846,7 @@ async function startListen() {
         };
 
         recognition.onend = () => {
-            console.log('[v4.4] Recognition ended, isListening:', isListening);
+            console.log('[v4.5] Recognition ended, isListening:', isListening);
             if (transcript.trim()) {
                 doTranslate(transcript.trim());
                 transcript = '';
@@ -1850,7 +1858,7 @@ async function startListen() {
         };
 
         // v4.3: Log exact config before starting (debug Android issues)
-        console.log('[v4.4] Recognition config:', {
+        console.log('[v4.5] Recognition config:', {
             lang: recognition.lang,
             continuous: recognition.continuous,
             interimResults: recognition.interimResults,
@@ -1865,16 +1873,16 @@ async function startListen() {
             setTimeout(() => {
                 try {
                     recognition.start();
-                    console.log('[v4.4] Android: recognition.start() called (deferred)');
+                    console.log('[v4.5] Android: recognition.start() called (deferred)');
                 } catch(e) {
-                    console.error('[v4.4] Android start failed:', e);
+                    console.error('[v4.5] Android start failed:', e);
                 }
             }, 50);
         } else {
             recognition.start();
         }
     } catch (e) {
-        console.error('[v4.4] startListen error:', e);
+        console.error('[v4.5] startListen error:', e);
         alert('Microphone access denied.\n\nPlease allow microphone permission in your browser/device settings.');
     }
 }
@@ -2213,7 +2221,7 @@ function sendFB() {
     const type = document.getElementById('fbType').value;
     const msg = document.getElementById('fbMsg').value.trim();
     if (!name || !email || !type || !msg) { alert('Please fill all fields'); return; }
-    const body = `*Khutbah v4.4 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
+    const body = `*Khutbah v4.5 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
     window.open(`https://wa.me/201227822099?text=${body}`, '_blank');
     ['fbName','fbEmail','fbMsg'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fbType').value = '';
@@ -2918,7 +2926,7 @@ doTranslate = async function(text) {
                 return;
             }
         } catch (e) {
-            console.warn('[v4.4] ML Kit failed, using web fallback:', e.message);
+            console.warn('[v4.5] ML Kit failed, using web fallback:', e.message);
         }
     }
     return _origDoTranslate(text);
@@ -2943,7 +2951,7 @@ relWakeLock = async function() {
 
 window.addEventListener('nativeBridgeReady', function(e) {
     const f = e.detail;
-    console.log('[v4.4] Native bridge ready:', f);
+    console.log('[v4.5] Native bridge ready:', f);
 
     const stsTxt = document.getElementById('stsTxt');
     if (stsTxt && f.hasMLKit) {
