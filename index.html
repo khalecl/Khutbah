@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -1685,26 +1686,31 @@ async function startListen() {
             updMicUI(true);
         };
 
-            recognition.onresult = (event) => {
-              // Collect all results (interim + final)
-              let transcript = '';
-              for (let i = event.resultIndex; i < event.results.length; i++) {
-                transcript += event.results[i][0].transcript;
-              }
-              
-              if (!transcript.trim()) return; // Skip empty
-            
-              console.log('📝 Raw transcript:', transcript);
-            
-              // ✅ Critical for Android: Update UI immediately with interim text
-              document.getElementById('recognizedText').textContent = transcript; // Adjust selector to your app
-            
-              // ✅ Only translate on FINAL results to avoid API spam
-              if (event.results[0].isFinal) {
-                console.log('✅ Final result – triggering translation');
-                translateText(transcript); // Your existing translation function
-              }
-            };
+        recognition.onresult = (e) => {
+            clearTimeout(silenceTimer);
+            restarts = 0;
+            let interim = '', final = '';
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+                else interim = e.results[i][0].transcript;
+            }
+            if (final) transcript += final;
+            document.getElementById('stsTxt').textContent = interim ? '🎤 Speech detected...' : '🎤 Listening...';
+
+            if (cfg.instant && final && transcript.trim()) {
+                clearTimeout(bufferFlushTimer);
+                doTranslate(transcript.trim());
+                transcript = '';
+            } else if (!cfg.instant && (transcript + interim).trim()) {
+                // Silence-based flush
+                silenceTimer = setTimeout(() => {
+                    if (transcript.trim()) {
+                        clearTimeout(bufferFlushTimer);
+                        doTranslate(transcript.trim());
+                        transcript = '';
+                    }
+                }, cfg.silenceWait * 1000);
+            }
 
             // Forced buffer flush — handles continuous speech without pauses
             if (transcript.trim() && !bufferFlushTimer) {
