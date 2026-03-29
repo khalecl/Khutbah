@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -15,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
-    <title>Khutbah Live Translator v4.0</title>
+    <title>Khutbah Live Translator v4.2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -938,7 +937,7 @@
 </div>
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
-<div class="ver">v4.0</div>
+<div class="ver">v4.2</div>
 
 <div class="shell">
     <div class="hdr">
@@ -1327,13 +1326,14 @@
                     This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.
                 </div>
                 <div class="about-text">
-                    <strong>v4.0 Features:</strong><br>
+                    <strong>v4.2 Features:</strong><br>
                     • Dual translation engine (Lingva + MyMemory fallback)<br>
                     • Quran reader with Arabic, transliteration &amp; translation<br>
                     • Du'a collection with categories and references<br>
                     • Translation caching to reduce API usage<br>
                     • Cross-platform PWA (Android + iOS ready)<br>
-                    • Dark theme for mosque-friendly use
+                    • Dark theme for mosque-friendly use<br>
+                    • Android Chrome mic conflict fix (v4.2)
                 </div>
 
                 <div class="dev-card">
@@ -1402,17 +1402,48 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   KHUTBAH LIVE TRANSLATOR v4.0
+   KHUTBAH LIVE TRANSLATOR v4.2
    Cross-platform PWA — Android (Chrome) + iOS (Safari)
    Dual Translation Engine: Lingva (primary) + MyMemory (fallback)
    + Quran Reader + Du'a Collection
+   
+   v4.2 FIXES (Android Chrome):
+   - getUserMedia now opens AFTER recognition.start() on Android (prevents mic conflict)
+   - If getUserMedia fails on Android, recognition still works (no visualizer is OK)
+   - Added onnomatch handler for Android speech recognition
+   - AbortSignal.timeout() replaced with manual AbortController
+   - Increased SpeechRecognition restart delay (500ms vs 100ms)
+   - Removed unsupported getUserMedia constraints (sampleRate, latency)
+   - Recognition state guard prevents InvalidStateError
+   - Skipped deprecated ScriptProcessor noise gate on Android
    ═══════════════════════════════════════════════════════════════ */
+
+// ── Platform Detection (v4.1) ──
+const IS_ANDROID = /Android/i.test(navigator.userAgent);
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const IS_CHROME = /Chrome/i.test(navigator.userAgent) && !/Edge|OPR/i.test(navigator.userAgent);
+const RESTART_DELAY = IS_ANDROID ? 500 : 100; // Android needs longer delay between recognition restarts
+
+// ── Cross-browser fetch with timeout (replaces AbortSignal.timeout) ──
+function fetchWithTimeout(url, options = {}, timeoutMs = 6000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const mergedOptions = { ...options, signal: controller.signal };
+    return fetch(url, mergedOptions).then(res => {
+        clearTimeout(timer);
+        return res;
+    }).catch(err => {
+        clearTimeout(timer);
+        throw err;
+    });
+}
 
 // ── State ──
 let recognition, isListening = false, isRecording = false;
+let recognitionRestarting = false; // v4.1: guard against double-start on Android
 let mediaRecorder, audioChunks = [], translations = [];
 let currentFontSize = 18, audioCtx, analyser, stream = null, wakeLock = null;
-let processedStream = null; // cleaned audio stream for speech recognition
+let processedStream = null; // cleaned audio stream for visualization only (NOT for speech recognition)
 let audioNodes = {};        // references to audio processing nodes
 let tutStep = 1;
 const TUT_TOTAL = 6;
@@ -1431,7 +1462,6 @@ let cfg = {
 };
 
 // ── Lingva instances (rotation for reliability) ──
-// Updated v4.0: more reliable hosts + LibreTranslate fallback
 const LINGVA_HOSTS = [
     'https://lingva.ml',
     'https://lingva.thedaviddelta.com',
@@ -1461,6 +1491,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTgt = localStorage.getItem('kht_tgt');
     if (savedSrc) document.getElementById('srcLang').value = savedSrc;
     if (savedTgt) document.getElementById('tgtLang').value = savedTgt;
+
+    // v4.1: Log platform for debugging
+    console.log('[v4.2] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
+        IS_CHROME ? 'Chrome' : 'Other', '| Restart delay:', RESTART_DELAY + 'ms');
 });
 
 // Save language selections on change
@@ -1469,7 +1503,7 @@ document.getElementById('srcLang').addEventListener('change', function() {
     if (recognition && isListening) {
         recognition.lang = this.value;
         try { recognition.stop(); } catch(e){}
-        setTimeout(() => { if (isListening) try { recognition.start(); } catch(e){} }, 200);
+        setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY);
     }
 });
 document.getElementById('tgtLang').addEventListener('change', function() {
@@ -1543,39 +1577,38 @@ function runViz(rawStream) {
         const source = audioCtx.createMediaStreamSource(rawStream);
 
         // ── Build audio processing chain ──
-        // source → highpass → lowpass → compressor → gate → gain → destination
         let lastNode = source;
 
         if (cfg.noiseFilter) {
-            // Highpass: remove low-frequency rumble (AC hum, traffic, fans)
+            // Highpass: remove low-frequency rumble
             const highpass = audioCtx.createBiquadFilter();
             highpass.type = 'highpass';
-            highpass.frequency.value = 200;  // cut below 200Hz
+            highpass.frequency.value = 200;
             highpass.Q.value = 0.7;
             lastNode.connect(highpass);
             lastNode = highpass;
             audioNodes.highpass = highpass;
 
-            // Lowpass: remove high-frequency hiss/feedback
+            // Lowpass: remove high-frequency hiss
             const lowpass = audioCtx.createBiquadFilter();
             lowpass.type = 'lowpass';
-            lowpass.frequency.value = 5000;  // cut above 5kHz
+            lowpass.frequency.value = 5000;
             lowpass.Q.value = 0.7;
             lastNode.connect(lowpass);
             lastNode = lowpass;
             audioNodes.lowpass = lowpass;
 
-            // Presence boost: enhance speech clarity (1kHz-3kHz range)
+            // Presence boost: enhance speech clarity
             const presence = audioCtx.createBiquadFilter();
             presence.type = 'peaking';
             presence.frequency.value = 2000;
-            presence.gain.value = 4;  // +4dB boost in speech range
+            presence.gain.value = 4;
             presence.Q.value = 1;
             lastNode.connect(presence);
             lastNode = presence;
             audioNodes.presence = presence;
 
-            // Dynamics compressor: normalize volume (loud/quiet speakers)
+            // Dynamics compressor
             const compressor = audioCtx.createDynamicsCompressor();
             compressor.threshold.value = -30;
             compressor.knee.value = 15;
@@ -1594,11 +1627,10 @@ function runViz(rawStream) {
         lastNode = gainNode;
         audioNodes.gain = gainNode;
 
-        // Noise gate via ScriptProcessor (mutes audio below threshold)
-        let gateNode = null;
-        if (cfg.noiseGate > 0) {
-            gateNode = audioCtx.createScriptProcessor(2048, 1, 1);
-            const gateThreshold = cfg.noiseGate / 100; // normalize 0-50 → 0-0.5
+        // v4.1: Skip ScriptProcessor noise gate on Android (deprecated API, causes issues)
+        if (cfg.noiseGate > 0 && !IS_ANDROID) {
+            const gateNode = audioCtx.createScriptProcessor(2048, 1, 1);
+            const gateThreshold = cfg.noiseGate / 100;
             gateNode.onaudioprocess = (e) => {
                 const input = e.inputBuffer.getChannelData(0);
                 const output = e.outputBuffer.getChannelData(0);
@@ -1613,12 +1645,13 @@ function runViz(rawStream) {
             audioNodes.gate = gateNode;
         }
 
-        // Create processed stream for speech recognition
+        // v4.1: processedStream is for visualization + recording ONLY
+        // SpeechRecognition uses its own internal mic — we cannot feed it a custom stream
         const destNode = audioCtx.createMediaStreamDestination();
         lastNode.connect(destNode);
         processedStream = destNode.stream;
 
-        // Also connect to analyser for visualization (from the processed chain)
+        // Analyser for visualization
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 256;
         lastNode.connect(analyser);
@@ -1639,14 +1672,32 @@ function runViz(rawStream) {
             requestAnimationFrame(loop);
         })();
     } catch(e) {
-        console.warn('Audio processing setup failed, using raw stream:', e);
+        console.warn('[v4.2] Audio processing setup failed:', e);
         processedStream = rawStream;
     }
 }
 
 // ══════════════════════════════════════════════
-// SPEECH RECOGNITION
+// SPEECH RECOGNITION (v4.1 — Android-safe)
 // ══════════════════════════════════════════════
+
+// v4.1: Safe start that prevents InvalidStateError on Android Chrome
+function safeStartRecognition() {
+    if (!recognition || !isListening || recognitionRestarting) return;
+    recognitionRestarting = true;
+    try {
+        recognition.start();
+    } catch(e) {
+        console.warn('[v4.2] Recognition start failed:', e.message);
+        // If already started, that's fine — Android sometimes reports this
+        if (e.name === 'InvalidStateError') {
+            // Already running, ignore
+        }
+    }
+    // Clear the guard after a safe window
+    setTimeout(() => { recognitionRestarting = false; }, RESTART_DELAY);
+}
+
 async function toggleListen() {
     if (!isListening) await startListen();
     else stopListen();
@@ -1659,31 +1710,69 @@ async function startListen() {
         return;
     }
     try {
-        stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
-                // Advanced constraints for noisy environments
-                channelCount: 1,
-                sampleRate: { ideal: 16000 },
-                latency: { ideal: 0 }
-            }
-        });
-        if (cfg.wakeLock) await reqWakeLock();
-        runViz(stream);
-        setupRecorder(processedStream || stream);
+        // v4.2 FIX: On Android Chrome, getUserMedia and SpeechRecognition BOTH
+        // try to access the mic. If getUserMedia grabs it first, recognition.start()
+        // gets blocked or receives no audio. Solution: start recognition FIRST on Android,
+        // then optionally open getUserMedia for visualization after a delay.
 
         recognition = new SR();
         recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = document.getElementById('srcLang').value;
 
+        // v4.1: Android Chrome needs maxAlternatives for stability
+        if (IS_ANDROID) {
+            recognition.maxAlternatives = 1;
+        }
+
+        // On non-Android: get mic stream first (for viz + recording)
+        if (!IS_ANDROID) {
+            const audioConstraints = {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+                channelCount: 1,
+                sampleRate: { ideal: 16000 },
+                latency: { ideal: 0 }
+            };
+            stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+            runViz(stream);
+            setupRecorder(processedStream || stream);
+        }
+
+        if (cfg.wakeLock) await reqWakeLock();
+
         let transcript = '', silenceTimer, bufferFlushTimer, restarts = 0;
 
         recognition.onstart = () => {
             isListening = true; restarts = 0;
+            recognitionRestarting = false;
             updMicUI(true);
+            console.log('[v4.2] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS');
+
+            // v4.2: On Android, open getUserMedia AFTER recognition has started
+            // This avoids the mic conflict. Delay ensures recognition has the mic lock.
+            if (IS_ANDROID && !stream) {
+                setTimeout(async () => {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({
+                            audio: {
+                                echoCancellation: true,
+                                noiseSuppression: true,
+                                autoGainControl: true,
+                                channelCount: 1
+                            }
+                        });
+                        runViz(stream);
+                        setupRecorder(processedStream || stream);
+                        console.log('[v4.2] Android: visualizer stream opened after recognition');
+                    } catch(vizErr) {
+                        // If getUserMedia fails on Android, that's OK — recognition still works
+                        // Just no visualizer bars. Better than broken recognition.
+                        console.warn('[v4.2] Android: visualizer stream failed (recognition still active):', vizErr.message);
+                    }
+                }, 1000);
+            }
         };
 
         recognition.onresult = (e) => {
@@ -1699,20 +1788,21 @@ async function startListen() {
 
             if (cfg.instant && final && transcript.trim()) {
                 clearTimeout(bufferFlushTimer);
+                bufferFlushTimer = null;
                 doTranslate(transcript.trim());
                 transcript = '';
             } else if (!cfg.instant && (transcript + interim).trim()) {
-                // Silence-based flush
                 silenceTimer = setTimeout(() => {
                     if (transcript.trim()) {
                         clearTimeout(bufferFlushTimer);
+                        bufferFlushTimer = null;
                         doTranslate(transcript.trim());
                         transcript = '';
                     }
                 }, cfg.silenceWait * 1000);
             }
 
-            // Forced buffer flush — handles continuous speech without pauses
+            // Forced buffer flush
             if (transcript.trim() && !bufferFlushTimer) {
                 bufferFlushTimer = setTimeout(() => {
                     bufferFlushTimer = null;
@@ -1725,37 +1815,54 @@ async function startListen() {
             }
         };
 
+        // v4.2: Handle onnomatch — Android fires this when the language code
+        // doesn't match well. Log it but don't stop; recognition will retry.
+        recognition.onnomatch = () => {
+            console.warn('[v4.2] No match — speech not recognized for current language');
+            document.getElementById('stsTxt').textContent = '🎤 No match — try speaking louder...';
+        };
+
         recognition.onerror = (e) => {
-            if ((e.error === 'no-speech' || e.error === 'audio-capture') && isListening && restarts < 15) {
+            console.warn('[v4.2] Recognition error:', e.error, e.message || '');
+            if ((e.error === 'no-speech' || e.error === 'audio-capture' || e.error === 'network') && isListening && restarts < 15) {
                 restarts++;
-                setTimeout(() => { if (isListening) try { recognition.start(); } catch(er){} }, 300);
+                setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 2);
             } else if (e.error === 'not-allowed') {
                 alert('Microphone permission denied. Please allow access in your browser settings.');
                 stopListen();
             } else if (e.error === 'language-not-supported') {
                 alert('This language is not supported for speech recognition on your device. Please try a different source language.');
                 stopListen();
+            } else if (e.error === 'aborted') {
+                if (isListening && restarts < 15) {
+                    restarts++;
+                    setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 3);
+                }
             }
         };
 
         recognition.onend = () => {
+            console.log('[v4.2] Recognition ended, isListening:', isListening);
             if (transcript.trim()) {
                 doTranslate(transcript.trim());
                 transcript = '';
             }
             if (isListening) {
-                setTimeout(() => { if (isListening) try { recognition.start(); } catch(e){} }, 100);
+                // v4.1: Use platform-appropriate delay and safe start
+                setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY);
             }
         };
 
         recognition.start();
     } catch (e) {
+        console.error('[v4.2] startListen error:', e);
         alert('Microphone access denied.\n\nPlease allow microphone permission in your browser/device settings.');
     }
 }
 
 function stopListen() {
     isListening = false;
+    recognitionRestarting = false;
     if (recognition) try { recognition.stop(); } catch(e){}
     if (audioCtx) try { audioCtx.close(); } catch(e){} audioCtx = null;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
@@ -1783,7 +1890,7 @@ function updMicUI(on) {
 }
 
 // ══════════════════════════════════════════════
-// TRANSLATION ENGINE
+// TRANSLATION ENGINE (v4.1 — AbortSignal.timeout replaced)
 // ══════════════════════════════════════════════
 async function doTranslate(text) {
     if (!text?.trim()) return;
@@ -1814,7 +1921,7 @@ async function doTranslate(text) {
     if (!result && (engine === 'auto' || engine === 'mymemory')) {
         result = await tryMyMemory(text, src, tgt);
     }
-    // Engine 3: LibreTranslate (auto-fallback when engine=auto)
+    // Engine 3: LibreTranslate
     if (!result && engine === 'auto') {
         result = await tryLibre(text, src, tgt);
     }
@@ -1834,7 +1941,6 @@ async function doTranslate(text) {
     updApiUI();
 }
 
-// Truncate text for Lingva URL length limits
 function truncateForUrl(text, maxChars) {
     if (text.length <= maxChars) return text;
     const trimmed = text.substring(0, maxChars);
@@ -1843,17 +1949,14 @@ function truncateForUrl(text, maxChars) {
 }
 
 async function tryLingva(text, src, tgt) {
-    // Lingva uses text in URL path, so we must keep URL length reasonable
     const safeText = truncateForUrl(text, 800);
 
     for (let attempt = 0; attempt < LINGVA_HOSTS.length; attempt++) {
         const host = LINGVA_HOSTS[(lingvaIdx + attempt) % LINGVA_HOSTS.length];
         try {
             const url = `${host}/api/v1/${src}/${tgt}/${encodeURIComponent(safeText)}`;
-            const res = await fetch(url, {
-                signal: AbortSignal.timeout(6000),
-                mode: 'cors'
-            });
+            // v4.1: Use fetchWithTimeout instead of AbortSignal.timeout
+            const res = await fetchWithTimeout(url, { mode: 'cors' }, 6000);
             if (!res.ok) throw new Error(res.status);
             const data = await res.json();
             if (data.translation && data.translation.trim()) {
@@ -1871,7 +1974,8 @@ async function tryLingva(text, src, tgt) {
 async function tryMyMemory(text, src, tgt) {
     try {
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${src}|${tgt}&de=khutbah.app@translator.net`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+        // v4.1: Use fetchWithTimeout
+        const res = await fetchWithTimeout(url, {}, 8000);
         const data = await res.json();
         if (data.responseStatus === 200 && data.responseData?.translatedText) {
             const trans = data.responseData.translatedText;
@@ -1895,16 +1999,16 @@ async function tryMyMemory(text, src, tgt) {
 async function tryLibre(text, src, tgt) {
     for (const host of LIBRE_HOSTS) {
         try {
-            const res = await fetch(`${host}/translate`, {
+            // v4.1: Use fetchWithTimeout
+            const res = await fetchWithTimeout(`${host}/translate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ q: text, source: src, target: tgt, format: 'text' }),
-                signal: AbortSignal.timeout(8000)
-            });
+                body: JSON.stringify({ q: text, source: src, target: tgt, format: 'text' })
+            }, 8000);
             if (!res.ok) continue;
             const data = await res.json();
             if (data.translatedText && data.translatedText.trim()) {
-                apiStats.lingvaOk++; // count as successful
+                apiStats.lingvaOk++;
                 return data.translatedText;
             }
         } catch(e) { /* try next host */ }
@@ -2055,6 +2159,10 @@ async function relWakeLock() {
 document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState === 'visible' && isListening && cfg.wakeLock) {
         await reqWakeLock();
+        // v4.1: Also restart recognition on Android when returning to foreground
+        if (IS_ANDROID && recognition) {
+            setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY);
+        }
     }
 });
 
@@ -2065,7 +2173,7 @@ function sendFB() {
     const type = document.getElementById('fbType').value;
     const msg = document.getElementById('fbMsg').value.trim();
     if (!name || !email || !type || !msg) { alert('Please fill all fields'); return; }
-    const body = `*Khutbah v4.0 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
+    const body = `*Khutbah v4.2 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
     window.open(`https://wa.me/201227822099?text=${body}`, '_blank');
     ['fbName','fbEmail','fbMsg'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fbType').value = '';
@@ -2117,7 +2225,6 @@ function saveSettings() {
     cfg.noiseFilter = document.getElementById('sNoiseFilter').checked;
     cfg.voiceGain = parseFloat(document.getElementById('sGain').value);
     cfg.noiseGate = parseInt(document.getElementById('sGate').value);
-    // Live-update gain if currently listening
     if (audioNodes.gain) audioNodes.gain.gain.value = cfg.voiceGain;
     try { localStorage.setItem('kht_cfg_v3', JSON.stringify(cfg)); } catch(e) {}
     alert('Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.');
@@ -2128,7 +2235,6 @@ function saveSettings() {
 // QURAN TAB — Uses Al-Quran Cloud API
 // ══════════════════════════════════════════════
 
-// Surah list (114 surahs)
 const SURAH_LIST = [
     "Al-Fatiha","Al-Baqarah","Aal-Imran","An-Nisa","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Tawbah","Yunus",
     "Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra","Al-Kahf","Maryam","Taha",
@@ -2156,7 +2262,6 @@ function initSurahList() {
         opt.textContent = `${i + 1}. ${name}`;
         sel.appendChild(opt);
     });
-    // Default to Al-Fatiha
     sel.value = '1';
     loadSurah();
 }
@@ -2167,7 +2272,6 @@ async function loadSurah() {
 
     const container = document.getElementById('quranContent');
 
-    // Check cache
     if (quranCache[num]) {
         renderSurah(quranCache[num]);
         return;
@@ -2176,11 +2280,10 @@ async function loadSurah() {
     container.innerHTML = '<div class="quran-loading"><div class="spinner"></div>Loading Surah...</div>';
 
     try {
-        // Fetch Arabic + English translation + transliteration in one batch
         const [arRes, enRes, trRes] = await Promise.all([
-            fetch(`https://api.alquran.cloud/v1/surah/${num}`),
-            fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`),
-            fetch(`https://api.alquran.cloud/v1/surah/${num}/en.transliteration`)
+            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}`, {}, 10000),
+            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`, {}, 10000),
+            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.transliteration`, {}, 10000)
         ]);
 
         const arData = await arRes.json();
@@ -2239,7 +2342,6 @@ function renderSurah(data) {
     });
 
     container.innerHTML = html;
-    // Re-highlight if currently playing this surah
     if (qaState.playing && qaState.surahNum == document.getElementById('surahSelect').value) {
         qaHighlightAyah(qaState.currentAyah);
     }
@@ -2267,7 +2369,7 @@ const qaState = {
     surahNum: null,
     currentAyah: 0,
     totalAyahs: 0,
-    audioUrls: [],   // per-ayah audio URLs
+    audioUrls: [],
     audio: new Audio(),
     reciter: 'ar.alafasy',
     speed: 1,
@@ -2276,13 +2378,12 @@ const qaState = {
 
 const QA_SPEEDS = [0.75, 1, 1.25, 1.5];
 
-// Fetch audio URLs for a surah from AlQuran.cloud
 async function qaFetchAudio(surahNum, reciter) {
     const cacheKey = `audio_${surahNum}_${reciter}`;
     if (quranCache[cacheKey]) return quranCache[cacheKey];
 
     try {
-        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}/${reciter}`);
+        const res = await fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${surahNum}/${reciter}`, {}, 10000);
         const data = await res.json();
         if (data.code === 200) {
             const urls = data.data.ayahs.map(a => a.audio);
@@ -2295,7 +2396,6 @@ async function qaFetchAudio(surahNum, reciter) {
     return null;
 }
 
-// Start playing from a specific ayah number (1-based)
 async function qaPlayFromAyah(ayahNum) {
     const surahNum = document.getElementById('surahSelect').value;
     if (!surahNum) return;
@@ -2304,7 +2404,6 @@ async function qaPlayFromAyah(ayahNum) {
     qaState.reciter = reciter;
     qaState.surahNum = surahNum;
 
-    // Show loading
     document.getElementById('qaInfo').textContent = 'Loading audio...';
     document.getElementById('qaPlayBtn').disabled = true;
 
@@ -2338,7 +2437,6 @@ function qaPlayCurrent() {
     qaState.playing = true;
     qaState.paused = false;
 
-    // UI updates
     const playBtn = document.getElementById('qaPlayBtn');
     playBtn.textContent = '⏸';
     playBtn.classList.add('playing');
@@ -2346,11 +2444,9 @@ function qaPlayCurrent() {
     qaHighlightAyah(qaState.currentAyah);
     qaUpdateInfo();
 
-    // Progress tracking
     clearInterval(qaState.progressTimer);
     qaState.progressTimer = setInterval(qaUpdateProgress, 200);
 
-    // When ayah finishes, play next
     qaState.audio.onended = () => {
         if (qaState.currentAyah < qaState.totalAyahs) {
             qaState.currentAyah++;
@@ -2375,7 +2471,6 @@ function qaPlayCurrent() {
 
 function qaTogglePlay() {
     if (!qaState.playing && !qaState.paused) {
-        // Start from ayah 1 if not already playing
         qaPlayFromAyah(1);
         return;
     }
@@ -2409,7 +2504,6 @@ function qaStop() {
     document.getElementById('qaProgressFill').style.width = '0%';
     document.getElementById('qaInfo').textContent = '—';
 
-    // Remove all highlights
     document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => {
         el.classList.remove('ayah-playing');
     });
@@ -2432,14 +2526,12 @@ function qaPlayPrev() {
 }
 
 function qaHighlightAyah(ayahNum) {
-    // Remove previous highlights
     document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => {
         el.classList.remove('ayah-playing');
     });
     const card = document.getElementById(`ayah-${ayahNum}`);
     if (card) {
         card.classList.add('ayah-playing');
-        // Smooth scroll into view
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
@@ -2482,7 +2574,6 @@ function qaChangeReciter() {
         qaState.playing = false;
         qaState.paused = false;
         clearInterval(qaState.progressTimer);
-        // Re-start with new reciter
         qaPlayFromAyah(currentAyah);
     }
 }
@@ -2492,7 +2583,6 @@ function qaChangeReciter() {
 // DU'A TAB — Loaded from external duas.json
 // ══════════════════════════════════════════════
 
-// ── CONFIGURE THIS: Path to your duas.json file ──
 const DUAS_JSON_URL = 'duas.json';
 
 let duaData = { categories: [], duas: [] };
@@ -2503,23 +2593,20 @@ async function loadDuasFromJSON() {
     const filterBar = document.getElementById('duaFilterBar');
 
     try {
-        const res = await fetch(DUAS_JSON_URL);
+        const res = await fetchWithTimeout(DUAS_JSON_URL, {}, 10000);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         duaData = await res.json();
 
-        // Build filter buttons from categories in JSON
         let filterHTML = '<button class="dua-tag on" onclick="filterDua(\'all\',this)">All</button>';
         duaData.categories.forEach(cat => {
             filterHTML += `<button class="dua-tag" onclick="filterDua('${cat.id}',this)">${cat.icon || ''} ${cat.label}</button>`;
         });
         filterBar.innerHTML = filterHTML;
 
-        // Render all duas
         renderDuas('all');
 
     } catch (e) {
         console.warn('Failed to load duas.json, using built-in fallback:', e.message);
-        // Fallback: show error with retry
         container.innerHTML = `
             <div class="quran-loading">
                 Could not load Du'as file.<br>
@@ -2527,7 +2614,6 @@ async function loadDuasFromJSON() {
                 <button class="bar-btn" onclick="loadDuasFromJSON()" style="margin:0 auto">🔄 Retry</button>
             </div>
         `;
-        // Also provide hardcoded fallback filter buttons
         filterBar.innerHTML = `
             <button class="dua-tag on" onclick="filterDua('all',this)">All</button>
             <button class="dua-tag" onclick="filterDua('daily',this)">Daily</button>
@@ -2570,7 +2656,7 @@ function filterDua(cat, btn) {
 }
 
 // ══════════════════════════════════════════════
-// PRAYER TIMES (v4.0 — AlAdhan API)
+// PRAYER TIMES (v4.1 — AlAdhan API)
 // ══════════════════════════════════════════════
 let prayerTimesData = null;
 let userCoords = null;
@@ -2580,7 +2666,6 @@ async function fetchPrayerTimes() {
     const locEl = document.getElementById('prayerLocation');
 
     try {
-        // Get user location
         if (!userCoords) {
             locEl.textContent = '📍 Detecting location...';
             const pos = await new Promise((resolve, reject) => {
@@ -2591,18 +2676,16 @@ async function fetchPrayerTimes() {
             userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         }
 
-        // Fetch from AlAdhan API (free, no key needed)
         const url = `https://api.aladhan.com/v1/timings?latitude=${userCoords.lat}&longitude=${userCoords.lng}&method=${method}`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        const res = await fetchWithTimeout(url, {}, 10000);
         const data = await res.json();
 
         if (data.code === 200) {
             prayerTimesData = data.data;
             renderPrayerTimes(data.data);
 
-            // Reverse geocode for display
             try {
-                const geoRes = await fetch(`https://api.aladhan.com/v1/qibla/${userCoords.lat}/${userCoords.lng}`);
+                const geoRes = await fetchWithTimeout(`https://api.aladhan.com/v1/qibla/${userCoords.lat}/${userCoords.lng}`, {}, 8000);
                 const geoData = await geoRes.json();
                 locEl.textContent = `📍 ${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}° • Qibla: ${geoData.data?.direction?.toFixed(1) || '—'}°`;
             } catch(e) {
@@ -2623,29 +2706,24 @@ function renderPrayerTimes(data) {
     const timings = data.timings;
     const prayers = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
 
-    // Arabic names mapping
     const arabicNames = {
         Fajr: 'الفجر', Sunrise: 'الشروق', Dhuhr: 'الظهر',
         Asr: 'العصر', Maghrib: 'المغرب', Isha: 'العشاء'
     };
 
-    // Icons for hero section
     const prayerIcons = {
         Fajr: '🌅', Sunrise: '☀️', Dhuhr: '🌤️',
         Asr: '🌇', Maghrib: '🌆', Isha: '🌙'
     };
 
-    // Default iqama offsets in minutes (after adhan)
     const iqamaOffsets = {
         Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 5, Isha: 15
     };
 
-    // Populate times
     prayers.forEach(p => {
         const el = document.getElementById('pt' + p);
         if (el) el.textContent = timings[p] || '--:--';
 
-        // Iqama time (adhan + offset)
         const iqEl = document.getElementById('iq' + p);
         if (iqEl && iqamaOffsets[p] && timings[p]) {
             const [h, m] = timings[p].split(':').map(Number);
@@ -2656,12 +2734,10 @@ function renderPrayerTimes(data) {
         }
     });
 
-    // Determine next prayer and highlight
     const now = new Date();
     const nowMins = now.getHours() * 60 + now.getMinutes();
     let nextPrayer = null, nextPrayerMins = null, prevPrayerMins = null;
 
-    // Build sorted list of prayer minutes
     const prayerMins = {};
     prayers.forEach(p => {
         if (timings[p]) {
@@ -2670,7 +2746,6 @@ function renderPrayerTimes(data) {
         }
     });
 
-    // Find next prayer
     for (const p of prayers) {
         if (prayerMins[p] !== undefined && prayerMins[p] > nowMins) {
             nextPrayer = p;
@@ -2679,13 +2754,11 @@ function renderPrayerTimes(data) {
         }
     }
 
-    // If no next prayer today, next is Fajr tomorrow
     if (!nextPrayer) {
         nextPrayer = 'Fajr';
         nextPrayerMins = prayerMins['Fajr'] + 24 * 60;
     }
 
-    // Find previous prayer for progress arc
     const prayerKeys = Object.keys(prayerMins);
     for (let i = prayerKeys.length - 1; i >= 0; i--) {
         if (prayerMins[prayerKeys[i]] <= nowMins) {
@@ -2695,7 +2768,6 @@ function renderPrayerTimes(data) {
     }
     if (prevPrayerMins === null) prevPrayerMins = prayerMins['Isha'] ? prayerMins['Isha'] - 24 * 60 : nowMins;
 
-    // Mark passed and next
     document.querySelectorAll('.prayer-row').forEach(row => {
         row.classList.remove('next', 'passed');
         const pName = row.dataset.prayer;
@@ -2706,23 +2778,19 @@ function renderPrayerTimes(data) {
         }
     });
 
-    // Update hero
     document.getElementById('prayerHeroName').textContent = nextPrayer;
     document.getElementById('prayerHeroArabic').textContent = arabicNames[nextPrayer] || '';
     document.getElementById('prayerHeroIcon').textContent = prayerIcons[nextPrayer] || '🕌';
     document.getElementById('prayerHeroTime').textContent = timings[nextPrayer] || '--:--';
 
-    // Store for countdown
     window._nextPrayerMins = nextPrayerMins;
     window._prevPrayerMins = prevPrayerMins;
     window._prayerTimings = timings;
 
-    // Start countdown
     if (window._prayerCountdownInterval) clearInterval(window._prayerCountdownInterval);
     updatePrayerCountdown();
     window._prayerCountdownInterval = setInterval(updatePrayerCountdown, 1000);
 
-    // Hijri date
     if (data.date) {
         const h = data.date.hijri;
         const g = data.date.gregorian;
@@ -2754,7 +2822,6 @@ function updatePrayerCountdown() {
     if (cdM) cdM.textContent = String(mins).padStart(2, '0');
     if (cdS) cdS.textContent = String(secs).padStart(2, '0');
 
-    // Update progress arc
     const prevSecs = (window._prevPrayerMins || 0) * 60;
     let totalSpan = targetSecs - prevSecs;
     if (totalSpan <= 0) totalSpan += 24 * 3600;
@@ -2764,11 +2831,10 @@ function updatePrayerCountdown() {
 
     const arc = document.getElementById('prayerArc');
     if (arc) {
-        const circumference = 2 * Math.PI * 44; // r=44
+        const circumference = 2 * Math.PI * 44;
         arc.style.strokeDashoffset = circumference * (1 - pct);
     }
 
-    // If countdown hits zero, refresh prayer times
     if (diff <= 0) {
         clearInterval(window._prayerCountdownInterval);
         setTimeout(fetchPrayerTimes, 2000);
@@ -2787,16 +2853,11 @@ goTab = function(name, btn) {
 };
 
 // ══════════════════════════════════════════════
-// NATIVE BRIDGE DETECTION (v4.0)
-// Enhances with ML Kit, Native STT, Foreground Service
-// when running inside the Android app (Option B).
-// Falls back gracefully to web APIs in browser.
+// NATIVE BRIDGE DETECTION (v4.1)
 // ══════════════════════════════════════════════
 
-// Override translation to try ML Kit first (if native app)
 const _origDoTranslate = doTranslate;
 doTranslate = async function(text) {
-    // If running in native app with ML Kit available
     if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) {
         try {
             const src = document.getElementById('srcLang').value.split('-')[0];
@@ -2817,14 +2878,12 @@ doTranslate = async function(text) {
                 return;
             }
         } catch (e) {
-            console.warn('[v4.0] ML Kit failed, using web fallback:', e.message);
+            console.warn('[v4.2] ML Kit failed, using web fallback:', e.message);
         }
     }
-    // Fallback to original web translation
     return _origDoTranslate(text);
 };
 
-// Override wake lock to use native when available
 const _origReqWakeLock = reqWakeLock;
 reqWakeLock = async function() {
     if (window.KhutbahEnhanced) {
@@ -2842,18 +2901,15 @@ relWakeLock = async function() {
     return _origRelWakeLock();
 };
 
-// Listen for native bridge ready event
 window.addEventListener('nativeBridgeReady', function(e) {
     const f = e.detail;
-    console.log('[v4.0] Native bridge ready:', f);
+    console.log('[v4.2] Native bridge ready:', f);
 
-    // Update status text
     const stsTxt = document.getElementById('stsTxt');
     if (stsTxt && f.hasMLKit) {
         stsTxt.textContent = '🟢 ML Kit Ready • Tap mic to start';
     }
 
-    // Pre-download translation model for selected language pair
     if (f.hasMLKit) {
         const src = document.getElementById('srcLang').value.split('-')[0];
         const tgt = document.getElementById('tgtLang').value;
@@ -2861,7 +2917,6 @@ window.addEventListener('nativeBridgeReady', function(e) {
     }
 });
 
-// Pre-download model when language changes (native only)
 document.getElementById('tgtLang').addEventListener('change', function() {
     if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) {
         const src = document.getElementById('srcLang').value.split('-')[0];
