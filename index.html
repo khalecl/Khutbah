@@ -937,7 +937,7 @@
 </div>
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
-<div class="ver">v4.5</div>
+<div class="ver">v4.5.1</div>
 
 <div class="shell">
     <div class="hdr">
@@ -1769,7 +1769,16 @@ async function startListen() {
                 if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
                 else interim = e.results[i][0].transcript;
             }
-            if (final) transcript += final;
+            // v4.5.1: On Android, each progressive isFinal already contains the
+            // full text so far ("الرحمن" → "الرحمن الرحيم" → "الرحمن الرحيم مالك").
+            // Appending causes duplication. Replace instead.
+            if (final) {
+                if (IS_ANDROID) {
+                    transcript = final; // replace — Android finals are cumulative
+                } else {
+                    transcript += final; // append — desktop finals are incremental
+                }
+            }
             document.getElementById('stsTxt').textContent = interim ? '🎤 Speech detected...' : '🎤 Listening...';
 
             // v4.5: On Android, every progressive recognition fires as isFinal
