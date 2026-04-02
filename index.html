@@ -14,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
-    <title>Khutbah Live Translator v4.7</title>
+    <title>Khutbah Live Translator v4.6</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -342,7 +342,7 @@ body::before{
 }
 .quran-nav select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim)}
 .quran-nav select option{background:#1a1a1a;color:#eee}
-/* v4.7: Translation language selector takes slightly less space */
+/* v4.6: Translation language selector takes slightly less space */
 .quran-nav #surahSelect{flex:1.2}
 .quran-nav #quranTransSelect{flex:0.8;font-size:12px}
 .quran-controls{
@@ -400,7 +400,7 @@ body::before{
     font-size:clamp(13px,2.5vw,15px);color:var(--cream-dim);
     line-height:1.8;
 }
-/* v4.7: RTL translation text (Urdu, Farsi, etc.) */
+/* v4.6: RTL translation text (Urdu, Farsi, etc.) */
 .ayah-trans.trans-rtl{
     direction:rtl;text-align:right;
     font-family:'Amiri','Noto Nastaliq Urdu',serif;
@@ -803,6 +803,30 @@ textarea.fb-input{resize:vertical;min-height:80px}
 .native-badge.mlkit{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.25)}
 .native-badge.offline{background:rgba(33,150,243,.15);color:#64b5f6;border:1px solid rgba(33,150,243,.25)}
 
+/* === RTL UI Mode (Arabic, Urdu) === */
+[dir="rtl"] .hdr-en{direction:rtl}
+[dir="rtl"] .lang-lbl{text-align:right}
+[dir="rtl"] .sent{border-left:none;border-right:3px solid rgba(212,168,67,.35);border-radius:var(--radius-sm) 0 0 var(--radius-sm);text-align:right}
+[dir="rtl"] .sent:last-child{border-right-color:var(--gold)}
+[dir="rtl"] .set-row{flex-direction:row-reverse}
+[dir="rtl"] .set-hint{padding-left:0;padding-right:2px;text-align:right}
+[dir="rtl"] .c-item{flex-direction:row-reverse}
+[dir="rtl"] .dua-title{flex-direction:row-reverse}
+[dir="rtl"] .about-text{text-align:right}
+[dir="rtl"] .dev-card p{text-align:right}
+[dir="rtl"] .prayer-row{grid-template-columns:auto 1fr auto 28px}
+[dir="rtl"] .prayer-row .p-icon{order:4}
+[dir="rtl"] .prayer-row .p-name{order:3;text-align:right}
+[dir="rtl"] .prayer-row .p-time{order:2;text-align:left}
+[dir="rtl"] .prayer-row .p-iqama{order:1;text-align:left}
+[dir="rtl"] .qibla-degree-label{direction:rtl}
+[dir="rtl"] .prayer-hero-at{direction:rtl}
+[dir="rtl"] .fb-grp{direction:rtl}
+[dir="rtl"] .lang-sel{padding:0 10px 0 28px;background-position:left 10px center}
+[dir="rtl"] .quran-nav select{padding:0 10px 0 28px;background-position:left 10px center}
+[dir="rtl"] .prayer-method-sel{padding:11px 12px 11px 32px;background-position:left 12px center}
+[dir="rtl"] .qa-reciter-select{padding:0 8px 0 24px;background-position:left 8px center}
+
 @media(min-width:768px){
     .shell{max-width:700px}
 }
@@ -870,22 +894,22 @@ textarea.fb-input{resize:vertical;min-height:80px}
 
 <button class="help-float" onclick="showTut()" title="Help">?</button>
 
-<div class="ver">v4.7</div>
+<div class="ver">v4.6</div>
 
 <div class="shell">
     <div class="hdr">
         <div class="hdr-ar">مترجم الخطبة الحي</div>
-        <div class="hdr-en">Khutbah Live Translator</div>
+        <div class="hdr-en" data-i18n="headerSubtitle">Khutbah Live Translator</div>
     </div>
 
 ```
 <div class="tabs">
-    <button class="tab on" onclick="goTab('main',this)">Translator</button>
-    <button class="tab" onclick="goTab('quran',this)">Quran</button>
-    <button class="tab" onclick="goTab('dua',this)">Du'a</button>
-    <button class="tab" onclick="goTab('prayer',this)">🕌 Prayer</button>
-    <button class="tab" onclick="goTab('settings',this)">Settings</button>
-    <button class="tab" onclick="goTab('about',this)">About</button>
+    <button class="tab on" onclick="goTab('main',this)" data-i18n="tabTranslator">Translator</button>
+    <button class="tab" onclick="goTab('quran',this)" data-i18n="tabQuran">Quran</button>
+    <button class="tab" onclick="goTab('dua',this)" data-i18n="tabDua">Du'a</button>
+    <button class="tab" onclick="goTab('prayer',this)">🕌 <span data-i18n="tabPrayer">Prayer</span></button>
+    <button class="tab" onclick="goTab('settings',this)" data-i18n="tabSettings">Settings</button>
+    <button class="tab" onclick="goTab('about',this)" data-i18n="tabAbout">About</button>
 </div>
 
 <div class="panels">
@@ -894,7 +918,7 @@ textarea.fb-input{resize:vertical;min-height:80px}
         <div class="ctl">
             <div class="lang-row">
                 <div class="lang-grp">
-                    <div class="lang-lbl">Source</div>
+                    <div class="lang-lbl" data-i18n="lblSource">Source</div>
                     <select class="lang-sel" id="srcLang">
                         <optgroup label="Arabic">
                             <option value="ar-SA">Arabic (Saudi)</option>
@@ -959,7 +983,7 @@ textarea.fb-input{resize:vertical;min-height:80px}
                     <button class="mic idle" id="micBtn" onclick="toggleListen()">🎤</button>
                 </div>
                 <div class="lang-grp">
-                    <div class="lang-lbl">Translate to</div>
+                    <div class="lang-lbl" data-i18n="lblTranslateTo">Translate to</div>
                     <select class="lang-sel" id="tgtLang">
                         <optgroup label="⭐ Most Common">
                             <option value="en">English</option>
@@ -1018,7 +1042,7 @@ textarea.fb-input{resize:vertical;min-height:80px}
             <div class="viz" id="viz"></div>
             <div class="sts">
                 <div class="sts-dot" id="stsDot"></div>
-                <span class="sts-txt" id="stsTxt">Tap microphone to start</span>
+                <span class="sts-txt" id="stsTxt" data-i18n="statusReady">Tap microphone to start</span>
             </div>
         </div>
         <div class="out-wrap">
@@ -1035,8 +1059,8 @@ textarea.fb-input{resize:vertical;min-height:80px}
                 <span class="font-val" id="fontVal">18px</span>
                 <button class="font-btn" onclick="adjFont(2)">+</button>
             </div>
-            <button class="bar-btn" onclick="clearAll()">🗑️ Clear</button>
-            <button class="bar-btn primary" onclick="saveText()">💾 Save</button>
+            <button class="bar-btn" onclick="clearAll()">🗑️ <span data-i18n="btnClear">Clear</span></button>
+            <button class="bar-btn primary" onclick="saveText()">💾 <span data-i18n="btnSave">Save</span></button>
             <button class="bar-btn" id="recBtn" onclick="toggleRec()">⏺️ <span id="recTxt">Rec</span></button>
             <div class="api-badge" id="apiBadge">
                 <div class="api-dot ok" id="apiDot"></div>
@@ -1048,7 +1072,7 @@ textarea.fb-input{resize:vertical;min-height:80px}
     <!-- === QURAN === -->
     <div class="panel" id="panelQuran">
         <div class="quran-inner">
-            <!-- v4.7: Added translation language dropdown -->
+            <!-- v4.6: Added translation language dropdown -->
             <div class="quran-nav">
                 <select id="surahSelect" onchange="loadSurah()">
                     <!-- Populated by JS -->
@@ -1114,9 +1138,9 @@ textarea.fb-input{resize:vertical;min-height:80px}
                 </select>
             </div>
             <div class="quran-controls">
-                <button class="q-toggle on" id="qShowArabic" onclick="toggleQView(this)">Arabic</button>
-                <button class="q-toggle on" id="qShowTranslit" onclick="toggleQView(this)">Transliteration</button>
-                <button class="q-toggle on" id="qShowTrans" onclick="toggleQView(this)">Translation</button>
+                <button class="q-toggle on" id="qShowArabic" onclick="toggleQView(this)" data-i18n="qArabic">Arabic</button>
+                <button class="q-toggle on" id="qShowTranslit" onclick="toggleQView(this)" data-i18n="qTranslit">Transliteration</button>
+                <button class="q-toggle on" id="qShowTrans" onclick="toggleQView(this)" data-i18n="qTranslation">Translation</button>
             </div>
             <div class="quran-audio-bar" id="quranAudioBar">
                 <button class="qa-btn" id="qaPrev" onclick="qaPlayPrev()" title="Previous Ayah">⏮</button>
@@ -1164,7 +1188,7 @@ textarea.fb-input{resize:vertical;min-height:80px}
     <div class="panel" id="panelPrayer">
         <div class="prayer-panel">
             <div class="prayer-hero" id="prayerHero">
-                <div class="prayer-hero-label">Next Prayer</div>
+                <div class="prayer-hero-label" data-i18n="prayerNextPrayer">Next Prayer</div>
                 <div class="prayer-progress" id="prayerProgress">
                     <svg viewBox="0 0 100 100">
                         <circle class="track" cx="50" cy="50" r="44"/>
@@ -1197,7 +1221,7 @@ textarea.fb-input{resize:vertical;min-height:80px}
                 <div class="prayer-row" data-prayer="Isha"><span class="p-icon">🌙</span><span class="p-name">Isha<span class="p-arabic">العشاء</span></span><span class="p-time" id="ptIsha">--:--</span><span class="p-iqama" id="iqIsha"></span></div>
             </div>
             <div class="qibla-section">
-                <button class="qibla-toggle" id="qiblaToggle" onclick="toggleQibla()">🕋 Show Qibla Compass</button>
+                <button class="qibla-toggle" id="qiblaToggle" onclick="toggleQibla()">🕋 <span data-i18n="qiblaShow">Show Qibla Compass</span></button>
                 <div class="qibla-compass-wrap" id="qiblaWrap">
                     <div class="qibla-compass">
                         <div class="qibla-north-dot"></div>
@@ -1240,14 +1264,30 @@ textarea.fb-input{resize:vertical;min-height:80px}
     <div class="panel" id="panelSettings">
         <div class="settings-inner">
             <div class="set-group">
-                <div class="set-title">Translation</div>
+                <div class="set-title" data-i18n="setUILang">🌐 App Language</div>
+                <label class="set-row">
+                    <select id="uiLangSelect" class="lang-sel" style="height:40px;flex:1" onchange="changeUILang(this.value)">
+                        <option value="en">English</option>
+                        <option value="ar">العربية (Arabic)</option>
+                        <option value="ur">اردو (Urdu)</option>
+                        <option value="tr">Türkçe (Turkish)</option>
+                        <option value="id">Bahasa Indonesia</option>
+                        <option value="fr">Français (French)</option>
+                        <option value="es">Español (Spanish)</option>
+                        <option value="ms">Bahasa Melayu (Malay)</option>
+                    </select>
+                </label>
+                <div class="set-hint" data-i18n="setUILangHint">Changes the app interface language. Sermon translation language is set separately above.</div>
+            </div>
+            <div class="set-group">
+                <div class="set-title" data-i18n="setTranslation">Translation</div>
                 <label class="set-row"><input type="checkbox" id="sInstant" checked> Instant translate (sentence-by-sentence)</label>
                 <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> Auto-scroll to latest</label>
                 <label class="set-row"><input type="checkbox" id="sHighlight" checked> Highlight latest translation</label>
                 <label class="set-row"><input type="checkbox" id="sShowOrig" > Show original text alongside</label>
             </div>
             <div class="set-group">
-                <div class="set-title">Audio</div>
+                <div class="set-title" data-i18n="setAudio">Audio</div>
                 <label class="set-row">Mic sensitivity: <span id="threshVal">15</span><input type="range" id="sThresh" min="5" max="60" value="15" oninput="document.getElementById('threshVal').textContent=this.value"></label>
                 <label class="set-row"><input type="checkbox" id="sWakeLock" checked> Keep screen on while listening</label>
                 <label class="set-row"><input type="checkbox" id="sNoiseFilter" checked> Enhanced noise filter (mosque/outdoor mode)</label>
@@ -1258,30 +1298,31 @@ textarea.fb-input{resize:vertical;min-height:80px}
                 <div class="set-hint">Audio below this volume level is treated as background noise and muted. Higher = more aggressive noise removal but may clip quiet speech. Set to 0 to disable.</div>
             </div>
             <div class="set-group">
-                <div class="set-title">Speech Flow</div>
+                <div class="set-title" data-i18n="setSpeechFlow">Speech Flow</div>
                 <label class="set-row">Max buffer time: <span id="bufferVal">8</span>s<input type="range" id="sBuffer" min="3" max="20" value="8" step="1" oninput="document.getElementById('bufferVal').textContent=this.value"></label>
                 <div class="set-hint">Forces translation after this many seconds of continuous speech — even if the speaker doesn't pause.</div>
                 <label class="set-row">Silence wait: <span id="silenceVal">1.5</span>s<input type="range" id="sSilence" min="0.5" max="5" value="1.5" step="0.5" oninput="document.getElementById('silenceVal').textContent=this.value"></label>
                 <div class="set-hint">How long to wait after the speaker pauses before translating.</div>
             </div>
             <div class="set-group">
-                <div class="set-title">Translation Engine</div>
+                <div class="set-title" data-i18n="setEngine">Translation Engine</div>
                 <label class="set-row"><input type="radio" name="engine" value="auto" checked> Auto (Lingva → MyMemory → LibreTranslate)</label>
                 <label class="set-row"><input type="radio" name="engine" value="lingva"> Lingva only (Google-powered)</label>
                 <label class="set-row"><input type="radio" name="engine" value="mymemory"> MyMemory only</label>
             </div>
-            <button class="set-save" onclick="saveSettings()">Save Settings ✓</button>
+            <button class="set-save" onclick="saveSettings()" data-i18n="btnSaveSettings">Save Settings ✓</button>
         </div>
     </div>
 
     <!-- === ABOUT + CONTACT === -->
     <div class="panel" id="panelAbout">
         <div class="about-inner">
-            <h2>Khutbah Live Translator</h2>
+            <h2 data-i18n="aboutTitle">Khutbah Live Translator</h2>
             <div class="bismillah-hdr">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
             <div class="about-text">This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.</div>
             <div class="about-text">
-                <strong>v4.7 Features:</strong><br>
+                <strong>v4.6 Features:</strong><br>
+                • Multi-language UI (English, Arabic, Urdu + more via lang/ files)<br>
                 • Quran reader with 30+ translation languages<br>
                 • Dual translation engine (Lingva + MyMemory fallback)<br>
                 • Du'a collection with categories and references<br>
@@ -1336,13 +1377,190 @@ textarea.fb-input{resize:vertical;min-height:80px}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   KHUTBAH LIVE TRANSLATOR v4.7
+   KHUTBAH LIVE TRANSLATOR v4.6
    
-   v4.7: Quran multi-language translation (30+ languages)
+   v4.6: UI localization (i18n) + Quran multi-language translation
    v4.5: Debounce Android isFinal (600ms), replace dead Lingva hosts
    v4.4: Skip getUserMedia on Android (kills recognition)
    v4.3: Deferred recognition.start(), re-apply config on restart
    ═══════════════════════════════════════════════════════════════ */
+
+// ═══════════════════════════════════════════════
+// i18n SYSTEM — Load from lang/ folder, fallback to embedded
+// ═══════════════════════════════════════════════
+const LOCALE_FALLBACK = {
+    en: {
+        _meta: { lang:'en', name:'English', nativeName:'English', dir:'ltr' },
+        headerSubtitle:'Khutbah Live Translator', tabTranslator:'Translator', tabQuran:'Quran',
+        tabDua:"Du'a", tabPrayer:'Prayer', tabSettings:'Settings', tabAbout:'About',
+        lblSource:'Source', lblTranslateTo:'Translate to', statusReady:'Tap microphone to start',
+        statusListening:'🎤 Listening...', statusSpeechDetected:'🎤 Speech detected...',
+        btnClear:'Clear', btnSave:'Save', btnRec:'Rec', btnRecStop:'Stop', apiReady:'API Ready',
+        emptyMsg:'Tap the microphone to begin\nlive translation of the Khutbah',
+        clearConfirm:'Clear all translations?', noTranslations:'No translations to save',
+        qArabic:'Arabic', qTranslit:'Transliteration', qTranslation:'Translation',
+        qSelectSurah:'— Select a Surah —', qLoading:'Loading Surah...',
+        duaAll:'All', duaLoading:"Loading Du'as...",
+        prayerNextPrayer:'Next Prayer', prayerAdhanAt:'Adhan at',
+        prayerHrs:'hrs', prayerMin:'min', prayerSec:'sec',
+        qiblaShow:'Show Qibla Compass', qiblaHide:'Hide Qibla Compass',
+        qiblaDirLabel:'Qibla Direction from North',
+        setUILang:'🌐 App Language', setTranslation:'Translation', setAudio:'Audio',
+        setSpeechFlow:'Speech Flow', setEngine:'Translation Engine',
+        btnSaveSettings:'Save Settings ✓', aboutTitle:'Khutbah Live Translator',
+        tutSkip:'Skip', tutNext:'Next →', tutStart:'Start ✓',
+        settingsSaved:'Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.'
+    },
+    ar: {
+        _meta: { lang:'ar', name:'Arabic', nativeName:'العربية', dir:'rtl' },
+        headerSubtitle:'مترجم الخطبة الحي', tabTranslator:'المترجم', tabQuran:'القرآن',
+        tabDua:'الدعاء', tabPrayer:'الصلاة', tabSettings:'الإعدادات', tabAbout:'حول',
+        lblSource:'لغة المصدر', lblTranslateTo:'ترجم إلى', statusReady:'اضغط على المايكروفون للبدء',
+        statusListening:'🎤 جاري الاستماع...', statusSpeechDetected:'🎤 تم اكتشاف كلام...',
+        btnClear:'مسح', btnSave:'حفظ', btnRec:'تسجيل', btnRecStop:'إيقاف', apiReady:'API جاهز',
+        emptyMsg:'اضغط على المايكروفون لبدء\nالترجمة المباشرة للخطبة',
+        clearConfirm:'مسح جميع الترجمات؟', noTranslations:'لا توجد ترجمات للحفظ',
+        qArabic:'عربي', qTranslit:'نقل صوتي', qTranslation:'ترجمة',
+        qSelectSurah:'— اختر سورة —', qLoading:'جاري تحميل السورة...',
+        duaAll:'الكل', duaLoading:'جاري تحميل الأدعية...',
+        prayerNextPrayer:'الصلاة القادمة', prayerAdhanAt:'الأذان في',
+        prayerHrs:'ساعة', prayerMin:'دقيقة', prayerSec:'ثانية',
+        qiblaShow:'إظهار بوصلة القبلة', qiblaHide:'إخفاء بوصلة القبلة',
+        qiblaDirLabel:'اتجاه القبلة من الشمال',
+        setUILang:'🌐 لغة التطبيق', setTranslation:'الترجمة', setAudio:'الصوت',
+        setSpeechFlow:'تدفق الكلام', setEngine:'محرك الترجمة',
+        btnSaveSettings:'حفظ الإعدادات ✓', aboutTitle:'مترجم الخطبة الحي',
+        tutSkip:'تخطي', tutNext:'← التالي', tutStart:'ابدأ ✓',
+        settingsSaved:'تم حفظ الإعدادات ✓\nتغييرات فلتر الضوضاء تسري في المرة القادمة.'
+    },
+    ur: {
+        _meta: { lang:'ur', name:'Urdu', nativeName:'اردو', dir:'rtl' },
+        headerSubtitle:'خطبہ لائیو ترجمان', tabTranslator:'ترجمان', tabQuran:'قرآن',
+        tabDua:'دعا', tabPrayer:'نماز', tabSettings:'ترتیبات', tabAbout:'تعارف',
+        lblSource:'ماخذ زبان', lblTranslateTo:'ترجمہ کریں', statusReady:'شروع کرنے کے لیے مائیکروفون دبائیں',
+        statusListening:'🎤 سن رہا ہے...', statusSpeechDetected:'🎤 تقریر کا پتہ چلا...',
+        btnClear:'صاف', btnSave:'محفوظ', btnRec:'ریکارڈ', btnRecStop:'بند', apiReady:'API تیار',
+        emptyMsg:'خطبے کا براہ راست ترجمہ شروع\nکرنے کے لیے مائیکروفون دبائیں',
+        clearConfirm:'تمام ترجمے صاف کریں؟', noTranslations:'محفوظ کرنے کے لیے کوئی ترجمہ نہیں',
+        qArabic:'عربی', qTranslit:'نقل حرفی', qTranslation:'ترجمہ',
+        qSelectSurah:'— سورۃ منتخب کریں —', qLoading:'سورۃ لوڈ ہو رہی ہے...',
+        duaAll:'سب', duaLoading:'دعائیں لوڈ ہو رہی ہیں...',
+        prayerNextPrayer:'اگلی نماز', prayerAdhanAt:'اذان بوقت',
+        prayerHrs:'گھنٹے', prayerMin:'منٹ', prayerSec:'سیکنڈ',
+        qiblaShow:'قبلہ کمپاس دکھائیں', qiblaHide:'قبلہ کمپاس چھپائیں',
+        qiblaDirLabel:'شمال سے قبلے کی سمت',
+        setUILang:'🌐 ایپ کی زبان', setTranslation:'ترجمہ', setAudio:'آڈیو',
+        setSpeechFlow:'تقریر کا بہاؤ', setEngine:'ترجمہ انجن',
+        btnSaveSettings:'ترتیبات محفوظ کریں ✓', aboutTitle:'خطبہ لائیو ترجمان',
+        tutSkip:'چھوڑیں', tutNext:'← اگلا', tutStart:'شروع ✓',
+        settingsSaved:'ترتیبات محفوظ ہو گئیں ✓\nشور فلٹر کی تبدیلیاں اگلی بار لاگو ہوں گی۔'
+    }
+};
+
+let currentLocale = {};
+let currentLang = 'en';
+
+async function loadLocale(lang) {
+    // Priority 1: Try loading from lang/ folder
+    try {
+        const res = await fetchWithTimeout(`lang/${lang}.json`, {}, 5000);
+        if (res.ok) {
+            const data = await res.json();
+            console.log(`[i18n] Loaded lang/${lang}.json from server`);
+            // Cache in localStorage for offline use
+            try { localStorage.setItem('kht_locale_' + lang, JSON.stringify(data)); } catch(e) {}
+            return data;
+        }
+    } catch(e) {
+        console.warn(`[i18n] Failed to load lang/${lang}.json:`, e.message);
+    }
+
+    // Priority 2: Try localStorage cached version
+    try {
+        const cached = localStorage.getItem('kht_locale_' + lang);
+        if (cached) {
+            console.log(`[i18n] Using cached locale for ${lang}`);
+            return JSON.parse(cached);
+        }
+    } catch(e) {}
+
+    // Priority 3: Embedded fallback (en/ar/ur only)
+    if (LOCALE_FALLBACK[lang]) {
+        console.log(`[i18n] Using embedded fallback for ${lang}`);
+        return LOCALE_FALLBACK[lang];
+    }
+
+    // Priority 4: Fall back to English
+    console.log(`[i18n] No locale for ${lang}, falling back to English`);
+    return LOCALE_FALLBACK.en;
+}
+
+function applyLocale(locale) {
+    currentLocale = locale;
+    const meta = locale._meta || {};
+    const dir = meta.dir || 'ltr';
+
+    // Set document direction for RTL languages
+    document.documentElement.dir = dir;
+    document.documentElement.lang = meta.lang || 'en';
+
+    // Apply body direction class for CSS targeting
+    document.body.classList.toggle('rtl-ui', dir === 'rtl');
+
+    // Replace all data-i18n elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (locale[key] !== undefined) {
+            // Handle placeholders differently
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = locale[key];
+            } else {
+                el.textContent = locale[key];
+            }
+        }
+    });
+
+    // Handle data-i18n-placeholder separately
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (locale[key] !== undefined) el.placeholder = locale[key];
+    });
+
+    // Update dynamic elements that aren't tagged
+    const stsTxt = document.getElementById('stsTxt');
+    if (stsTxt && stsTxt.textContent.includes('Tap microphone') || stsTxt && stsTxt.textContent.includes('دبائیں') || stsTxt && stsTxt.textContent.includes('المايكروفون')) {
+        stsTxt.textContent = locale.statusReady || 'Tap microphone to start';
+    }
+
+    console.log(`[i18n] Applied locale: ${meta.lang || 'unknown'} (${meta.nativeName || meta.name || ''}), dir=${dir}`);
+}
+
+// Get a translated string by key (for use in JS code)
+function t(key, replacements) {
+    let str = currentLocale[key] || LOCALE_FALLBACK.en[key] || key;
+    if (replacements) {
+        for (const [k, v] of Object.entries(replacements)) {
+            str = str.replace(`{${k}}`, v);
+        }
+    }
+    return str;
+}
+
+async function changeUILang(lang) {
+    currentLang = lang;
+    localStorage.setItem('kht_ui_lang', lang);
+    const locale = await loadLocale(lang);
+    applyLocale(locale);
+}
+
+async function initI18n() {
+    const savedLang = localStorage.getItem('kht_ui_lang') || 'en';
+    currentLang = savedLang;
+    const uiSel = document.getElementById('uiLangSelect');
+    if (uiSel) uiSel.value = savedLang;
+    const locale = await loadLocale(savedLang);
+    applyLocale(locale);
+}
 
 // ── Platform Detection ──
 const IS_ANDROID = /Android/i.test(navigator.userAgent);
@@ -1375,7 +1593,7 @@ let tutStep = 1;
 const TUT_TOTAL = 6;
 const RTL_LANGS = ['ar','ur','fa','ps','he','ku','sd','yi'];
 
-// v4.7: RTL edition languages (for Quran translation text direction)
+// v4.6: RTL edition languages (for Quran translation text direction)
 const QURAN_RTL_EDITIONS = ['ur','fa','ar','ps','ku','sd','yi','he'];
 
 // ── Translation Cache ──
@@ -1476,11 +1694,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedSrc) document.getElementById('srcLang').value = savedSrc;
     if (savedTgt) document.getElementById('tgtLang').value = savedTgt;
 
-    // v4.7: Restore saved Quran translation language
+    // v4.6: Restore saved Quran translation language
     const savedQuranTrans = localStorage.getItem('kht_quran_trans');
     if (savedQuranTrans) document.getElementById('quranTransSelect').value = savedQuranTrans;
 
-    console.log('[v4.7] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
+    // v4.6: Initialize UI localization (loads lang/ files → fallback to embedded)
+    initI18n();
+
+    console.log('[v4.6] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
         IS_CHROME ? 'Chrome' : 'Other', '| Restart delay:', RESTART_DELAY + 'ms');
 });
 
@@ -1567,7 +1788,7 @@ function runViz(rawStream) {
             bars.forEach((bar, i) => { const v = data[i * 4] || 0; bar.style.height = Math.max(6, (v / 255) * 40) + 'px'; bar.style.background = avg > cfg.threshold ? 'var(--gold)' : 'rgba(212,168,67,.3)'; });
             requestAnimationFrame(loop);
         })();
-    } catch(e) { console.warn('[v4.7] Audio processing setup failed:', e); processedStream = rawStream; }
+    } catch(e) { console.warn('[v4.6] Audio processing setup failed:', e); processedStream = rawStream; }
 }
 
 // ══════════════════════════════════════════════
@@ -1579,7 +1800,7 @@ function safeStartRecognition() {
     recognition.continuous = true; recognition.interimResults = true;
     recognition.lang = document.getElementById('srcLang').value;
     if (IS_ANDROID) recognition.maxAlternatives = 1;
-    const doStart = () => { try { recognition.start(); } catch(e) { if (e.name !== 'InvalidStateError') console.warn('[v4.7] Recognition restart failed:', e.message); } setTimeout(() => { recognitionRestarting = false; }, RESTART_DELAY); };
+    const doStart = () => { try { recognition.start(); } catch(e) { if (e.name !== 'InvalidStateError') console.warn('[v4.6] Recognition restart failed:', e.message); } setTimeout(() => { recognitionRestarting = false; }, RESTART_DELAY); };
     if (IS_ANDROID) setTimeout(doStart, 50); else doStart();
 }
 
@@ -1600,7 +1821,7 @@ async function startListen() {
         if (cfg.wakeLock) await reqWakeLock();
         let transcript = '', silenceTimer, bufferFlushTimer, restarts = 0;
 
-        recognition.onstart = () => { isListening = true; restarts = 0; recognitionRestarting = false; updMicUI(true); console.log('[v4.7] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS'); if (IS_ANDROID && !stream) console.log('[v4.7] Android: skipping getUserMedia'); };
+        recognition.onstart = () => { isListening = true; restarts = 0; recognitionRestarting = false; updMicUI(true); console.log('[v4.6] Recognition started on', IS_ANDROID ? 'Android' : 'Desktop/iOS'); if (IS_ANDROID && !stream) console.log('[v4.6] Android: skipping getUserMedia'); };
 
         recognition.onresult = (e) => {
             clearTimeout(silenceTimer); restarts = 0;
@@ -1621,19 +1842,19 @@ async function startListen() {
             }
         };
 
-        recognition.onnomatch = () => { console.warn('[v4.7] No match'); document.getElementById('stsTxt').textContent = '🎤 No match — try speaking louder...'; };
+        recognition.onnomatch = () => { console.warn('[v4.6] No match'); document.getElementById('stsTxt').textContent = '🎤 No match — try speaking louder...'; };
         recognition.onerror = (e) => {
-            console.warn('[v4.7] Recognition error:', e.error, e.message || '');
+            console.warn('[v4.6] Recognition error:', e.error, e.message || '');
             if ((e.error === 'no-speech' || e.error === 'audio-capture' || e.error === 'network') && isListening && restarts < 15) { restarts++; setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 2); }
             else if (e.error === 'not-allowed') { alert('Microphone permission denied.'); stopListen(); }
             else if (e.error === 'language-not-supported') { alert('Language not supported for speech recognition on your device.'); stopListen(); }
             else if (e.error === 'aborted' && isListening && restarts < 15) { restarts++; setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 3); }
         };
-        recognition.onend = () => { console.log('[v4.7] Recognition ended, isListening:', isListening); if (transcript.trim()) { doTranslate(transcript.trim()); transcript = ''; } if (isListening) setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY); };
+        recognition.onend = () => { console.log('[v4.6] Recognition ended, isListening:', isListening); if (transcript.trim()) { doTranslate(transcript.trim()); transcript = ''; } if (isListening) setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY); };
 
-        if (IS_ANDROID) { setTimeout(() => { try { recognition.start(); console.log('[v4.7] Android: recognition.start() called (deferred)'); } catch(e) { console.error('[v4.7] Android start failed:', e); } }, 50); }
+        if (IS_ANDROID) { setTimeout(() => { try { recognition.start(); console.log('[v4.6] Android: recognition.start() called (deferred)'); } catch(e) { console.error('[v4.6] Android start failed:', e); } }, 50); }
         else recognition.start();
-    } catch (e) { console.error('[v4.7] startListen error:', e); alert('Microphone access denied.'); }
+    } catch (e) { console.error('[v4.6] startListen error:', e); alert('Microphone access denied.'); }
 }
 
 function stopListen() {
@@ -1765,7 +1986,7 @@ document.addEventListener('visibilitychange', async () => { if (document.visibil
 function sendFB() {
     const name = document.getElementById('fbName').value.trim(), email = document.getElementById('fbEmail').value.trim(), type = document.getElementById('fbType').value, msg = document.getElementById('fbMsg').value.trim();
     if (!name || !email || !type || !msg) { alert('Please fill all fields'); return; }
-    const body = `*Khutbah v4.7 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
+    const body = `*Khutbah v4.6 Feedback*%0A%0AName: ${encodeURIComponent(name)}%0AEmail: ${encodeURIComponent(email)}%0AType: ${encodeURIComponent(type)}%0A%0AMessage:%0A${encodeURIComponent(msg)}`;
     window.open(`https://wa.me/201227822099?text=${body}`, '_blank');
     ['fbName','fbEmail','fbMsg'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fbType').value = '';
@@ -1801,7 +2022,7 @@ function saveSettings() {
 
 
 // ══════════════════════════════════════════════
-// QURAN TAB — v4.7: Multi-Language Translation
+// QURAN TAB — v4.6: Multi-Language Translation
 // ══════════════════════════════════════════════
 
 const SURAH_LIST = [
@@ -1835,11 +2056,11 @@ function isQuranTransRTL() {
     return QURAN_RTL_EDITIONS.includes(getQuranEditionLang());
 }
 
-// v4.7: Called when user changes translation language
+// v4.6: Called when user changes translation language
 function changeQuranTranslation() {
     const edition = getSelectedQuranEdition();
     localStorage.setItem('kht_quran_trans', edition);
-    console.log('[v4.7] Quran translation changed to:', edition);
+    console.log('[v4.6] Quran translation changed to:', edition);
 
     // Reload current surah with new translation
     const num = document.getElementById('surahSelect').value;
@@ -1934,7 +2155,7 @@ async function fetchSurahFromAPI(num, edition, silent) {
             container.innerHTML = '<div class="quran-loading">Failed to load. Please try again.</div>';
         }
     } catch (e) {
-        console.warn('[v4.7] Quran fetch error:', e.message);
+        console.warn('[v4.6] Quran fetch error:', e.message);
         if (!silent) container.innerHTML = '<div class="quran-loading">Network error. Check your connection.</div>';
     }
 }
@@ -2148,7 +2369,7 @@ goTab = function(name, btn) { origGoTab(name, btn); if (name === 'prayer' && !pr
 const _origDoTranslate = doTranslate;
 doTranslate = async function(text) {
     if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) {
-        try { const src = document.getElementById('srcLang').value.split('-')[0]; const tgt = document.getElementById('tgtLang').value; if (src === tgt) { addEntry(text, text); return; } const cacheKey = `${src}|${tgt}|${text.trim().toLowerCase()}`; if (txCache.has(cacheKey)) { apiStats.cacheHit++; addEntry(text, txCache.get(cacheKey)); return; } const result = await window.KhutbahEnhanced.translate(text, src, tgt); if (result && result.success && result.text) { txCache.set(cacheKey, result.text); addEntry(text, result.text); return; } } catch (e) { console.warn('[v4.7] ML Kit failed, using web fallback:', e.message); }
+        try { const src = document.getElementById('srcLang').value.split('-')[0]; const tgt = document.getElementById('tgtLang').value; if (src === tgt) { addEntry(text, text); return; } const cacheKey = `${src}|${tgt}|${text.trim().toLowerCase()}`; if (txCache.has(cacheKey)) { apiStats.cacheHit++; addEntry(text, txCache.get(cacheKey)); return; } const result = await window.KhutbahEnhanced.translate(text, src, tgt); if (result && result.success && result.text) { txCache.set(cacheKey, result.text); addEntry(text, result.text); return; } } catch (e) { console.warn('[v4.6] ML Kit failed, using web fallback:', e.message); }
     }
     return _origDoTranslate(text);
 };
@@ -2158,7 +2379,7 @@ reqWakeLock = async function() { if (window.KhutbahEnhanced) { window.KhutbahEnh
 const _origRelWakeLock = relWakeLock;
 relWakeLock = async function() { if (window.KhutbahEnhanced) { window.KhutbahEnhanced.releaseWakeLock(); window.KhutbahEnhanced.stopForegroundService(); } return _origRelWakeLock(); };
 
-window.addEventListener('nativeBridgeReady', function(e) { const f = e.detail; console.log('[v4.7] Native bridge ready:', f); const stsTxt = document.getElementById('stsTxt'); if (stsTxt && f.hasMLKit) stsTxt.textContent = '🟢 ML Kit Ready • Tap mic to start'; if (f.hasMLKit) { const src = document.getElementById('srcLang').value.split('-')[0]; const tgt = document.getElementById('tgtLang').value; window.KhutbahEnhanced.downloadModel(src, tgt).catch(() => {}); } });
+window.addEventListener('nativeBridgeReady', function(e) { const f = e.detail; console.log('[v4.6] Native bridge ready:', f); const stsTxt = document.getElementById('stsTxt'); if (stsTxt && f.hasMLKit) stsTxt.textContent = '🟢 ML Kit Ready • Tap mic to start'; if (f.hasMLKit) { const src = document.getElementById('srcLang').value.split('-')[0]; const tgt = document.getElementById('tgtLang').value; window.KhutbahEnhanced.downloadModel(src, tgt).catch(() => {}); } });
 
 document.getElementById('tgtLang').addEventListener('change', function() { if (window.KhutbahEnhanced && window.KhutbahEnhanced.hasMLKit) { const src = document.getElementById('srcLang').value.split('-')[0]; window.KhutbahEnhanced.downloadModel(src, this.value).catch(() => {}); } });
 
