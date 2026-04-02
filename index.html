@@ -1006,45 +1006,45 @@
         <div class="tut-steps" id="tutSteps">
             <div class="tut-step on" data-s="1">
                 <div class="tut-icon">🕌</div>
-                <div class="tut-title">Welcome, Brother/Sister!</div>
-                <div class="tut-desc">This app translates Friday sermons (Khutbah) in real-time, helping Muslims worldwide understand the beautiful teachings regardless of language barriers.</div>
-                <div class="tut-tip"><strong>💡 Tip:</strong> Works in any mosque or while watching online sermons.</div>
+                <div class="tut-title" data-i18n="tutWelcomeTitle">Welcome, Brother/Sister!</div>
+                <div class="tut-desc" data-i18n="tutWelcomeDesc">This app translates Friday sermons (Khutbah) in real-time, helping Muslims worldwide understand the beautiful teachings regardless of language barriers.</div>
+                <div class="tut-tip"><strong>💡</strong> <span data-i18n="tutWelcomeTip">Works in any mosque or while watching online sermons.</span></div>
             </div>
             <div class="tut-step" data-s="2">
                 <div class="tut-icon">🌍</div>
-                <div class="tut-title">Select Languages</div>
-                <div class="tut-desc">Choose the <strong>Source Language</strong> (what the Imam speaks) and <strong>Translation Language</strong> (your preferred language). Only verified, working language combinations are shown.</div>
-                <div class="tut-tip"><strong>💡 Tip:</strong> Select a regional dialect (Saudi, Egyptian, etc.) for better speech recognition accuracy.</div>
+                <div class="tut-title" data-i18n="tutLangTitle">Select Languages</div>
+                <div class="tut-desc" data-i18n="tutLangDesc">Choose the Source Language (what the Imam speaks) and Translation Language (your preferred language). Only verified, working language combinations are shown.</div>
+                <div class="tut-tip"><strong>💡</strong> <span data-i18n="tutLangTip">Select a regional dialect (Saudi, Egyptian, etc.) for better speech recognition accuracy.</span></div>
             </div>
             <div class="tut-step" data-s="3">
                 <div class="tut-icon">🎤</div>
-                <div class="tut-title">Start Listening</div>
-                <div class="tut-desc">Tap the <strong>microphone button</strong> to start. The app listens and translates automatically. The audio visualizer shows when speech is detected.</div>
-                <div class="tut-tip"><strong>💡 Tip:</strong> Position your phone near the speaker. Allow microphone permission when prompted.</div>
+                <div class="tut-title" data-i18n="tutMicTitle">Start Listening</div>
+                <div class="tut-desc" data-i18n="tutMicDesc">Tap the microphone button to start. The app listens and translates automatically. The audio visualizer shows when speech is detected.</div>
+                <div class="tut-tip"><strong>💡</strong> <span data-i18n="tutMicTip">Position your phone near the speaker. Allow microphone permission when prompted.</span></div>
             </div>
             <div class="tut-step" data-s="4">
                 <div class="tut-icon">📖</div>
-                <div class="tut-title">Quran &amp; Du'a</div>
-                <div class="tut-desc">Read Quran with <strong>Arabic text, transliteration, and translation</strong> in <strong>30+ languages</strong>. Browse a collection of essential <strong>Du'as</strong> for daily life with meanings.</div>
-                <div class="tut-tip"><strong>💡 Tip:</strong> Use the translation dropdown in the Quran tab to read in your own language!</div>
+                <div class="tut-title" data-i18n="tutQuranTitle">Quran &amp; Du'a</div>
+                <div class="tut-desc" data-i18n="tutQuranDesc">Read Quran with Arabic text, transliteration, and translation in 30+ languages. Browse a collection of essential Du'as for daily life with meanings.</div>
+                <div class="tut-tip"><strong>💡</strong> <span data-i18n="tutQuranTip">Use the translation dropdown in the Quran tab to read in your own language!</span></div>
             </div>
             <div class="tut-step" data-s="5">
                 <div class="tut-icon">📱</div>
-                <div class="tut-title">Cross-Platform</div>
-                <div class="tut-desc"><strong>Android:</strong> Use Chrome browser. Keep screen on.<br><br><strong>iPhone/iPad:</strong> Use Safari browser. Add to Home Screen for best experience.</div>
-                <div class="tut-tip"><strong>💡 Tip:</strong> The app uses dual translation engines for maximum reliability.</div>
+                <div class="tut-title" data-i18n="tutPlatformTitle">Cross-Platform</div>
+                <div class="tut-desc" data-i18n="tutPlatformDesc">Android: Use Chrome browser. Keep screen on. iPhone/iPad: Use Safari browser. Add to Home Screen for best experience.</div>
+                <div class="tut-tip"><strong>💡</strong> <span data-i18n="tutPlatformTip">The app uses dual translation engines for maximum reliability.</span></div>
             </div>
             <div class="tut-step" data-s="6">
                 <div class="tut-icon">🤲</div>
-                <div class="tut-title">You're Ready!</div>
-                <div class="tut-desc">May Allah bless you. This app is <strong>completely free</strong> and made with love for the Muslim Ummah. Please share it with others!</div>
+                <div class="tut-title" data-i18n="tutReadyTitle">You're Ready!</div>
+                <div class="tut-desc" data-i18n="tutReadyDesc">May Allah bless you. This app is completely free and made with love for the Muslim Ummah. Please share it with others!</div>
                 <div class="tut-tip"><strong>دعاء:</strong> اللهم علمنا ما ينفعنا وانفعنا بما علمتنا وزدنا علماً</div>
             </div>
         </div>
         <div class="tut-dots" id="tutDots"></div>
         <div class="tut-nav">
-            <button class="tut-btn skip" onclick="closeTut()">Skip</button>
-            <button class="tut-btn next" id="tutNext" onclick="nextTut()">Next →</button>
+            <button class="tut-btn skip" onclick="closeTut()" data-i18n="tutSkip">Skip</button>
+            <button class="tut-btn next" id="tutNext" onclick="nextTut()" data-i18n="tutNext">Next →</button>
         </div>
     </div>
 </div>
@@ -1354,13 +1354,13 @@
                     <div class="prayer-hero-name" id="prayerHeroName">—</div>
                     <div class="prayer-hero-arabic" id="prayerHeroArabic"></div>
                     <div class="prayer-hero-countdown" id="prayerCountdown">
-                        <div class="cd-unit"><span class="cd-num" id="cdHours">--</span><span class="cd-label">hrs</span></div>
+                        <div class="cd-unit"><span class="cd-num" id="cdHours">--</span><span class="cd-label" data-i18n="prayerHrs">hrs</span></div>
                         <span class="cd-sep">:</span>
-                        <div class="cd-unit"><span class="cd-num" id="cdMins">--</span><span class="cd-label">min</span></div>
+                        <div class="cd-unit"><span class="cd-num" id="cdMins">--</span><span class="cd-label" data-i18n="prayerMin">min</span></div>
                         <span class="cd-sep">:</span>
-                        <div class="cd-unit"><span class="cd-num" id="cdSecs">--</span><span class="cd-label">sec</span></div>
+                        <div class="cd-unit"><span class="cd-num" id="cdSecs">--</span><span class="cd-label" data-i18n="prayerSec">sec</span></div>
                     </div>
-                    <div class="prayer-hero-at">Adhan at <span id="prayerHeroTime">--:--</span></div>
+                    <div class="prayer-hero-at"><span data-i18n="prayerAdhanAt">Adhan at</span> <span id="prayerHeroTime">--:--</span></div>
                 </div>
                 <div class="prayer-date-bar">
                     <span class="pdb-hijri" id="hijriDateDisplay">Loading...</span>
@@ -1390,7 +1390,7 @@
                             <div class="qibla-center">🕋</div>
                         </div>
                         <div class="qibla-degree" id="qiblaDegree">—°</div>
-                        <div class="qibla-degree-label">Qibla Direction from North</div>
+                        <div class="qibla-degree-label" data-i18n="qiblaDirLabel">Qibla Direction from North</div>
                         <div class="qibla-status" id="qiblaStatus">Initializing compass...</div>
                     </div>
                 </div>
@@ -1465,34 +1465,34 @@
                 </div>
                 <div class="set-group">
                     <div class="set-title" data-i18n="setTranslation">Translation</div>
-                    <label class="set-row"><input type="checkbox" id="sInstant" checked> Instant translate (sentence-by-sentence)</label>
-                    <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> Auto-scroll to latest</label>
-                    <label class="set-row"><input type="checkbox" id="sHighlight" checked> Highlight latest translation</label>
-                    <label class="set-row"><input type="checkbox" id="sShowOrig" > Show original text alongside</label>
+                    <label class="set-row"><input type="checkbox" id="sInstant" checked> <span data-i18n="setInstant">Instant translate (sentence-by-sentence)</span></label>
+                    <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> <span data-i18n="setAutoScroll">Auto-scroll to latest</span></label>
+                    <label class="set-row"><input type="checkbox" id="sHighlight" checked> <span data-i18n="setHighlight">Highlight latest translation</span></label>
+                    <label class="set-row"><input type="checkbox" id="sShowOrig" > <span data-i18n="setShowOrig">Show original text alongside</span></label>
                 </div>
                 <div class="set-group">
                     <div class="set-title" data-i18n="setAudio">Audio</div>
-                    <label class="set-row">Mic sensitivity: <span id="threshVal">15</span><input type="range" id="sThresh" min="5" max="60" value="15" oninput="document.getElementById('threshVal').textContent=this.value"></label>
-                    <label class="set-row"><input type="checkbox" id="sWakeLock" checked> Keep screen on while listening</label>
-                    <label class="set-row"><input type="checkbox" id="sNoiseFilter" checked> Enhanced noise filter (mosque/outdoor mode)</label>
-                    <div class="set-hint">Applies highpass + lowpass filters to isolate speech and remove background noise like AC hum, crowd murmur, and echo.</div>
-                    <label class="set-row">Voice boost: <span id="gainVal">1.5</span>×<input type="range" id="sGain" min="1" max="4" value="1.5" step="0.5" oninput="document.getElementById('gainVal').textContent=this.value"></label>
-                    <div class="set-hint">Amplifies the speech signal before recognition. Increase if the speaker is far from the mic or the environment is very loud.</div>
-                    <label class="set-row">Noise gate: <span id="gateVal">20</span><input type="range" id="sGate" min="0" max="50" value="20" step="5" oninput="document.getElementById('gateVal').textContent=this.value"></label>
-                    <div class="set-hint">Audio below this volume level is treated as background noise and muted. Higher = more aggressive noise removal but may clip quiet speech. Set to 0 to disable.</div>
+                    <label class="set-row"><span data-i18n="setMicSensitivity">Mic sensitivity:</span> <span id="threshVal">15</span><input type="range" id="sThresh" min="5" max="60" value="15" oninput="document.getElementById('threshVal').textContent=this.value"></label>
+                    <label class="set-row"><input type="checkbox" id="sWakeLock" checked> <span data-i18n="setKeepScreen">Keep screen on while listening</span></label>
+                    <label class="set-row"><input type="checkbox" id="sNoiseFilter" checked> <span data-i18n="setNoiseFilter">Enhanced noise filter (mosque/outdoor mode)</span></label>
+                    <div class="set-hint" data-i18n="setNoiseFilterHint">Applies highpass + lowpass filters to isolate speech and remove background noise like AC hum, crowd murmur, and echo.</div>
+                    <label class="set-row"><span data-i18n="setVoiceBoost">Voice boost:</span> <span id="gainVal">1.5</span>×<input type="range" id="sGain" min="1" max="4" value="1.5" step="0.5" oninput="document.getElementById('gainVal').textContent=this.value"></label>
+                    <div class="set-hint" data-i18n="setVoiceBoostHint">Amplifies the speech signal before recognition. Increase if the speaker is far from the mic or the environment is very loud.</div>
+                    <label class="set-row"><span data-i18n="setNoiseGate">Noise gate:</span> <span id="gateVal">20</span><input type="range" id="sGate" min="0" max="50" value="20" step="5" oninput="document.getElementById('gateVal').textContent=this.value"></label>
+                    <div class="set-hint" data-i18n="setNoiseGateHint">Audio below this volume level is treated as background noise and muted. Higher = more aggressive noise removal but may clip quiet speech. Set to 0 to disable.</div>
                 </div>
                 <div class="set-group">
                     <div class="set-title" data-i18n="setSpeechFlow">Speech Flow</div>
-                    <label class="set-row">Max buffer time: <span id="bufferVal">8</span>s<input type="range" id="sBuffer" min="3" max="20" value="8" step="1" oninput="document.getElementById('bufferVal').textContent=this.value"></label>
-                    <div class="set-hint">Forces translation after this many seconds of continuous speech — even if the speaker doesn't pause.</div>
-                    <label class="set-row">Silence wait: <span id="silenceVal">1.5</span>s<input type="range" id="sSilence" min="0.5" max="5" value="1.5" step="0.5" oninput="document.getElementById('silenceVal').textContent=this.value"></label>
-                    <div class="set-hint">How long to wait after the speaker pauses before translating.</div>
+                    <label class="set-row"><span data-i18n="setMaxBuffer">Max buffer time:</span> <span id="bufferVal">8</span>s<input type="range" id="sBuffer" min="3" max="20" value="8" step="1" oninput="document.getElementById('bufferVal').textContent=this.value"></label>
+                    <div class="set-hint" data-i18n="setMaxBufferHint">Forces translation after this many seconds of continuous speech — even if the speaker doesn't pause.</div>
+                    <label class="set-row"><span data-i18n="setSilenceWait">Silence wait:</span> <span id="silenceVal">1.5</span>s<input type="range" id="sSilence" min="0.5" max="5" value="1.5" step="0.5" oninput="document.getElementById('silenceVal').textContent=this.value"></label>
+                    <div class="set-hint" data-i18n="setSilenceWaitHint">How long to wait after the speaker pauses before translating.</div>
                 </div>
                 <div class="set-group">
                     <div class="set-title" data-i18n="setEngine">Translation Engine</div>
-                    <label class="set-row"><input type="radio" name="engine" value="auto" checked> Auto (Lingva → MyMemory → LibreTranslate)</label>
-                    <label class="set-row"><input type="radio" name="engine" value="lingva"> Lingva only (Google-powered)</label>
-                    <label class="set-row"><input type="radio" name="engine" value="mymemory"> MyMemory only</label>
+                    <label class="set-row"><input type="radio" name="engine" value="auto" checked> <span data-i18n="setEngineAuto">Auto (Lingva → MyMemory → LibreTranslate)</span></label>
+                    <label class="set-row"><input type="radio" name="engine" value="lingva"> <span data-i18n="setEngineLingva">Lingva only (Google-powered)</span></label>
+                    <label class="set-row"><input type="radio" name="engine" value="mymemory"> <span data-i18n="setEngineMymemory">MyMemory only</span></label>
                 </div>
                 <button class="set-save" onclick="saveSettings()" data-i18n="btnSaveSettings">Save Settings ✓</button>
             </div>
@@ -1503,9 +1503,9 @@
             <div class="about-inner">
                 <h2 data-i18n="aboutTitle">Khutbah Live Translator</h2>
                 <div class="bismillah-hdr">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-                <div class="about-text">This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.</div>
+                <div class="about-text" data-i18n="aboutIntro">This application was created to help Muslims around the world understand Friday sermons regardless of language barriers. Whether you're a new Muslim, living abroad, or simply want to understand a sermon in a different language — this tool is for you.</div>
                 <div class="about-text">
-                    <strong>v4.6 Features:</strong><br>
+                    <strong data-i18n="aboutFeatures">v4.6 Features:</strong><br>
                     • Multi-language UI (English, Arabic, Urdu + more via lang/ files)<br>
                     • Quran reader with 30+ translation languages<br>
                     • Dual translation engine (Lingva + MyMemory fallback)<br>
@@ -1516,36 +1516,36 @@
                     • Dark theme for mosque-friendly use
                 </div>
                 <div class="dev-card">
-                    <h3>Developer</h3>
-                    <p><strong>Dr. Khaled Diab</strong><br>Senior Corporate Trainer &amp; Energy Systems Expert<br>Jeddah, Saudi Arabia</p>
-                    <p>This app is <strong>completely free</strong>, open-source, and made as Sadaqah Jariyah for the Muslim Ummah. Please share it with anyone who might benefit.</p>
+                    <h3 data-i18n="aboutDeveloper">Developer</h3>
+                    <p><strong data-i18n="aboutDevName">Dr. Khaled Diab</strong><br><span data-i18n="aboutDevRole">Senior Corporate Trainer &amp; Energy Systems Expert</span><br><span data-i18n="aboutDevLocation">Jeddah, Saudi Arabia</span></p>
+                    <p data-i18n="aboutFreeMsg">This app is completely free, open-source, and made as Sadaqah Jariyah for the Muslim Ummah. Please share it with anyone who might benefit.</p>
                 </div>
-                <div class="section-divider"><span>Contact &amp; Support</span></div>
+                <div class="section-divider"><span data-i18n="aboutContact">Contact &amp; Support</span></div>
                 <div class="c-card">
-                    <h3>Get in Touch</h3>
+                    <h3 data-i18n="aboutGetInTouch">Get in Touch</h3>
                     <div class="c-item"><span class="c-icon">📧</span><div class="c-info"><div class="c-lbl">Email</div><a href="mailto:khaleddiab@engineer.com">khaleddiab&#64;engineer.com</a></div></div>
                     <div class="c-item"><span class="c-icon">💼</span><div class="c-info"><div class="c-lbl">LinkedIn</div><a href="https://linkedin.com/in/khaleddiab" target="_blank">linkedin.com/in/khaleddiab</a></div></div>
                     <div class="c-item"><span class="c-icon">💻</span><div class="c-info"><div class="c-lbl">GitHub</div><a href="https://github.com/khalecl" target="_blank">github.com/khalecl</a></div></div>
                 </div>
                 <div class="donate-box">
-                    <h3>صدقة جارية</h3>
-                    <p>This app is free and always will be. If you'd like to support its development, please make dua for us or share it with your community.</p>
+                    <h3 data-i18n="aboutSadaqah">صدقة جارية</h3>
+                    <p data-i18n="aboutDonateMsg">This app is free and always will be. If you'd like to support its development, please make dua for us or share it with your community.</p>
                 </div>
                 <div class="c-card">
-                    <h3>Send Feedback</h3>
+                    <h3 data-i18n="aboutFeedback">Send Feedback</h3>
                     <div class="fb-grp">
-                        <input id="fbName" class="fb-input" placeholder="Your name">
-                        <input id="fbEmail" class="fb-input" placeholder="Email address">
+                        <input id="fbName" class="fb-input" data-i18n-placeholder="aboutFbName" placeholder="Your name">
+                        <input id="fbEmail" class="fb-input" data-i18n-placeholder="aboutFbEmail" placeholder="Email address">
                         <select id="fbType" class="fb-input">
-                            <option value="">Select feedback type...</option>
-                            <option value="bug">🐛 Bug Report</option>
-                            <option value="feature">✨ Feature Request</option>
-                            <option value="translation">🌍 Translation Issue</option>
-                            <option value="quran">📖 Quran/Du'a Issue</option>
-                            <option value="general">💬 General Feedback</option>
+                            <option value="" data-i18n="aboutFbType">Select feedback type...</option>
+                            <option value="bug" data-i18n="aboutFbTypeBug">🐛 Bug Report</option>
+                            <option value="feature" data-i18n="aboutFbTypeFeature">✨ Feature Request</option>
+                            <option value="translation" data-i18n="aboutFbTypeTranslation">🌍 Translation Issue</option>
+                            <option value="quran" data-i18n="aboutFbTypeQuran">📖 Quran/Du'a Issue</option>
+                            <option value="general" data-i18n="aboutFbTypeGeneral">💬 General Feedback</option>
                         </select>
-                        <textarea id="fbMsg" class="fb-input" placeholder="Your message..."></textarea>
-                        <button class="bar-btn primary" style="width:100%;justify-content:center" onclick="sendFB()">📤 Send via WhatsApp</button>
+                        <textarea id="fbMsg" class="fb-input" data-i18n-placeholder="aboutFbMsg" placeholder="Your message..."></textarea>
+                        <button class="bar-btn primary" style="width:100%;justify-content:center" onclick="sendFB()" data-i18n="aboutFbSend">📤 Send via WhatsApp</button>
                     </div>
                 </div>
             </div>
@@ -2010,7 +2010,7 @@ function updTut() {
     document.querySelectorAll('.tut-step').forEach(s => { s.classList.toggle('on', +s.dataset.s === tutStep); });
     document.querySelectorAll('.tut-dot').forEach(d => { const n = +d.dataset.d; d.className = 'tut-dot' + (n === tutStep ? ' on' : n < tutStep ? ' done' : ''); });
     const btn = document.getElementById('tutNext');
-    btn.textContent = tutStep === TUT_TOTAL ? 'Start ✓' : 'Next →';
+    btn.textContent = tutStep === TUT_TOTAL ? t('tutStart') : t('tutNext');
     btn.className = 'tut-btn ' + (tutStep === TUT_TOTAL ? 'go' : 'next');
 }
 
