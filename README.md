@@ -40,7 +40,7 @@ The ultimate spiritual companion for the Masjid — now with 35+ languages and a
 ### ⚡ Real-time Translation
 
 Advanced speech-to-text and dual translation APIs deliver live sermon captions in real-time:
-
+![ 01-live-translation](https://khalecl.github.io/Khutbah/screenshots/1.jpeg)
 - **35+ languages** for app interface localization
 - **Speech recognition** for 30+ source languages (Arabic dialects, English, Urdu, Turkish, etc.)
 - **Translation** to 35+ target languages
@@ -49,7 +49,7 @@ Advanced speech-to-text and dual translation APIs deliver live sermon captions i
 ### 📖 Quran Reader
 
 Read and listen to the Holy Quran with:
-
+![ 02-quran-reader](https://khalecl.github.io/Khutbah/screenshots/2.jpeg)
 - **Arabic text** with beautiful Amiri font
 - **Transliteration** for those learning Arabic
 - **30+ translation languages** including English, Urdu, Arabic, Turkish, Indonesian, Hindi, Bengali, and more
@@ -57,9 +57,9 @@ Read and listen to the Holy Quran with:
 - **Playback speed control** (0.5x - 2x)
 
 ### 🤲 Du'a Collection
-![ 03-dua-collection-daily](https://khalecl.github.io/Khutbah/screenshots/3.jpeg)
-Curated library of essential supplications:
 
+Curated library of essential supplications:
+![ 03-dua-collection-daily](https://khalecl.github.io/Khutbah/screenshots/3.jpeg)
 - **Arabic text** with transliteration
 - **English/Hindi meanings** for all duas
 - **Categorized** by type (Morning, Evening, Sleep, Food, Travel, etc.)
@@ -68,13 +68,13 @@ Curated library of essential supplications:
 ### 🕌 Prayer Times
 
 Stay connected to prayer times:
-
+![ 04-prayer-times-countdown](https://khalecl.github.io/Khutbah/screenshots/4.jpeg)
 - **Automatic location detection**
 - **Multiple calculation methods** (Umm Al-Qura, Egyptian, ISNA, etc.)
 - **Countdown timer** to next prayer
 - **Hijri & Gregorian dates**
 - **Qibla compass** direction indicator
-
+![ 05-qibla-compass](https://khalecl.github.io/Khutbah/screenshots/5.jpeg)
 ### 📱 PWA Ready
 
 Add to your home screen for a native app experience:
@@ -89,7 +89,7 @@ Add to your home screen for a native app experience:
 ## 🌍 Supported Languages
 
 The app interface is fully translated into **35+ languages**:
-
+![ 06-settings-language](https://khalecl.github.io/Khutbah/screenshots/6.jpeg)
 | Language | Code | Status |
 |----------|------|--------|
 | Amharic | am | ✅ |
@@ -141,7 +141,7 @@ Architecture:  Progressive Web App (PWA)
 APIs:         Web Speech API • Lingva Translation • MyMemory Translation
 Prayer:        Aladhan API • OpenCompass
 ```
-
+![ 07-settings-audio-config](https://khalecl.github.io/Khutbah/screenshots/7.jpeg)
 ---
 
 ## 📥 Installation & How to Use
