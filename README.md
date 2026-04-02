@@ -145,7 +145,7 @@ Prayer:        Aladhan API • OpenCompass
 ---
 
 ## 📥 Installation & How to Use
-[ 03-dua-collection-daily](https://khalecl.github.io/Khutbah/screenshots/WhatsApp Image 2026-04-02 at 12.50.25 PM.jpeg)
+[ 03-dua-collection-daily](https://khalecl.github.io/Khutbah/screenshots/3.jpeg)
 
 ### 🔗 Option 1: Web Browser (Easiest)
 
