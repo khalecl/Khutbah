@@ -40,7 +40,9 @@ The ultimate spiritual companion for the Masjid — now with 35+ languages and a
 ### ⚡ Real-time Translation
 
 Advanced speech-to-text and dual translation APIs deliver live sermon captions in real-time:
+
 ![ 01-live-translation](https://khalecl.github.io/Khutbah/screenshots/1.jpeg)
+
 - **35+ languages** for app interface localization
 - **Speech recognition** for 30+ source languages (Arabic dialects, English, Urdu, Turkish, etc.)
 - **Translation** to 35+ target languages
