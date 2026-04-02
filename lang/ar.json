@@ -142,5 +142,12 @@
   "tutReadyDesc": "بارك الله فيك. هذا التطبيق مجاني تماماً وصُنع بحب للأمة الإسلامية. يرجى مشاركته مع الآخرين!",
   "tutSkip": "تخطي",
   "tutNext": "← التالي",
-  "tutStart": "ابدأ ✓"
+  "tutStart": "ابدأ ✓",
+  "setSkin": "🎨 مظهر التطبيق",
+  "skinMasjidNight": "ليلة المسجد",
+  "skinDesertSand": "رمال الصحراء",
+  "skinMidnightBlue": "أزرق منتصف الليل",
+  "skinOttomanRose": "وردة عثمانية",
+  "skinPureLight": "ضوء نقي",
+  "skinRoyalPurple": "بنفسجي ملكي"
 }
