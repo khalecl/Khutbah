@@ -1660,37 +1660,54 @@ let currentLocale = {};
 let currentLang = 'en';
 
 async function loadLocale(lang) {
-    // ── For en/ar/ur: ALWAYS start with embedded fallback (guaranteed to work) ──
-    // Then try to enrich with the full lang/ file (has more keys)
-    if (LOCALE_FALLBACK[lang]) {
-        let locale = { ...LOCALE_FALLBACK[lang] };
-        console.log(`[i18n] Using embedded locale for ${lang}`);
+    let locale = {};
 
-        // Try to load richer version from lang/ folder (has ~140 keys vs ~40 embedded)
-        try {
-            const baseUrl = document.baseURI ? new URL('.', document.baseURI).href : '';
-            const url = baseUrl + 'lang/' + lang + '.json';
-            const res = await fetchWithTimeout(url, {}, 4000);
-            if (res.ok) {
-                const fullData = await res.json();
-                locale = { ...locale, ...fullData }; // merge: full file wins
-                console.log(`[i18n] Enriched ${lang} from lang/ folder (${Object.keys(fullData).length} keys)`);
-                try { localStorage.setItem('kht_locale_' + lang, JSON.stringify(fullData)); } catch(e) {}
-            }
-        } catch(e) {
-            console.warn(`[i18n] Could not load lang/${lang}.json, using embedded only`);
-            // Try localStorage cache as enrichment
+    // ── 1. Try website/lang/ folder FIRST ──
+    try {
+        const baseUrl = document.baseURI ? new URL('.', document.baseURI).href : '';
+        const url = baseUrl + 'lang/' + lang + '.json';
+        const res = await fetchWithTimeout(url, {}, 4000);
+        
+        if (res.ok) {
+            const fullData = await res.json();
+            locale = { ...fullData };
+            console.log(`[i18n] Loaded ${lang} from lang/ folder (${Object.keys(fullData).length} keys)`);
+            
+            // Cache successful fetch
             try {
-                const cached = localStorage.getItem('kht_locale_' + lang);
-                if (cached) {
-                    const cachedData = JSON.parse(cached);
-                    locale = { ...locale, ...cachedData };
-                    console.log(`[i18n] Enriched ${lang} from localStorage cache`);
-                }
-            } catch(e2) {}
+                localStorage.setItem('kht_locale_' + lang, JSON.stringify(fullData));
+            } catch(e) {}
+            
+            return locale;
         }
+    } catch(e) {
+        console.warn(`[i18n] Could not load lang/${lang}.json from website`);
+    }
+
+    // ── 2. Try localStorage cache ──
+    try {
+        const cached = localStorage.getItem('kht_locale_' + lang);
+        if (cached) {
+            const cachedData = JSON.parse(cached);
+            locale = { ...cachedData };
+            console.log(`[i18n] Loaded ${lang} from localStorage cache`);
+            return locale;
+        }
+    } catch(e) {
+        console.warn(`[i18n] Cache read failed`);
+    }
+
+    // ── 3. Fallback to embedded data ──
+    if (LOCALE_FALLBACK[lang]) {
+        locale = { ...LOCALE_FALLBACK[lang] };
+        console.log(`[i18n] Using embedded fallback for ${lang}`);
         return locale;
     }
+
+    // ── 4. Last resort: empty object or default to 'en' ──
+    console.error(`[i18n] No locale data available for ${lang}`);
+    return {};
+}
 
     // ── For all other languages (tr, id, fr, es, ms, etc.): no embedded fallback ──
     // Must load from lang/ folder or cache; if both fail, fall back to English
