@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "lang": "so",
+    "name": "Somali",
+    "nativeName": "Soomaali",
+    "dir": "ltr",
+    "version": "1.0"
+  },
+  "headerSubtitle": "Turjumaan Khutbada Tooska ah",
+  "tabTranslator": "Turjumaan",
+  "tabQuran": "Qur'aan",
+  "tabDua": "Ducada",
+  "tabPrayer": "Salaadda",
+  "tabSettings": "Settings",
+  "statusReady": "Riix makarafoonka si aad u bilowdo",
+  "statusListening": "🎤 Dhageysi...",
+  "btnClear": "Tirtir",
+  "btnSave": "Keydi",
+  "emptyMsg": "Riix makarafoonka si aad u bilowdo\nturjumida khutbada si toos ah",
+  "qArabic": "Carabi",
+  "qTranslation": "Turjumid",
+  "qSelectSurah": "— Dooro Suuradda —",
+  "prayerNextPrayer": "Salaadda xigta",
+  "qiblaShow": "Muuji Qiblada",
+  "qiblaFacing": "✅ Waxaad u jeedaa Qiblada!",
+  "setUILang": "🌐 Luqadda App-ka",
+  "aboutDevName": "Dr. Khaled Diab",
+  "aboutFreeMsg": "App-kani waa Sadaqah Jariyah oo loogu talagalay Umadda.",
+  "tutWelcomeTitle": "Ku soo dhawaada!",
+  "tutStart": "Bilow ✓"
+}
