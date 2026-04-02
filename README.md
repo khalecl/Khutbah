@@ -57,7 +57,7 @@ Read and listen to the Holy Quran with:
 - **Playback speed control** (0.5x - 2x)
 
 ### 🤲 Du'a Collection
-
+![ 03-dua-collection-daily](https://khalecl.github.io/Khutbah/screenshots/3.jpeg)
 Curated library of essential supplications:
 
 - **Arabic text** with transliteration
@@ -145,7 +145,6 @@ Prayer:        Aladhan API • OpenCompass
 ---
 
 ## 📥 Installation & How to Use
-[ 03-dua-collection-daily](https://khalecl.github.io/Khutbah/screenshots/3.jpeg)
 
 ### 🔗 Option 1: Web Browser (Easiest)
 
