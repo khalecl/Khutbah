@@ -803,6 +803,167 @@ textarea.fb-input{resize:vertical;min-height:80px}
 .native-badge.mlkit{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.25)}
 .native-badge.offline{background:rgba(33,150,243,.15);color:#64b5f6;border:1px solid rgba(33,150,243,.25)}
 
+/* === Skin/Theme Selector === */
+.skin-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.skin-chip{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 12px;border:1px solid rgba(255,255,255,.08);
+    border-radius:var(--radius-sm);background:rgba(255,255,255,.03);
+    color:var(--text-dim);font-family:'Outfit',sans-serif;
+    font-size:11px;font-weight:500;cursor:pointer;
+    transition:all .25s;text-align:left;
+}
+.skin-chip.on{
+    border-color:var(--gold);background:rgba(212,168,67,.1);
+    color:var(--gold);font-weight:600;
+}
+.skin-chip:active{transform:scale(.97)}
+.skin-preview{
+    width:24px;height:24px;border-radius:6px;flex-shrink:0;
+    border:2px solid transparent;
+}
+.skin-chip.on .skin-preview{box-shadow:0 0 8px rgba(212,168,67,.4)}
+
+/* ═══════════════════════════════════════════
+   THEME SKINS — CSS variable overrides
+   ═══════════════════════════════════════════ */
+
+/* Default: Masjid Night (no override needed, uses :root) */
+
+/* Desert Sand */
+[data-skin="desert-sand"]{
+    --bg-deep:#1e0f08;--bg-mid:#2c1810;--bg-light:#4a2c17;
+    --gold:#c8956c;--gold-dim:rgba(200,149,108,.15);--gold-glow:rgba(200,149,108,.35);
+    --cream:#f5ead5;--cream-dim:#e8dcc4;
+    --text:#f0e6d5;--text-dim:rgba(240,230,213,.55);
+}
+[data-skin="desert-sand"] body{background:var(--bg-deep)}
+[data-skin="desert-sand"] body::before{
+    opacity:.03;
+    background-image:
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(60deg,rgba(200,149,108,.35) 25%,transparent 25.5%,transparent 75%,rgba(200,149,108,.35) 75%,rgba(200,149,108,.35)),
+        linear-gradient(60deg,rgba(200,149,108,.35) 25%,transparent 25.5%,transparent 75%,rgba(200,149,108,.35) 75%,rgba(200,149,108,.35));
+    background-size:40px 70px;
+}
+
+/* Midnight Blue */
+[data-skin="midnight-blue"]{
+    --bg-deep:#080e1a;--bg-mid:#0f1d38;--bg-light:#1a3058;
+    --gold:#8ab4f8;--gold-dim:rgba(138,180,248,.12);--gold-glow:rgba(138,180,248,.3);
+    --cream:#e8edf5;--cream-dim:#d0d8e8;
+    --text:#e0e8f5;--text-dim:rgba(224,232,245,.55);
+}
+[data-skin="midnight-blue"] body{background:var(--bg-deep)}
+[data-skin="midnight-blue"] body::before{
+    opacity:.025;
+    background-image:
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(60deg,rgba(138,180,248,.25) 25%,transparent 25.5%,transparent 75%,rgba(138,180,248,.25) 75%,rgba(138,180,248,.25)),
+        linear-gradient(60deg,rgba(138,180,248,.25) 25%,transparent 25.5%,transparent 75%,rgba(138,180,248,.25) 75%,rgba(138,180,248,.25));
+    background-size:40px 70px;
+}
+[data-skin="midnight-blue"] .mic.live{
+    background:linear-gradient(145deg,#1565c0,#1976d2);
+    border-color:rgba(100,160,255,.5);
+}
+
+/* Ottoman Rose */
+[data-skin="ottoman-rose"]{
+    --bg-deep:#1a070e;--bg-mid:#2a0a14;--bg-light:#4a1225;
+    --gold:#d4a043;--gold-dim:rgba(212,160,67,.15);--gold-glow:rgba(212,160,67,.35);
+    --cream:#f5e8e0;--cream-dim:#e8d5cc;
+    --text:#f0e4dc;--text-dim:rgba(240,228,220,.55);
+}
+[data-skin="ottoman-rose"] body{background:var(--bg-deep)}
+[data-skin="ottoman-rose"] body::before{
+    opacity:.03;
+    background-image:
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(60deg,rgba(212,160,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,160,67,.35) 75%,rgba(212,160,67,.35)),
+        linear-gradient(60deg,rgba(212,160,67,.35) 25%,transparent 25.5%,transparent 75%,rgba(212,160,67,.35) 75%,rgba(212,160,67,.35));
+    background-size:40px 70px;
+}
+[data-skin="ottoman-rose"] .mic.live{
+    background:linear-gradient(145deg,#8b1a3a,#a52050);
+    border-color:rgba(200,100,120,.5);
+}
+
+/* Pure Light */
+[data-skin="pure-light"]{
+    --bg-deep:#f5f0e6;--bg-mid:#e8e0d0;--bg-light:#d9cfbc;
+    --gold:#2d6b45;--gold-dim:rgba(45,107,69,.1);--gold-glow:rgba(45,107,69,.25);
+    --cream:#1a3025;--cream-dim:#2a4035;
+    --text:#1a2820;--text-dim:rgba(26,40,32,.55);
+}
+[data-skin="pure-light"] body{background:var(--bg-deep)}
+[data-skin="pure-light"] body::before{
+    opacity:.04;
+    background-image:
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(60deg,rgba(45,107,69,.2) 25%,transparent 25.5%,transparent 75%,rgba(45,107,69,.2) 75%,rgba(45,107,69,.2)),
+        linear-gradient(60deg,rgba(45,107,69,.2) 25%,transparent 25.5%,transparent 75%,rgba(45,107,69,.2) 75%,rgba(45,107,69,.2));
+    background-size:40px 70px;
+}
+[data-skin="pure-light"] .tab{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08)}
+[data-skin="pure-light"] .tab.on{background:rgba(45,107,69,.1);border-color:rgba(45,107,69,.3)}
+[data-skin="pure-light"] .panels{background:rgba(255,255,255,.6);border-color:rgba(0,0,0,.08)}
+[data-skin="pure-light"] .lang-sel{background-color:rgba(255,255,255,.7);color:#1a2820}
+[data-skin="pure-light"] .lang-sel option{background:#fff;color:#1a2820}
+[data-skin="pure-light"] .set-group{background:rgba(255,255,255,.5);border-color:rgba(0,0,0,.06)}
+[data-skin="pure-light"] .ayah-card{background:rgba(255,255,255,.5);border-color:rgba(0,0,0,.06)}
+[data-skin="pure-light"] .dua-card{background:rgba(255,255,255,.5);border-color:rgba(0,0,0,.06)}
+[data-skin="pure-light"] .c-card{background:rgba(255,255,255,.5);border-color:rgba(0,0,0,.06)}
+[data-skin="pure-light"] .c-item{background:rgba(255,255,255,.5)}
+[data-skin="pure-light"] .skin-chip{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:rgba(26,40,32,.6)}
+[data-skin="pure-light"] .skin-chip.on{border-color:var(--gold);background:rgba(45,107,69,.08);color:var(--gold)}
+[data-skin="pure-light"] .ver{background:rgba(245,240,230,.85);color:rgba(26,40,32,.5)}
+[data-skin="pure-light"] .mic.idle{background:linear-gradient(145deg,#d9cfbc,#e8e0d0);border-color:rgba(45,107,69,.4)}
+[data-skin="pure-light"] .mic.live{background:linear-gradient(145deg,#c62828,#e53935);border-color:rgba(255,100,100,.5)}
+[data-skin="pure-light"] .prayer-hero{background:linear-gradient(160deg,rgba(45,107,69,.1),rgba(232,224,208,.8),rgba(245,240,230,.95))}
+[data-skin="pure-light"] .prayer-row.next{background:linear-gradient(135deg,rgba(45,107,69,.08),rgba(45,107,69,.03));border-color:rgba(45,107,69,.2)}
+[data-skin="pure-light"] .fb-input{background:rgba(255,255,255,.7);border-color:rgba(0,0,0,.1);color:#1a2820}
+[data-skin="pure-light"] .quran-nav select{background-color:rgba(255,255,255,.7);color:#1a2820}
+[data-skin="pure-light"] .quran-nav select option{background:#fff;color:#1a2820}
+
+/* Royal Purple */
+[data-skin="royal-purple"]{
+    --bg-deep:#120a22;--bg-mid:#1a0a2e;--bg-light:#2d1452;
+    --gold:#c9a0dc;--gold-dim:rgba(201,160,220,.12);--gold-glow:rgba(201,160,220,.3);
+    --cream:#f0e8f5;--cream-dim:#dcd0e8;
+    --text:#ece4f2;--text-dim:rgba(236,228,242,.55);
+}
+[data-skin="royal-purple"] body{background:var(--bg-deep)}
+[data-skin="royal-purple"] body::before{
+    opacity:.03;
+    background-image:
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(30deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(150deg,var(--gold) 12%,transparent 12.5%,transparent 87%,var(--gold) 87.5%,var(--gold)),
+        linear-gradient(60deg,rgba(201,160,220,.25) 25%,transparent 25.5%,transparent 75%,rgba(201,160,220,.25) 75%,rgba(201,160,220,.25)),
+        linear-gradient(60deg,rgba(201,160,220,.25) 25%,transparent 25.5%,transparent 75%,rgba(201,160,220,.25) 75%,rgba(201,160,220,.25));
+    background-size:40px 70px;
+}
+[data-skin="royal-purple"] .mic.live{
+    background:linear-gradient(145deg,#7b1fa2,#9c27b0);
+    border-color:rgba(180,130,220,.5);
+}
+
 /* === RTL UI Mode (Arabic, Urdu) === */
 [dir="rtl"] .hdr-en{direction:rtl}
 [dir="rtl"] .lang-lbl{text-align:right}
@@ -1280,6 +1441,35 @@ textarea.fb-input{resize:vertical;min-height:80px}
                 <div class="set-hint" data-i18n="setUILangHint">Changes the app interface language. Sermon translation language is set separately above.</div>
             </div>
             <div class="set-group">
+                <div class="set-title" data-i18n="setSkin">🎨 App Skin</div>
+                <div class="skin-grid" id="skinGrid">
+                    <button class="skin-chip on" data-skin="masjid-night" onclick="changeSkin('masjid-night',this)">
+                        <span class="skin-preview" style="background:linear-gradient(135deg,#0a2818,#0f3d24);border-color:#d4a843"></span>
+                        <span data-i18n="skinMasjidNight">Masjid Night</span>
+                    </button>
+                    <button class="skin-chip" data-skin="desert-sand" onclick="changeSkin('desert-sand',this)">
+                        <span class="skin-preview" style="background:linear-gradient(135deg,#2c1810,#4a2c17);border-color:#c8956c"></span>
+                        <span data-i18n="skinDesertSand">Desert Sand</span>
+                    </button>
+                    <button class="skin-chip" data-skin="midnight-blue" onclick="changeSkin('midnight-blue',this)">
+                        <span class="skin-preview" style="background:linear-gradient(135deg,#0a1628,#122244);border-color:#8ab4f8"></span>
+                        <span data-i18n="skinMidnightBlue">Midnight Blue</span>
+                    </button>
+                    <button class="skin-chip" data-skin="ottoman-rose" onclick="changeSkin('ottoman-rose',this)">
+                        <span class="skin-preview" style="background:linear-gradient(135deg,#2a0a14,#4a1225);border-color:#d4a043"></span>
+                        <span data-i18n="skinOttomanRose">Ottoman Rose</span>
+                    </button>
+                    <button class="skin-chip" data-skin="pure-light" onclick="changeSkin('pure-light',this)">
+                        <span class="skin-preview" style="background:linear-gradient(135deg,#f5f0e6,#e8e0d0);border-color:#2d6b45"></span>
+                        <span data-i18n="skinPureLight">Pure Light</span>
+                    </button>
+                    <button class="skin-chip" data-skin="royal-purple" onclick="changeSkin('royal-purple',this)">
+                        <span class="skin-preview" style="background:linear-gradient(135deg,#1a0a2e,#2d1452);border-color:#c9a0dc"></span>
+                        <span data-i18n="skinRoyalPurple">Royal Purple</span>
+                    </button>
+                </div>
+            </div>
+            <div class="set-group">
                 <div class="set-title" data-i18n="setTranslation">Translation</div>
                 <label class="set-row"><input type="checkbox" id="sInstant" checked> Instant translate (sentence-by-sentence)</label>
                 <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> Auto-scroll to latest</label>
@@ -1409,7 +1599,10 @@ const LOCALE_FALLBACK = {
         setSpeechFlow:'Speech Flow', setEngine:'Translation Engine',
         btnSaveSettings:'Save Settings ✓', aboutTitle:'Khutbah Live Translator',
         tutSkip:'Skip', tutNext:'Next →', tutStart:'Start ✓',
-        settingsSaved:'Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.'
+        settingsSaved:'Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.',
+        setSkin:'🎨 App Skin', skinMasjidNight:'Masjid Night', skinDesertSand:'Desert Sand',
+        skinMidnightBlue:'Midnight Blue', skinOttomanRose:'Ottoman Rose',
+        skinPureLight:'Pure Light', skinRoyalPurple:'Royal Purple'
     },
     ar: {
         _meta: { lang:'ar', name:'Arabic', nativeName:'العربية', dir:'rtl' },
@@ -1431,7 +1624,10 @@ const LOCALE_FALLBACK = {
         setSpeechFlow:'تدفق الكلام', setEngine:'محرك الترجمة',
         btnSaveSettings:'حفظ الإعدادات ✓', aboutTitle:'مترجم الخطبة الحي',
         tutSkip:'تخطي', tutNext:'← التالي', tutStart:'ابدأ ✓',
-        settingsSaved:'تم حفظ الإعدادات ✓\nتغييرات فلتر الضوضاء تسري في المرة القادمة.'
+        settingsSaved:'تم حفظ الإعدادات ✓\nتغييرات فلتر الضوضاء تسري في المرة القادمة.',
+        setSkin:'🎨 مظهر التطبيق', skinMasjidNight:'ليلة المسجد', skinDesertSand:'رمال الصحراء',
+        skinMidnightBlue:'أزرق منتصف الليل', skinOttomanRose:'وردة عثمانية',
+        skinPureLight:'ضوء نقي', skinRoyalPurple:'بنفسجي ملكي'
     },
     ur: {
         _meta: { lang:'ur', name:'Urdu', nativeName:'اردو', dir:'rtl' },
@@ -1453,7 +1649,10 @@ const LOCALE_FALLBACK = {
         setSpeechFlow:'تقریر کا بہاؤ', setEngine:'ترجمہ انجن',
         btnSaveSettings:'ترتیبات محفوظ کریں ✓', aboutTitle:'خطبہ لائیو ترجمان',
         tutSkip:'چھوڑیں', tutNext:'← اگلا', tutStart:'شروع ✓',
-        settingsSaved:'ترتیبات محفوظ ہو گئیں ✓\nشور فلٹر کی تبدیلیاں اگلی بار لاگو ہوں گی۔'
+        settingsSaved:'ترتیبات محفوظ ہو گئیں ✓\nشور فلٹر کی تبدیلیاں اگلی بار لاگو ہوں گی۔',
+        setSkin:'🎨 ایپ کا تھیم', skinMasjidNight:'مسجد کی رات', skinDesertSand:'صحرائی ریت',
+        skinMidnightBlue:'آدھی رات نیلا', skinOttomanRose:'عثمانی گلاب',
+        skinPureLight:'خالص روشنی', skinRoyalPurple:'شاہی جامنی'
     }
 };
 
@@ -1560,6 +1759,47 @@ async function initI18n() {
     if (uiSel) uiSel.value = savedLang;
     const locale = await loadLocale(savedLang);
     applyLocale(locale);
+}
+
+// ═══════════════════════════════════════════════
+// SKIN / THEME SYSTEM — cached in localStorage
+// ═══════════════════════════════════════════════
+const VALID_SKINS = ['masjid-night','desert-sand','midnight-blue','ottoman-rose','pure-light','royal-purple'];
+
+function changeSkin(skinId, btn) {
+    if (!VALID_SKINS.includes(skinId)) skinId = 'masjid-night';
+    // Apply to <html> element so CSS [data-skin] selectors work
+    if (skinId === 'masjid-night') {
+        document.documentElement.removeAttribute('data-skin');
+    } else {
+        document.documentElement.setAttribute('data-skin', skinId);
+    }
+    // Update theme-color meta tag for mobile browsers
+    const themeColors = {
+        'masjid-night': '#0f3d24',
+        'desert-sand': '#2c1810',
+        'midnight-blue': '#0f1d38',
+        'ottoman-rose': '#2a0a14',
+        'pure-light': '#e8e0d0',
+        'royal-purple': '#1a0a2e'
+    };
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.content = themeColors[skinId] || '#0f3d24';
+    // Update UI: highlight active chip
+    document.querySelectorAll('.skin-chip').forEach(c => c.classList.remove('on'));
+    if (btn) btn.classList.add('on');
+    else {
+        const chip = document.querySelector(`.skin-chip[data-skin="${skinId}"]`);
+        if (chip) chip.classList.add('on');
+    }
+    // Persist
+    localStorage.setItem('kht_skin', skinId);
+    console.log('[Skin] Applied:', skinId);
+}
+
+function initSkin() {
+    const saved = localStorage.getItem('kht_skin') || 'masjid-night';
+    changeSkin(saved, null);
 }
 
 // ── Platform Detection ──
@@ -1700,6 +1940,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // v4.6: Initialize UI localization (loads lang/ files → fallback to embedded)
     initI18n();
+    // v4.6: Initialize skin/theme from cached preference
+    initSkin();
 
     console.log('[v4.6] Platform:', IS_ANDROID ? 'Android' : IS_IOS ? 'iOS' : 'Desktop',
         IS_CHROME ? 'Chrome' : 'Other', '| Restart delay:', RESTART_DELAY + 'ms');
