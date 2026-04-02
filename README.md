@@ -70,13 +70,17 @@ Curated library of essential supplications:
 ### 🕌 Prayer Times
 
 Stay connected to prayer times:
+
 ![ 04-prayer-times-countdown](https://khalecl.github.io/Khutbah/screenshots/4.jpeg)
+
 - **Automatic location detection**
 - **Multiple calculation methods** (Umm Al-Qura, Egyptian, ISNA, etc.)
 - **Countdown timer** to next prayer
 - **Hijri & Gregorian dates**
 - **Qibla compass** direction indicator
+- 
 ![ 05-qibla-compass](https://khalecl.github.io/Khutbah/screenshots/5.jpeg)
+
 ### 📱 PWA Ready
 
 Add to your home screen for a native app experience:
