@@ -2966,21 +2966,22 @@ function qaStop() {
     qaState.audioUrls = [];
 
     // Update UI
+    clearInterval(qaState.progressTimer);
     const playBtn = document.getElementById('qaPlayBtn');
     if (playBtn) {
         playBtn.textContent = '▶';
         playBtn.classList.remove('playing');
-        playBtn.disabled = false;
+    }
+    const floatingPlay = document.getElementById('qaFloatingPlay');
+    if (floatingPlay) {
+        floatingPlay.textContent = '▶';
+        floatingPlay.classList.remove('playing');
     }
     const progressFill = document.getElementById('qaProgressFill');
     if (progressFill) progressFill.style.width = '0%';
     const qaInfo = document.getElementById('qaInfo');
     if (qaInfo) qaInfo.textContent = '—';
-
-    // Remove playing highlight from all ayah cards
     document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => el.classList.remove('ayah-playing'));
-
-    // Update ayah buttons and hide floating bar
     qaUpdateAyahButtons();
     qaUpdateFloatingBar();
 }
