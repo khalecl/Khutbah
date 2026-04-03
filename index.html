@@ -2220,7 +2220,7 @@ function buildTutDots() {
     }
 }
 function showTut() { tutStep = 1; updTut(); document.getElementById('tutOverlay').classList.add('on'); }
-function closeTut() { document.getElementById('tutOverlay').classList.remove('on'); localStorage.setItem('kht_tut_v3', '1'); }
+function closeTut() { document.getElementById('tutOverlay').classList.remove('on'); localStorage.setItem('kht_tut_v4', '1'); }
 function nextTut() { if (tutStep < TUT_TOTAL) { tutStep++; updTut(); } else closeTut(); }
 function updTut() {
     document.querySelectorAll('.tut-step').forEach(s => { s.classList.toggle('on', +s.dataset.s === tutStep); });
