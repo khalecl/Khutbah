@@ -726,6 +726,37 @@
     .tut-btn.next{background:rgba(212,168,67,.15);color:var(--gold);border:1px solid rgba(212,168,67,.3)}
     .tut-btn.go{background:linear-gradient(145deg,rgba(212,168,67,.25),rgba(212,168,67,.12));color:var(--gold)}
 
+    /* Tutorial Language Selection */
+    .tut-lang-select-wrap {
+        margin: 16px 0;
+    }
+    .tut-lang-select {
+        width: 100%;
+        height: 48px;
+        padding: 0 32px 0 12px;
+        border: 1px solid rgba(212,168,67,.35);
+        border-radius: var(--radius-sm);
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        background: rgba(255,255,255,.05)
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath fill='%23d4a843' d='M5 7L0 2h10z'/%3E%3C/svg%3E")
+            no-repeat right 12px center;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+    }
+    .tut-lang-select:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px var(--gold-dim);
+    }
+    .tut-lang-select option {
+        background: #1a1a1a;
+        color: #eee;
+    }
+
     /* === Help + Version === */
     .help-float{
         position:fixed;bottom:calc(16px + var(--safe-bottom));right:16px;
@@ -1061,7 +1092,20 @@
             <p>Welcome to Khutbah Live Translator</p>
         </div>
         <div class="tut-steps" id="tutSteps">
-            <div class="tut-step on" data-s="1">
+            <!-- Step 0: Language Selection (First Time Only) -->
+            <div class="tut-step on" data-s="0">
+                <div class="tut-icon">🌍</div>
+                <div class="tut-title" data-i18n="tutLangSelectTitle">Choose Your Language</div>
+                <div class="tut-desc" data-i18n="tutLangSelectDesc">Select your preferred interface language. This changes the app menus and buttons to your language. You can change this later in Settings.</div>
+                <div class="tut-lang-select-wrap">
+                    <select id="tutLangSelect" class="lang-sel tut-lang-select" onchange="onTutLangSelect(this.value)">
+                        <!-- Dynamically populated by initAvailableLangs() -->
+                        <option value="">Loading languages...</option>
+                    </select>
+                </div>
+                <div class="tut-tip"><strong>💡</strong> <span data-i18n="tutLangSelectTip">You can also change the sermon translation languages separately in the Translator tab.</span></div>
+            </div>
+            <div class="tut-step" data-s="1">
                 <div class="tut-icon">🕌</div>
                 <div class="tut-title" data-i18n="tutWelcomeTitle">Welcome, Brother/Sister!</div>
                 <div class="tut-desc" data-i18n="tutWelcomeDesc">This app translates Friday sermons (Khutbah) in real-time, helping Muslims worldwide understand the beautiful teachings regardless of language barriers.</div>
@@ -1660,6 +1704,8 @@ const LOCALE_FALLBACK = {
         setSpeechFlow:'Speech Flow', setEngine:'Translation Engine',
         btnSaveSettings:'Save Settings ✓', aboutTitle:'Khutbah Live Translator',
         tutSkip:'Skip', tutNext:'Next →', tutStart:'Start ✓',
+        tutLangSelectTitle:'Choose Your Language', tutLangSelectDesc:'Select your preferred interface language. This changes the app menus and buttons to your language. You can change this later in Settings.',
+        tutLangSelectTip:'You can also change the sermon translation languages separately in the Translator tab.',
         settingsSaved:'Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.',
         setSkin:'🎨 App Skin', skinMasjidNight:'Masjid Night', skinDesertSand:'Desert Sand',
         skinMidnightBlue:'Midnight Blue', skinOttomanRose:'Ottoman Rose',
@@ -1685,6 +1731,8 @@ const LOCALE_FALLBACK = {
         setSpeechFlow:'تدفق الكلام', setEngine:'محرك الترجمة',
         btnSaveSettings:'حفظ الإعدادات ✓', aboutTitle:'مترجم الخطبة الحي',
         tutSkip:'تخطي', tutNext:'← التالي', tutStart:'ابدأ ✓',
+        tutLangSelectTitle:'اختر لغتك', tutLangSelectDesc:'اختر لغة الواجهة المفضلة. هذا يغير قوائم وأزرار التطبيق إلى لغتك. يمكنك تغيير هذا لاحقًا في الإعدادات.',
+        tutLangSelectTip:'يمكنك أيضًا تغيير لغات ترجمة الخطبة بشكل منفصل في علامة التبويب المترجم.',
         settingsSaved:'تم حفظ الإعدادات ✓\nتغييرات فلتر الضوضاء تسري في المرة القادمة.',
         setSkin:'🎨 مظهر التطبيق', skinMasjidNight:'ليلة المسجد', skinDesertSand:'رمال الصحراء',
         skinMidnightBlue:'أزرق منتصف الليل', skinOttomanRose:'وردة عثمانية',
@@ -1701,19 +1749,21 @@ const LOCALE_FALLBACK = {
         clearConfirm:'تمام ترجمے صاف کریں؟', noTranslations:'محفوظ کرنے کے لیے کوئی ترجمہ نہیں',
         qArabic:'عربی', qTranslit:'نقل حرفی', qTranslation:'ترجمہ',
         qSelectSurah:'— سورۃ منتخب کریں —', qLoading:'سورۃ لوڈ ہو رہی ہے...',
-        duaAll:'سب', duaLoading:'دعائیں لوڈ ہو رہی ہیں...',
-        prayerNextPrayer:'اگلی نماز', prayerAdhanAt:'اذان بوقت',
+        duaAll:'تمام', duaLoading:'دعا لوڈ ہو رہی ہے...',
+        prayerNextPrayer:'اگلی نماز', prayerAdhanAt:'اذان ہو گی',
         prayerHrs:'گھنٹے', prayerMin:'منٹ', prayerSec:'سیکنڈ',
-        qiblaShow:'قبلہ کمپاس دکھائیں', qiblaHide:'قبلہ کمپاس چھپائیں',
+        qiblaShow:'قبلہ کی طرف دکھائیں', qiblaHide:'قبلہ چھپائیں',
         qiblaDirLabel:'شمال سے قبلے کی سمت',
         setUILang:'🌐 ایپ کی زبان', setTranslation:'ترجمہ', setAudio:'آڈیو',
         setSpeechFlow:'تقریر کا بہاؤ', setEngine:'ترجمہ انجن',
-        btnSaveSettings:'ترتیبات محفوظ کریں ✓', aboutTitle:'خطبہ لائیو ترجمان',
+        btnSaveSettings:'سیٹنگز محفوظ کریں ✓', aboutTitle:'خطبہ لائیو ترجمان',
         tutSkip:'چھوڑیں', tutNext:'← اگلا', tutStart:'شروع ✓',
-        settingsSaved:'ترتیبات محفوظ ہو گئیں ✓\nشور فلٹر کی تبدیلیاں اگلی بار لاگو ہوں گی۔',
-        setSkin:'🎨 ایپ کا تھیم', skinMasjidNight:'مسجد کی رات', skinDesertSand:'صحرائی ریت',
-        skinMidnightBlue:'آدھی رات نیلا', skinOttomanRose:'عثمانی گلاب',
-        skinPureLight:'خالص روشنی', skinRoyalPurple:'شاہی جامنی'
+        tutLangSelectTitle:'اپنی زبان منتخب کریں', tutLangSelectDesc:'اپنی ترجیحی انٹرفیس زبان منتخب کریں۔ یہ ایپ کے مینو اور بٹن کو آپ کی زبان میں تبدیل کرتا ہے۔ آپ اسے بعد میں سیٹنگز میں تبدیل کر سکتے ہیں۔',
+        tutLangSelectTip:'آپ خطبہ کے ترجمہ کی زبانیں بھی الگ سے مترجم ٹیب میں تبدیل کر سکتے ہیں۔',
+        settingsSaved:'سیٹنگز محفوظ ہو گئیں ✓\nنویز فلٹر کی تبدیلیاں اگلی بار نافذ ہوں گی۔',
+        setSkin:'🎨 ایپ کا اسکن', skinMasjidNight:'مسجد کی رات', skinDesertSand:'ریگستان کی ریت',
+        skinMidnightBlue:'درمیانی شب کا نیلا', skinOttomanRose:'عثمانی گلاب',
+        skinPureLight:'صاف روشنی', skinRoyalPurple:'شاہی بنفشی'
     }
 };
 
@@ -1841,6 +1891,11 @@ async function changeUILang(lang) {
     localStorage.setItem('kht_ui_lang', lang);
     const locale = await loadLocale(lang);
     applyLocale(locale);
+    // Also update tutorial language selector if it exists
+    const tutSel = document.getElementById('tutLangSelect');
+    if (tutSel) {
+        tutSel.value = lang;
+    }
 }
 
 async function initI18n() {
@@ -1919,8 +1974,8 @@ let mediaRecorder, audioChunks = [], translations = [];
 let currentFontSize = 18, audioCtx, analyser, stream = null, wakeLock = null;
 let processedStream = null;
 let audioNodes = {};
-let tutStep = 1;
-const TUT_TOTAL = 6;
+let tutStep = 0; // Start at 0 (language selection)
+const TUT_TOTAL = 6; // Total steps after language (0-6, so 7 total including step 0)
 const RTL_LANGS = ['ar','ur','fa','ps','he','ku','sd','yi'];
 
 // v4.6: RTL edition languages (for Quran translation text direction)
@@ -2045,6 +2100,7 @@ async function fetchAvailableLangsFromGitHub() {
 
 async function initAvailableLangs() {
     const uiSel = document.getElementById('uiLangSelect');
+    const tutSel = document.getElementById('tutLangSelect');
     if (!uiSel) return;
 
     const savedLang = localStorage.getItem('kht_ui_lang') || 'en';
@@ -2069,7 +2125,14 @@ async function initAvailableLangs() {
         html += `<option value="${code}"${selected}>${name}</option>`;
     }
 
+    // Update settings dropdown
     uiSel.innerHTML = html;
+
+    // Also update tutorial language selector if it exists and has default options
+    if (tutSel && tutSel.options.length <= 1) {
+        tutSel.innerHTML = html;
+    }
+
     console.log('[i18n] Populated language dropdown with', sortedLangs.length, 'languages');
 }
 
@@ -2213,21 +2276,94 @@ function goTab(name, btn) {
 // ══════════════════════════════════════════════
 function buildTutDots() {
     const c = document.getElementById('tutDots'); c.innerHTML = '';
-    for (let i = 1; i <= TUT_TOTAL; i++) {
+    // Build dots for steps 0-6 (language + 6 tutorial steps)
+    for (let i = 0; i <= TUT_TOTAL; i++) {
         const d = document.createElement('div');
-        d.className = 'tut-dot' + (i === 1 ? ' on' : '');
+        d.className = 'tut-dot' + (i === 0 ? ' on' : '');
         d.dataset.d = i; c.appendChild(d);
     }
 }
-function showTut() { tutStep = 1; updTut(); document.getElementById('tutOverlay').classList.add('on'); }
+
+function showTut() {
+    tutStep = 0; // Always start at language selection
+    updTut();
+    document.getElementById('tutOverlay').classList.add('on');
+    // Populate tutorial language selector if not already done
+    populateTutLangSelect();
+}
+
 function closeTut() { document.getElementById('tutOverlay').classList.remove('on'); localStorage.setItem('kht_tut_v4', '1'); }
-function nextTut() { if (tutStep < TUT_TOTAL) { tutStep++; updTut(); } else closeTut(); }
+
+function nextTut() {
+    // Don't allow advancing from step 0 without selecting a language
+    // Actually, allow it but just proceed
+    if (tutStep < TUT_TOTAL) {
+        tutStep++;
+        updTut();
+    } else {
+        closeTut();
+    }
+}
+
 function updTut() {
     document.querySelectorAll('.tut-step').forEach(s => { s.classList.toggle('on', +s.dataset.s === tutStep); });
     document.querySelectorAll('.tut-dot').forEach(d => { const n = +d.dataset.d; d.className = 'tut-dot' + (n === tutStep ? ' on' : n < tutStep ? ' done' : ''); });
     const btn = document.getElementById('tutNext');
-    btn.textContent = tutStep === TUT_TOTAL ? t('tutStart') : t('tutNext');
-    btn.className = 'tut-btn ' + (tutStep === TUT_TOTAL ? 'go' : 'next');
+    // Step 0 is language selection, steps 1-TUT_TOTAL are tutorial
+    if (tutStep === 0) {
+        btn.textContent = t('tutNext');
+        btn.className = 'tut-btn next';
+    } else if (tutStep === TUT_TOTAL) {
+        btn.textContent = t('tutStart');
+        btn.className = 'tut-btn go';
+    } else {
+        btn.textContent = t('tutNext');
+        btn.className = 'tut-btn next';
+    }
+}
+
+// Handle language selection in tutorial
+function onTutLangSelect(lang) {
+    if (!lang) return;
+    // Apply the selected language immediately
+    changeUILang(lang);
+    // Update the settings dropdown if it exists
+    const uiSel = document.getElementById('uiLangSelect');
+    if (uiSel) {
+        uiSel.value = lang;
+    }
+}
+
+// Populate tutorial language selector from available languages
+function populateTutLangSelect() {
+    const sel = document.getElementById('tutLangSelect');
+    if (!sel) return;
+
+    // Check if already populated
+    if (sel.options.length > 1 && sel.options[0].value !== '') return;
+
+    // Get saved language or default to English
+    const savedLang = localStorage.getItem('kht_ui_lang') || 'en';
+
+    // Build options from LANGUAGE_NAMES
+    const codes = Object.keys(LANGUAGE_NAMES).sort((a, b) => {
+        const aEmbedded = EMBEDDED_LANGS.includes(a);
+        const bEmbedded = EMBEDDED_LANGS.includes(b);
+        if (aEmbedded && !bEmbedded) return -1;
+        if (!aEmbedded && bEmbedded) return 1;
+        const nameA = LANGUAGE_NAMES[a] || a;
+        const nameB = LANGUAGE_NAMES[b] || b;
+        return nameA.localeCompare(nameB);
+    });
+
+    let html = '';
+    for (const code of codes) {
+        const name = LANGUAGE_NAMES[code] || code;
+        const selected = code === savedLang ? ' selected' : '';
+        html += `<option value="${code}"${selected}>${name}</option>`;
+    }
+
+    sel.innerHTML = html;
 }
 
 // ══════════════════════════════════════════════
@@ -2748,29 +2884,38 @@ function qaUpdateAyahButtons() {
 function qaUpdateFloatingBar() {
     const floatingBar = document.getElementById('qaFloatingBar');
     const floatingPlay = document.getElementById('qaFloatingPlay');
+    const floatingPrev = document.getElementById('qaFloatingPrev');
+    const floatingNext = document.getElementById('qaFloatingNext');
     const floatingInfo = document.getElementById('qaFloatingInfo');
 
-    if (!floatingBar || !floatingPlay || !floatingInfo) return;
+    if (!floatingBar) return;
 
-    // Show floating bar when playing or paused
+    // Show floating bar when playing or paused, hide otherwise
     if (qaState.playing || qaState.paused) {
         floatingBar.classList.add('visible');
     } else {
         floatingBar.classList.remove('visible');
+        // Clear info when hidden
+        if (floatingInfo) floatingInfo.textContent = '—';
+        return;
     }
 
     // Update play/pause button state
-    if (qaState.playing) {
-        floatingPlay.textContent = '⏸';
-        floatingPlay.classList.add('playing');
-    } else {
-        floatingPlay.textContent = '▶';
-        floatingPlay.classList.remove('playing');
+    if (floatingPlay) {
+        if (qaState.playing) {
+            floatingPlay.textContent = '⏸';
+            floatingPlay.classList.add('playing');
+        } else {
+            floatingPlay.textContent = '▶';
+            floatingPlay.classList.remove('playing');
+        }
     }
 
     // Update info text
-    const surahName = SURAH_LIST[qaState.surahNum - 1] || '';
-    floatingInfo.textContent = `Ayah ${qaState.currentAyah}/${qaState.totalAyahs} · ${surahName}`;
+    if (floatingInfo) {
+        const surahName = SURAH_LIST[qaState.surahNum - 1] || '';
+        floatingInfo.textContent = `Ayah ${qaState.currentAyah}/${qaState.totalAyahs} · ${surahName}`;
+    }
 }
 
 function qaPlayCurrent() {
@@ -2787,35 +2932,57 @@ function qaPlayCurrent() {
 function qaTogglePlay() { if (!qaState.playing && !qaState.paused) { qaPlayFromAyah(1); return; } if (qaState.paused) { qaState.audio.play().catch(() => {}); qaState.paused = false; qaState.playing = true; document.getElementById('qaPlayBtn').textContent = '⏸'; document.getElementById('qaPlayBtn').classList.add('playing'); qaState.progressTimer = setInterval(qaUpdateProgress, 200); qaUpdateAyahButtons(); } else { qaState.audio.pause(); qaState.paused = true; qaState.playing = false; document.getElementById('qaPlayBtn').textContent = '▶'; document.getElementById('qaPlayBtn').classList.remove('playing'); clearInterval(qaState.progressTimer); qaUpdateAyahButtons(); } }
 
 function qaStop() {
+    // Clear progress timer first to prevent any pending updates
+    if (qaState.progressTimer) {
+        clearInterval(qaState.progressTimer);
+        qaState.progressTimer = null;
+    }
+
+    // Clear event handlers FIRST to prevent orphaned callbacks
+    // This is critical - must clear before any audio operations
+    qaState.audio.onended = null;
+    qaState.audio.onerror = null;
+
     // Safely stop audio without triggering errors
     try {
         qaState.audio.pause();
     } catch (e) {
-        // Ignore pause errors
+        // Ignore pause errors - audio might already be stopped
     }
+
     try {
+        // Reset audio element completely
+        qaState.audio.currentTime = 0;
         qaState.audio.src = '';
+        qaState.audio.load(); // Force reload to clear any pending operations
     } catch (e) {
         // Ignore src clearing errors
     }
-    // Clear event handlers to prevent orphaned callbacks
-    qaState.audio.onended = null;
-    qaState.audio.onerror = null;
+
+    // Reset state
     qaState.playing = false;
     qaState.paused = false;
     qaState.currentAyah = 0;
-    clearInterval(qaState.progressTimer);
+    qaState.audioUrls = [];
+
+    // Update UI
     const playBtn = document.getElementById('qaPlayBtn');
     if (playBtn) {
         playBtn.textContent = '▶';
         playBtn.classList.remove('playing');
+        playBtn.disabled = false;
     }
     const progressFill = document.getElementById('qaProgressFill');
     if (progressFill) progressFill.style.width = '0%';
     const qaInfo = document.getElementById('qaInfo');
     if (qaInfo) qaInfo.textContent = '—';
+
+    // Remove playing highlight from all ayah cards
     document.querySelectorAll('.ayah-card.ayah-playing').forEach(el => el.classList.remove('ayah-playing'));
+
+    // Update ayah buttons and hide floating bar
     qaUpdateAyahButtons();
+    qaUpdateFloatingBar();
 }
 function qaPlayNext() { if (!qaState.playing && !qaState.paused) return; if (qaState.currentAyah < qaState.totalAyahs) { qaState.currentAyah++; qaPlayCurrent(); } }
 function qaPlayPrev() { if (!qaState.playing && !qaState.paused) return; if (qaState.currentAyah > 1) { qaState.currentAyah--; qaPlayCurrent(); } }
@@ -2967,6 +3134,482 @@ document.getElementById('tgtLang').addEventListener('change', function() { if (w
 
 </script>
 
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
 
 <script>
 /**
