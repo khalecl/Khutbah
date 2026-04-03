@@ -2843,9 +2843,15 @@ async function qaPlayFromAyah(ayahNum) {
 
 // Toggle play/pause for specific ayah button
 function qaToggleAyahPlay(ayahNum) {
+    const floatingPlay = document.getElementById('qaFloatingPlay');
     // If playing this exact ayah, toggle pause/play
     if (qaState.playing && qaState.currentAyah === ayahNum) {
         qaTogglePlay();
+        // Sync floating button to paused state
+        if (floatingPlay) {
+            floatingPlay.textContent = '▶';
+            floatingPlay.classList.remove('playing');
+        }
     } else if (qaState.paused && qaState.currentAyah === ayahNum) {
         // Resume from paused
         qaState.audio.play().catch(() => {});
@@ -2853,12 +2859,23 @@ function qaToggleAyahPlay(ayahNum) {
         qaState.playing = true;
         document.getElementById('qaPlayBtn').textContent = '⏸';
         document.getElementById('qaPlayBtn').classList.add('playing');
+        // Sync floating button to playing state
+        if (floatingPlay) {
+            floatingPlay.textContent = '⏸';
+            floatingPlay.classList.add('playing');
+        }
         qaState.progressTimer = setInterval(qaUpdateProgress, 200);
     } else {
         // Start playing from this ayah
         qaPlayFromAyah(ayahNum);
+        // Sync floating button to playing state
+        if (floatingPlay) {
+            floatingPlay.textContent = '⏸';
+            floatingPlay.classList.add('playing');
+        }
     }
 }
+
 
 // Update all ayah buttons to show correct state
 function qaUpdateAyahButtons() {
