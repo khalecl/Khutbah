@@ -2929,7 +2929,38 @@ function qaPlayCurrent() {
     qaState.audio.onerror = () => { document.getElementById('qaInfo').textContent = 'Audio error — skipping...'; setTimeout(() => { if (qaState.currentAyah < qaState.totalAyahs) { qaState.currentAyah++; qaPlayCurrent(); } else qaStop(); }, 1000); };
 }
 
-function qaTogglePlay() { if (!qaState.playing && !qaState.paused) { qaPlayFromAyah(1); return; } if (qaState.paused) { qaState.audio.play().catch(() => {}); qaState.paused = false; qaState.playing = true; document.getElementById('qaPlayBtn').textContent = '⏸'; document.getElementById('qaPlayBtn').classList.add('playing'); qaState.progressTimer = setInterval(qaUpdateProgress, 200); qaUpdateAyahButtons(); } else { qaState.audio.pause(); qaState.paused = true; qaState.playing = false; document.getElementById('qaPlayBtn').textContent = '▶'; document.getElementById('qaPlayBtn').classList.remove('playing'); clearInterval(qaState.progressTimer); qaUpdateAyahButtons(); } }
+function qaTogglePlay() { 
+    if (!qaState.playing && !qaState.paused) { 
+        qaPlayFromAyah(1); 
+        return; 
+    } 
+    const floatingPlay = document.getElementById('qaFloatingPlay');
+    if (qaState.paused) { 
+        qaState.audio.play().catch(() => {}); 
+        qaState.paused = false; 
+        qaState.playing = true; 
+        document.getElementById('qaPlayBtn').textContent = '⏸'; 
+        document.getElementById('qaPlayBtn').classList.add('playing'); 
+        if (floatingPlay) {
+            floatingPlay.textContent = '⏸';
+            floatingPlay.classList.add('playing');
+        }
+        qaState.progressTimer = setInterval(qaUpdateProgress, 200); 
+        qaUpdateAyahButtons(); 
+    } else { 
+        qaState.audio.pause(); 
+        qaState.paused = true; 
+        qaState.playing = false; 
+        document.getElementById('qaPlayBtn').textContent = '▶'; 
+        document.getElementById('qaPlayBtn').classList.remove('playing'); 
+        if (floatingPlay) {
+            floatingPlay.textContent = '▶';
+            floatingPlay.classList.remove('playing');
+        }
+        clearInterval(qaState.progressTimer); 
+        qaUpdateAyahButtons(); 
+    } 
+}
 
 function qaStop() {
     // Clear progress timer first to prevent any pending updates
