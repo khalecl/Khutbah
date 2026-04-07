@@ -389,11 +389,12 @@
         color:var(--cream);line-height:2;direction:rtl;text-align:right;
         margin-bottom:12px;padding-right:42px;
     }
-    .ayah-translit{
-        font-size:clamp(13px,2.5vw,15px);color:var(--gold);
-        font-style:italic;line-height:1.7;margin-bottom:8px;
-        padding-left:4px;border-left:2px solid rgba(212,168,67,.2);
-        padding:4px 0 4px 10px;
+    .ayah-translit.trans-rtl{
+        direction:rtl;text-align:right;font-style:normal;
+        font-family:'Amiri','Noto Nastaliq Urdu',serif;
+        font-size:clamp(15px,3vw,19px);line-height:2.2;
+        border-left:none;border-right:2px solid rgba(212,168,67,.2);
+        padding:4px 10px 4px 0;
     }
     .ayah-trans{
         font-size:clamp(13px,2.5vw,15px);color:var(--cream-dim);
@@ -1336,61 +1337,61 @@
                     </select>
                     <select id="quranTransSelect" onchange="changeQuranTranslation()" title="Translation Language">
                         <optgroup label="English">
-                            <option value="en.sahih">English (Sahih Intl)</option>
-                            <option value="en.asad">English (M. Asad)</option>
-                            <option value="en.pickthall">English (Pickthall)</option>
-                            <option value="en.yusufali">English (Yusuf Ali)</option>
+                            <option value="en.sahih|en.transliteration">English (Sahih Intl)</option>
+                            <option value="en.asad|en.transliteration">English (M. Asad)</option>
+                            <option value="en.pickthall|en.transliteration">English (Pickthall)</option>
+                            <option value="en.yusufali|en.transliteration">English (Yusuf Ali)</option>
                         </optgroup>
                         <optgroup label="اردو Urdu">
-                            <option value="ur.jalandhry">Urdu (Jalandhry)</option>
-                            <option value="ur.maududi">Urdu (Maududi)</option>
-                            <option value="ur.ahmedali">Urdu (Ahmed Ali)</option>
+                            <option value="ur.jalandhry|ur.jalandhry">Urdu (Jalandhry)</option>
+                            <option value="ur.maududi|ur.maududi">Urdu (Maududi)</option>
+                            <option value="ur.ahmedali|ur.ahmedali">Urdu (Ahmed Ali)</option>
                         </optgroup>
                         <optgroup label="Türkçe Turkish">
-                            <option value="tr.diyanet">Turkish (Diyanet)</option>
-                            <option value="tr.ozturk">Turkish (Öztürk)</option>
+                            <option value="tr.diyanet|tr.diyanet">Turkish (Diyanet)</option>
+                            <option value="tr.ozturk|tr.ozturk">Turkish (Öztürk)</option>
                         </optgroup>
                         <optgroup label="Bahasa">
-                            <option value="id.indonesian">Indonesian</option>
-                            <option value="ms.basmeih">Malay (Basmeih)</option>
+                            <option value="id.indonesian|id.indonesian">Indonesian</option>
+                            <option value="ms.basmeih|ms.basmeih">Malay (Basmeih)</option>
                         </optgroup>
                         <optgroup label="South Asian">
-                            <option value="hi.hindi">Hindi (हिन्दी)</option>
-                            <option value="bn.bengali">Bengali (বাংলা)</option>
-                            <option value="ta.tamil">Tamil (தமிழ்)</option>
-                            <option value="ml.abdulhameed">Malayalam (മലയാളം)</option>
+                            <option value="hi.hindi|hi.hindi">Hindi (हिन्दी)</option>
+                            <option value="bn.bengali|bn.bengali">Bengali (বাংলা)</option>
+                            <option value="ta.tamil|ta.tamil">Tamil (தமிழ்)</option>
+                            <option value="ml.abdulhameed|ml.abdulhameed">Malayalam (മലയാളം)</option>
                         </optgroup>
                         <optgroup label="فارسی Persian">
-                            <option value="fa.makarem">Farsi (Makarem)</option>
-                            <option value="fa.ansarian">Farsi (Ansarian)</option>
+                            <option value="fa.makarem|fa.makarem">Farsi (Makarem)</option>
+                            <option value="fa.ansarian|fa.ansarian">Farsi (Ansarian)</option>
                         </optgroup>
                         <optgroup label="European">
-                            <option value="fr.hamidullah">French (Hamidullah)</option>
-                            <option value="de.bubenheim">German (Bubenheim)</option>
-                            <option value="es.cortes">Spanish (Cortes)</option>
-                            <option value="it.piccardo">Italian (Piccardo)</option>
-                            <option value="pt.elhayek">Portuguese (El-Hayek)</option>
-                            <option value="nl.keyzer">Dutch (Keyzer)</option>
-                            <option value="ru.kuliev">Russian (Kuliev)</option>
-                            <option value="pl.bielawskiego">Polish (Bielawski)</option>
-                            <option value="bs.korkut">Bosnian (Korkut)</option>
-                            <option value="sq.nahi">Albanian (Nahi)</option>
+                            <option value="fr.hamidullah|fr.hamidullah">French (Hamidullah)</option>
+                            <option value="de.bubenheim|de.bubenheim">German (Bubenheim)</option>
+                            <option value="es.cortes|es.cortes">Spanish (Cortes)</option>
+                            <option value="it.piccardo|it.piccardo">Italian (Piccardo)</option>
+                            <option value="pt.elhayek|pt.elhayek">Portuguese (El-Hayek)</option>
+                            <option value="nl.keyzer|nl.keyzer">Dutch (Keyzer)</option>
+                            <option value="ru.kuliev|ru.kuliev">Russian (Kuliev)</option>
+                            <option value="pl.bielawskiego|pl.bielawskiego">Polish (Bielawski)</option>
+                            <option value="bs.korkut|bs.korkut">Bosnian (Korkut)</option>
+                            <option value="sq.nahi|sq.nahi">Albanian (Nahi)</option>
                         </optgroup>
                         <optgroup label="East Asian">
-                            <option value="zh.majian">Chinese (Ma Jian)</option>
-                            <option value="ja.japanese">Japanese (日本語)</option>
-                            <option value="ko.korean">Korean (한국어)</option>
-                            <option value="th.thai">Thai (ไทย)</option>
+                            <option value="zh.majian|zh.majian">Chinese (Ma Jian)</option>
+                            <option value="ja.japanese|ja.japanese">Japanese (日本語)</option>
+                            <option value="ko.korean|ko.korean">Korean (한국어)</option>
+                            <option value="th.thai|th.thai">Thai (ไทย)</option>
                         </optgroup>
                         <optgroup label="African">
-                            <option value="sw.barwani">Swahili (Barwani)</option>
-                            <option value="ha.gumi">Hausa (Gumi)</option>
-                            <option value="so.abduh">Somali (Abduh)</option>
+                            <option value="sw.barwani|sw.barwani">Swahili (Barwani)</option>
+                            <option value="ha.gumi|ha.gumi">Hausa (Gumi)</option>
+                            <option value="so.abduh|so.abduh">Somali (Abduh)</option>
                         </optgroup>
                         <optgroup label="Other">
-                            <option value="az.musayev">Azerbaijani</option>
-                            <option value="ku.asan">Kurdish (Asan)</option>
-                            <option value="uz.sodik">Uzbek (Sodik)</option>
+                            <option value="az.musayev|az.musayev">Azerbaijani</option>
+                            <option value="ku.asan|ku.asan">Kurdish (Asan)</option>
+                            <option value="uz.sodik|uz.sodik">Uzbek (Sodik)</option>
                         </optgroup>
                     </select>
                 </div>
@@ -1398,6 +1399,7 @@
                     <button class="q-toggle on" id="qShowArabic" onclick="toggleQView(this)" data-i18n="qArabic">Arabic</button>
                     <button class="q-toggle on" id="qShowTranslit" onclick="toggleQView(this)" data-i18n="qTranslit">Transliteration</button>
                     <button class="q-toggle on" id="qShowTrans" onclick="toggleQView(this)" data-i18n="qTranslation">Translation</button>
+                    <button class="q-toggle" id="qShowRoman" onclick="toggleQView(this)" data-i18n="qRoman">Roman</button>
                 </div>
                 <div class="quran-audio-bar" id="quranAudioBar">
                     <button class="qa-btn" id="qaPrev" onclick="qaPlayPrev()" title="Previous Ayah">⏮</button>
@@ -2642,19 +2644,28 @@ const SURAH_LIST = [
 ];
 
 let quranCache = {};
-let qShowArabic = true, qShowTranslit = true, qShowTrans = true;
-
+let qShowArabic = true, qShowTranslit = true, qShowTrans = true, qShowRoman = false;
+    
 function getSelectedQuranEdition() {
-    return document.getElementById('quranTransSelect').value || 'en.sahih';
+    const val = document.getElementById('quranTransSelect').value || 'en.sahih|en.transliteration';
+    return val.split('|')[0];
+}
+
+function getSelectedQuranTranslit() {
+    const val = document.getElementById('quranTransSelect').value || 'en.sahih|en.transliteration';
+    return val.split('|')[1] || 'en.transliteration';
 }
 
 function getQuranEditionLang() {
-    // Extract 2-letter language code from edition identifier like "ur.jalandhry"
     return getSelectedQuranEdition().split('.')[0];
 }
 
 function isQuranTransRTL() {
     return QURAN_RTL_EDITIONS.includes(getQuranEditionLang());
+}
+
+function isQuranTranslitRTL() {
+    return QURAN_RTL_EDITIONS.includes(getSelectedQuranTranslit().split('.')[0]);
 }
 
 // v4.6: Called when user changes translation language
@@ -2693,7 +2704,8 @@ async function loadSurah() {
     qaStop();
 
     const edition = getSelectedQuranEdition();
-    const cacheKey = `${num}_${edition}`;
+    const translitEdition = getSelectedQuranTranslit();
+    const cacheKey = `${num}_${edition}_${translitEdition}`;
     const container = document.getElementById('quranContent');
 
     // In-memory cache (edition-specific)
@@ -2720,22 +2732,32 @@ async function loadSurah() {
 
 async function fetchSurahFromAPI(num, edition, silent) {
     const container = document.getElementById('quranContent');
-    const cacheKey = `${num}_${edition}`;
+    const translitEdition = getSelectedQuranTranslit();
+    const cacheKey = `${num}_${edition}_${translitEdition}`;
     try {
-        // Always fetch Arabic text + selected translation
-        // Transliteration is only available in English (en.transliteration)
+        // Always fetch: Arabic + chosen translation + chosen transliteration
+        // If transliteration IS the same as translation, we still fetch it (API returns same data, no penalty)
+        // Also fetch Roman transliteration if it's a different edition
+        const isEnglishTranslit = translitEdition === 'en.transliteration';
         const fetches = [
             fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}`, {}, 12000),
             fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/${edition}`, {}, 12000),
-            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.transliteration`, {}, 12000)
+            fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/${translitEdition}`, {}, 12000),
         ];
-        const [arRes, transRes, trRes] = await Promise.all(fetches);
-        const arData = await arRes.json();
-        const transData = await transRes.json();
-        const trData = await trRes.json();
+        // Always fetch Roman transliteration as well (for the "Roman" toggle)
+        if (!isEnglishTranslit) {
+            fetches.push(fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${num}/en.transliteration`, {}, 12000));
+        }
+
+        const results = await Promise.all(fetches);
+        const arData = await results[0].json();
+        const transData = await results[1].json();
+        const translitData = await results[2].json();
+        const romanData = (!isEnglishTranslit && results[3]) ? await results[3].json() : null;
 
         if (arData.code === 200 && transData.code === 200) {
             const editionLang = edition.split('.')[0];
+            const translitLang = translitEdition.split('.')[0];
             const surahData = {
                 name: arData.data.name,
                 englishName: arData.data.englishName,
@@ -2745,11 +2767,14 @@ async function fetchSurahFromAPI(num, edition, silent) {
                 editionName: transData.data.edition?.name || edition,
                 editionLang: editionLang,
                 isTransRTL: QURAN_RTL_EDITIONS.includes(editionLang),
+                isTranslitRTL: QURAN_RTL_EDITIONS.includes(translitLang),
                 ayahs: arData.data.ayahs.map((ayah, idx) => ({
                     number: ayah.numberInSurah,
                     arabic: ayah.text,
                     translation: transData.data.ayahs[idx]?.text || '',
-                    transliteration: (trData.code === 200 && trData.data.ayahs[idx]?.text) || ''
+                    transliteration: (translitData.code === 200 && translitData.data.ayahs[idx]?.text) || '',
+                    roman: (romanData && romanData.code === 200 && romanData.data.ayahs[idx]?.text) || 
+                           (isEnglishTranslit && translitData.code === 200 ? translitData.data.ayahs[idx]?.text : '') || ''
                 }))
             };
             quranCache[cacheKey] = surahData;
@@ -2768,6 +2793,7 @@ async function fetchSurahFromAPI(num, edition, silent) {
 function renderSurah(data) {
     const container = document.getElementById('quranContent');
     const transRTL = data.isTransRTL || false;
+    const translitRTL = data.isTranslitRTL || false;
 
     let html = `
         <div class="surah-header">
@@ -2780,10 +2806,16 @@ function renderSurah(data) {
 
     data.ayahs.forEach(ayah => {
         html += `<div class="ayah-card" id="ayah-${ayah.number}" data-ayah="${ayah.number}">`;
-        html += `<button class="ayah-play-btn" onclick="qaToggleAyahPlay(${ayah.number})" title="Play from Ayah ${ayah.number}">▶</button>`;
+        html += `<button class="ayah-play-btn" onclick="qaPlayFromAyah(${ayah.number})" title="Play from Ayah ${ayah.number}">▶</button>`;
         html += `<div class="ayah-num">${ayah.number}</div>`;
         if (qShowArabic) html += `<div class="ayah-arabic">${ayah.arabic}</div>`;
-        if (qShowTranslit && ayah.transliteration) html += `<div class="ayah-translit">${ayah.transliteration}</div>`;
+        if (qShowTranslit && ayah.transliteration) {
+            html += `<div class="ayah-translit${translitRTL ? ' trans-rtl' : ''}">${ayah.transliteration}</div>`;
+        }
+        if (qShowRoman && ayah.roman && !(!translitRTL && qShowTranslit)) {
+            // Show Roman only if transliteration is NOT already Roman
+            html += `<div class="ayah-translit" style="opacity:.6;font-size:clamp(11px,2.2vw,13px)">${ayah.roman}</div>`;
+        }
         if (qShowTrans) html += `<div class="ayah-trans${transRTL ? ' trans-rtl' : ''}">${ayah.translation}</div>`;
         html += `</div>`;
     });
@@ -2797,9 +2829,11 @@ function toggleQView(btn) {
     qShowArabic = document.getElementById('qShowArabic').classList.contains('on');
     qShowTranslit = document.getElementById('qShowTranslit').classList.contains('on');
     qShowTrans = document.getElementById('qShowTrans').classList.contains('on');
+    qShowRoman = document.getElementById('qShowRoman').classList.contains('on');
     const num = document.getElementById('surahSelect').value;
     const edition = getSelectedQuranEdition();
-    const cacheKey = `${num}_${edition}`;
+    const translitEdition = getSelectedQuranTranslit();
+    const cacheKey = `${num}_${edition}_${translitEdition}`;
     if (num && quranCache[cacheKey]) renderSurah(quranCache[cacheKey]);
 }
 
