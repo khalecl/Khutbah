@@ -1145,6 +1145,7 @@
         <div class="tut-dots" id="tutDots"></div>
         <div class="tut-nav">
             <button class="tut-btn skip" onclick="closeTut()" data-i18n="tutSkip">Skip</button>
+            <button class="tut-btn skip" id="tutBack" onclick="prevTut()" style="display:none" data-i18n="tutBack">← Back</button>
             <button class="tut-btn next" id="tutNext" onclick="nextTut()" data-i18n="tutNext">Next →</button>
         </div>
     </div>
@@ -1703,7 +1704,7 @@ const LOCALE_FALLBACK = {
         setUILang:'🌐 App Language', setTranslation:'Translation', setAudio:'Audio',
         setSpeechFlow:'Speech Flow', setEngine:'Translation Engine',
         btnSaveSettings:'Save Settings ✓', aboutTitle:'Khutbah Live Translator',
-        tutSkip:'Skip', tutNext:'Next →', tutStart:'Start ✓',
+        tutSkip:'Skip',tutBack:'← Back', tutNext:'Next →', tutStart:'Start ✓',
         tutLangSelectTitle:'Choose Your Language', tutLangSelectDesc:'Select your preferred interface language. This changes the app menus and buttons to your language. You can change this later in Settings.',
         tutLangSelectTip:'You can also change the sermon translation languages separately in the Translator tab.',
         settingsSaved:'Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.',
@@ -1730,7 +1731,7 @@ const LOCALE_FALLBACK = {
         setUILang:'🌐 لغة التطبيق', setTranslation:'الترجمة', setAudio:'الصوت',
         setSpeechFlow:'تدفق الكلام', setEngine:'محرك الترجمة',
         btnSaveSettings:'حفظ الإعدادات ✓', aboutTitle:'مترجم الخطبة الحي',
-        tutSkip:'تخطي', tutNext:'← التالي', tutStart:'ابدأ ✓',
+        tutSkip:'تخطي', tutBack:'رجوع →',tutNext:'← التالي', tutStart:'ابدأ ✓',
         tutLangSelectTitle:'اختر لغتك', tutLangSelectDesc:'اختر لغة الواجهة المفضلة. هذا يغير قوائم وأزرار التطبيق إلى لغتك. يمكنك تغيير هذا لاحقًا في الإعدادات.',
         tutLangSelectTip:'يمكنك أيضًا تغيير لغات ترجمة الخطبة بشكل منفصل في علامة التبويب المترجم.',
         settingsSaved:'تم حفظ الإعدادات ✓\nتغييرات فلتر الضوضاء تسري في المرة القادمة.',
@@ -1757,7 +1758,7 @@ const LOCALE_FALLBACK = {
         setUILang:'🌐 ایپ کی زبان', setTranslation:'ترجمہ', setAudio:'آڈیو',
         setSpeechFlow:'تقریر کا بہاؤ', setEngine:'ترجمہ انجن',
         btnSaveSettings:'سیٹنگز محفوظ کریں ✓', aboutTitle:'خطبہ لائیو ترجمان',
-        tutSkip:'چھوڑیں', tutNext:'← اگلا', tutStart:'شروع ✓',
+        tutSkip:'چھوڑیں',tutBack:'واپس →', tutNext:'← اگلا', tutStart:'شروع ✓',
         tutLangSelectTitle:'اپنی زبان منتخب کریں', tutLangSelectDesc:'اپنی ترجیحی انٹرفیس زبان منتخب کریں۔ یہ ایپ کے مینو اور بٹن کو آپ کی زبان میں تبدیل کرتا ہے۔ آپ اسے بعد میں سیٹنگز میں تبدیل کر سکتے ہیں۔',
         tutLangSelectTip:'آپ خطبہ کے ترجمہ کی زبانیں بھی الگ سے مترجم ٹیب میں تبدیل کر سکتے ہیں۔',
         settingsSaved:'سیٹنگز محفوظ ہو گئیں ✓\nنویز فلٹر کی تبدیلیاں اگلی بار نافذ ہوں گی۔',
@@ -2294,34 +2295,18 @@ function showTut() {
 
 function closeTut() { document.getElementById('tutOverlay').classList.remove('on'); localStorage.setItem('kht_tut_v4', '1'); }
 
-function nextTut() {
-    // Don't allow advancing from step 0 without selecting a language
-    // Actually, allow it but just proceed
-    if (tutStep < TUT_TOTAL) {
-        tutStep++;
-        updTut();
-    } else {
-        closeTut();
-    }
-}
-
+function prevTut() { if (tutStep > 1) { tutStep--; updTut(); } }
+function nextTut() { if (tutStep < TUT_TOTAL) { tutStep++; updTut(); } else closeTut(); }
 function updTut() {
     document.querySelectorAll('.tut-step').forEach(s => { s.classList.toggle('on', +s.dataset.s === tutStep); });
     document.querySelectorAll('.tut-dot').forEach(d => { const n = +d.dataset.d; d.className = 'tut-dot' + (n === tutStep ? ' on' : n < tutStep ? ' done' : ''); });
     const btn = document.getElementById('tutNext');
-    // Step 0 is language selection, steps 1-TUT_TOTAL are tutorial
-    if (tutStep === 0) {
-        btn.textContent = t('tutNext');
-        btn.className = 'tut-btn next';
-    } else if (tutStep === TUT_TOTAL) {
-        btn.textContent = t('tutStart');
-        btn.className = 'tut-btn go';
-    } else {
-        btn.textContent = t('tutNext');
-        btn.className = 'tut-btn next';
-    }
+    btn.textContent = tutStep === TUT_TOTAL ? t('tutStart') : t('tutNext');
+    btn.className = 'tut-btn ' + (tutStep === TUT_TOTAL ? 'go' : 'next');
+    const backBtn = document.getElementById('tutBack');
+    backBtn.style.display = tutStep > 1 ? '' : 'none';
+    backBtn.textContent = t('tutBack');
 }
-
 // Handle language selection in tutorial
 function onTutLangSelect(lang) {
     if (!lang) return;
@@ -2444,7 +2429,7 @@ async function startListen() {
             let interim = '', final = '';
             for (let i = e.resultIndex; i < e.results.length; i++) { if (e.results[i].isFinal) final += e.results[i][0].transcript + ' '; else interim = e.results[i][0].transcript; }
             if (final) { if (IS_ANDROID) transcript = final; else transcript += final; }
-            document.getElementById('stsTxt').textContent = interim ? '🎤 Speech detected...' : '🎤 Listening...';
+            document.getElementById('stsTxt').textContent = interim ? t('statusSpeechDetected') : t('statusListening');
             if (cfg.instant && final && transcript.trim()) {
                 clearTimeout(bufferFlushTimer); clearTimeout(silenceTimer);
                 if (IS_ANDROID) { silenceTimer = setTimeout(() => { if (transcript.trim()) { doTranslate(transcript.trim()); transcript = ''; } }, 600); }
@@ -2484,8 +2469,8 @@ function stopListen() {
 
 function updMicUI(on) {
     const btn = document.getElementById('micBtn'), dot = document.getElementById('stsDot'), txt = document.getElementById('stsTxt');
-    if (on) { btn.className = 'mic live'; btn.textContent = '⏹️'; dot.classList.add('on'); txt.textContent = '🎤 Listening...'; if (IS_ANDROID) startFakeViz(); }
-    else { btn.className = 'mic idle'; btn.textContent = '🎤'; dot.classList.remove('on'); dot.style.boxShadow = 'none'; txt.textContent = 'Tap microphone to start'; if (IS_ANDROID) stopFakeViz(); document.querySelectorAll('.viz-bar').forEach(b => { b.style.height = '8px'; b.style.background = 'rgba(212,168,67,.3)'; }); }
+    if (on) { btn.className = 'mic live'; btn.textContent = '⏹️'; dot.classList.add('on'); txt.textContent = t('statusListening'); if (IS_ANDROID) startFakeViz(); }
+    else { btn.className = 'mic idle'; btn.textContent = '🎤'; dot.classList.remove('on'); dot.style.boxShadow = 'none'; txt.textContent = t('statusReady'); if (IS_ANDROID) stopFakeViz(); document.querySelectorAll('.viz-bar').forEach(b => { b.style.height = '8px'; b.style.background = 'rgba(212,168,67,.3)'; }); }
 }
 
 let fakeVizInterval = null;
@@ -2560,7 +2545,7 @@ function renderTranslations() {
     const box = document.getElementById('outBox');
     const tgt = document.getElementById('tgtLang').value;
     const isRtl = RTL_LANGS.includes(tgt);
-    if (!translations.length) { box.innerHTML = '<div class="empty-msg"><span class="icon">🕌</span>Tap the microphone to begin<br>live translation of the Khutbah</div>'; return; }
+    if (!translations.length) { box.innerHTML = '<div class="empty-msg"><span class="icon">🕌</span>' + t('emptyMsg').replace('\n','<br>') + '</div>'; return; }
     box.innerHTML = translations.map((t, i) => {
         const isLast = i === translations.length - 1;
         let cls = 'sent' + (isRtl ? ' rtl' : '') + (isLast && cfg.highlight ? ' latest' : '');
@@ -3084,7 +3069,7 @@ async function fetchPrayerTimes(silentRefresh) {
     const method = document.getElementById('prayerMethod').value, locEl = document.getElementById('prayerLocation');
     if (!isOnline && !silentRefresh) { const cp = cacheGet(CACHE_KEYS.PRAYER_DATA); const cc = cacheGet(CACHE_KEYS.PRAYER_COORDS); if (cp) { prayerTimesData = cp; if (cc) userCoords = cc; renderPrayerTimes(cp); locEl.textContent = '📴 Offline — showing cached prayer times'; return; } locEl.textContent = '📴 Offline — no cached prayer data yet.'; return; }
     try {
-        if (!userCoords) { const cc = cacheGet(CACHE_KEYS.PRAYER_COORDS); if (cc) userCoords = cc; else { if (!navigator.geolocation) { locEl.textContent = '📍 Geolocation not supported.'; const cp = cacheGet(CACHE_KEYS.PRAYER_DATA); if (cp) { prayerTimesData = cp; renderPrayerTimes(cp); } return; } if (!silentRefresh) locEl.textContent = '📍 Detecting location...'; const pos = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }); }); userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude }; cacheSet(CACHE_KEYS.PRAYER_COORDS, userCoords); } }
+        if (!userCoords) { const cc = cacheGet(CACHE_KEYS.PRAYER_COORDS); if (cc) userCoords = cc; else { if (!navigator.geolocation) { locEl.textContent = '📍 Geolocation not supported.'; const cp = cacheGet(CACHE_KEYS.PRAYER_DATA); if (cp) { prayerTimesData = cp; renderPrayerTimes(cp); } return; } if (!silentRefresh) locEl.textContent = t('prayerDetecting'); const pos = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }); }); userCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude }; cacheSet(CACHE_KEYS.PRAYER_COORDS, userCoords); } }
         const url = `https://api.aladhan.com/v1/timings?latitude=${userCoords.lat}&longitude=${userCoords.lng}&method=${method}`;
         const res = await fetchWithTimeout(url, {}, 10000); const data = await res.json();
         if (data.code === 200) { prayerTimesData = data.data; cacheSet(CACHE_KEYS.PRAYER_DATA, data.data); cacheSet(CACHE_KEYS.PRAYER_METHOD, method); renderPrayerTimes(data.data); try { const geoRes = await fetchWithTimeout(`https://api.aladhan.com/v1/qibla/${userCoords.lat}/${userCoords.lng}`, {}, 8000); const geoData = await geoRes.json(); locEl.textContent = `📍 ${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}° • Qibla: ${geoData.data?.direction?.toFixed(1) || '—'}°`; } catch(e) { locEl.textContent = `📍 ${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}°`; } }
@@ -3109,7 +3094,7 @@ function renderPrayerTimes(data) {
     const prayerKeys = Object.keys(prayerMins); for (let i = prayerKeys.length - 1; i >= 0; i--) { if (prayerMins[prayerKeys[i]] <= nowMins) { prevPrayerMins = prayerMins[prayerKeys[i]]; break; } }
     if (prevPrayerMins === null) prevPrayerMins = prayerMins['Isha'] ? prayerMins['Isha'] - 24 * 60 : nowMins;
     document.querySelectorAll('.prayer-row').forEach(row => { row.classList.remove('next', 'passed'); const pName = row.dataset.prayer; if (pName === nextPrayer) row.classList.add('next'); else if (prayerMins[pName] !== undefined && prayerMins[pName] <= nowMins) row.classList.add('passed'); });
-    document.getElementById('prayerHeroName').textContent = nextPrayer; document.getElementById('prayerHeroArabic').textContent = arabicNames[nextPrayer] || ''; document.getElementById('prayerHeroIcon').textContent = prayerIcons[nextPrayer] || '🕌'; document.getElementById('prayerHeroTime').textContent = timings[nextPrayer] || '--:--';
+    document.getElementById('prayerHeroName').textContent = nextPrayer; document.getElementById('prayerHeroArabic').textContent = arabicNames[nextPrayer] || ''; document.getElementById('prayerHeroIcon').textContent = prayerIcons[nextPrayer] || '🕌'; document.querySelector('[data-i18n="prayerAdhanAt"]').textContent = t('prayerAdhanAt');
     window._nextPrayerMins = nextPrayerMins; window._prevPrayerMins = prevPrayerMins; window._prayerTimings = timings;
     if (window._prayerCountdownInterval) clearInterval(window._prayerCountdownInterval); updatePrayerCountdown(); window._prayerCountdownInterval = setInterval(updatePrayerCountdown, 1000);
     if (data.date) { const h = data.date.hijri, g = data.date.gregorian; if (h) { document.getElementById('hijriDateDisplay').textContent = `${h.day} ${h.month.en} ${h.year} AH`; document.getElementById('hijriDateSub').textContent = `${g?.weekday?.en || ''}, ${g?.date || ''}`; } }
