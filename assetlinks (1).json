@@ -1,0 +1,16 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.khaleddiab.khutbah",
+      "sha256_cert_fingerprints": [
+        "DD:8C:C9:EC:8F:63:50:23:DE:39:D5:45:C5:DC:AE:DB:A6:89:04:C4:67:C9:CE:F0:FA:98:D0:EE:0A:08:C1:85",
+        "FF:DC:5F:C7:03:4D:90:5D:FA:61:08:03:B0:B1:40:B7:8C:C6:28:0C:41:78:D9:FA:BE:79:0B:14:14:2B:D3:F6"
+      ]
+    }
+  }
+]
