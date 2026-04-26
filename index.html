@@ -2146,7 +2146,7 @@ let cfg = {
     instant: true, autoScroll: true, highlight: true, showOrig: false,
     threshold: 15, wakeLock: true, engine: 'auto',
     bufferTime: 8, silenceWait: 1.5,
-    noiseFilter: true, voiceGain: 1.5, noiseGate: 20
+    noiseFilter: true, voiceGain: 2.5, noiseGate: 20
 };
 
 // ── Lingva instances ──
@@ -2358,18 +2358,49 @@ function buildViz() {
     const c = document.getElementById('viz'); c.innerHTML = '';
     for (let i = 0; i < 16; i++) { const b = document.createElement('div'); b.className = 'viz-bar'; c.appendChild(b); }
 }
-function runViz(rawStream) {
+
+  function runViz(rawStream) {
     try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioCtx.createMediaStreamSource(rawStream);
         let lastNode = source;
         if (cfg.noiseFilter) {
-            const highpass = audioCtx.createBiquadFilter(); highpass.type = 'highpass'; highpass.frequency.value = 200; highpass.Q.value = 0.7; lastNode.connect(highpass); lastNode = highpass; audioNodes.highpass = highpass;
-            const lowpass = audioCtx.createBiquadFilter(); lowpass.type = 'lowpass'; lowpass.frequency.value = 5000; lowpass.Q.value = 0.7; lastNode.connect(lowpass); lastNode = lowpass; audioNodes.lowpass = lowpass;
-            const presence = audioCtx.createBiquadFilter(); presence.type = 'peaking'; presence.frequency.value = 2000; presence.gain.value = 4; presence.Q.value = 1; lastNode.connect(presence); lastNode = presence; audioNodes.presence = presence;
-            const compressor = audioCtx.createDynamicsCompressor(); compressor.threshold.value = -30; compressor.knee.value = 15; compressor.ratio.value = 8; compressor.attack.value = 0.005; compressor.release.value = 0.15; lastNode.connect(compressor); lastNode = compressor; audioNodes.compressor = compressor;
+            // ── v4.7: Aggressive far-mic chain (mosque-distance mode) ──
+            // 1. Stronger highpass at 180 Hz to kill room rumble
+            const highpass = audioCtx.createBiquadFilter();
+            highpass.type = 'highpass'; highpass.frequency.value = 180; highpass.Q.value = 0.7;
+            lastNode.connect(highpass); lastNode = highpass; audioNodes.highpass = highpass;
+
+            // 2. Pre-emphasis: 1-pole high-shelf, ~+6dB/oct above 1.6 kHz
+            //    Undoes the low-pass coloration that distance + reverb impose
+            const preEmph = audioCtx.createIIRFilter([1, -0.97], [1]);
+            lastNode.connect(preEmph); lastNode = preEmph; audioNodes.preEmph = preEmph;
+
+            // 3. Lowpass at 6 kHz (slightly higher than before — keep more consonant detail)
+            const lowpass = audioCtx.createBiquadFilter();
+            lowpass.type = 'lowpass'; lowpass.frequency.value = 6000; lowpass.Q.value = 0.7;
+            lastNode.connect(lowpass); lastNode = lowpass; audioNodes.lowpass = lowpass;
+
+            // 4. AGGRESSIVE presence boost at 2.2 kHz (was +4 dB, now +9 dB)
+            //    This is the F2/F3 formant region — what the recognizer keys on
+            const presence = audioCtx.createBiquadFilter();
+            presence.type = 'peaking'; presence.frequency.value = 2200;
+            presence.gain.value = 9; presence.Q.value = 0.8;
+            lastNode.connect(presence); lastNode = presence; audioNodes.presence = presence;
+
+            // 5. NEW: High-shelf at 4 kHz, +6 dB — restores consonant articulation (s, t, sh)
+            const airShelf = audioCtx.createBiquadFilter();
+            airShelf.type = 'highshelf'; airShelf.frequency.value = 4000; airShelf.gain.value = 6;
+            lastNode.connect(airShelf); lastNode = airShelf; audioNodes.airShelf = airShelf;
+
+            // 6. Compressor (unchanged)
+            const compressor = audioCtx.createDynamicsCompressor();
+            compressor.threshold.value = -30; compressor.knee.value = 15; compressor.ratio.value = 8;
+            compressor.attack.value = 0.005; compressor.release.value = 0.15;
+            lastNode.connect(compressor); lastNode = compressor; audioNodes.compressor = compressor;
         }
-        const gainNode = audioCtx.createGain(); gainNode.gain.value = cfg.voiceGain; lastNode.connect(gainNode); lastNode = gainNode; audioNodes.gain = gainNode;
+        const gainNode = audioCtx.createGain(); gainNode.gain.value = cfg.voiceGain;
+        lastNode.connect(gainNode); lastNode = gainNode; audioNodes.gain = gainNode;
         if (cfg.noiseGate > 0 && !IS_ANDROID) {
             const gateNode = audioCtx.createScriptProcessor(2048, 1, 1);
             const gateThreshold = cfg.noiseGate / 100;
@@ -2389,8 +2420,8 @@ function runViz(rawStream) {
             bars.forEach((bar, i) => { const v = data[i * 4] || 0; bar.style.height = Math.max(6, (v / 255) * 40) + 'px'; bar.style.background = avg > cfg.threshold ? 'var(--gold)' : 'rgba(212,168,67,.3)'; });
             requestAnimationFrame(loop);
         })();
-    } catch(e) { console.warn('[v4.6] Audio processing setup failed:', e); processedStream = rawStream; }
-}
+    } catch(e) { console.warn('[v4.7] Audio processing setup failed:', e); processedStream = rawStream; }
+}  
 
 // ══════════════════════════════════════════════
 // SPEECH RECOGNITION
