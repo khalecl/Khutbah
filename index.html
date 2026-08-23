@@ -1584,10 +1584,10 @@
                 </div>
                 <div class="set-group">
                     <div class="set-title" data-i18n="setTranslation">Translation</div>
-                    <label class="set-row"><input type="checkbox" id="sInstant" checked> <span data-i18n="setInstant">Instant translate (sentence-by-sentence)</span></label>
-                    <label class="set-row"><input type="checkbox" id="sAutoScroll" checked> <span data-i18n="setAutoScroll">Auto-scroll to latest</span></label>
-                    <label class="set-row"><input type="checkbox" id="sHighlight" checked> <span data-i18n="setHighlight">Highlight latest translation</span></label>
-                    <label class="set-row"><input type="checkbox" id="sShowOrig" > <span data-i18n="setShowOrig">Show original text alongside</span></label>
+                    <label class="set-row"><input type="checkbox" id="sInstant" checked onchange="saveSettings(true)"> <span data-i18n="setInstant">Instant translate (sentence-by-sentence)</span></label>
+                    <label class="set-row"><input type="checkbox" id="sAutoScroll" checked onchange="saveSettings(true)"> <span data-i18n="setAutoScroll">Auto-scroll to latest</span></label>
+                    <label class="set-row"><input type="checkbox" id="sHighlight" checked onchange="saveSettings(true)"> <span data-i18n="setHighlight">Highlight latest translation</span></label>
+                    <label class="set-row"><input type="checkbox" id="sShowOrig" onchange="saveSettings(true)"> <span data-i18n="setShowOrig">Show original text alongside</span></label>
                 </div>
                 <div class="set-group">
                     <div class="set-title" data-i18n="setAudio">Audio</div>
@@ -2360,7 +2360,7 @@ function buildViz() {
     for (let i = 0; i < 16; i++) { const b = document.createElement('div'); b.className = 'viz-bar'; c.appendChild(b); }
 }
 
-  function runViz(rawStream) {
+ function runViz(rawStream) {
     try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioCtx.createMediaStreamSource(rawStream);
@@ -2422,7 +2422,7 @@ function buildViz() {
             requestAnimationFrame(loop);
         })();
     } catch(e) { console.warn('[v4.7] Audio processing setup failed:', e); processedStream = rawStream; }
-}  
+}
 
 // ══════════════════════════════════════════════
 // SPEECH RECOGNITION
@@ -2464,14 +2464,14 @@ async function startListen() {
             document.getElementById('stsTxt').textContent = interim ? t('statusSpeechDetected') : t('statusListening');
             if (cfg.instant && final && transcript.trim()) {
                 clearTimeout(bufferFlushTimer); clearTimeout(silenceTimer);
-                if (IS_ANDROID) { silenceTimer = setTimeout(() => { if (transcript.trim()) { doTranslate(transcript.trim()); transcript = ''; } }, 600); }
-                else { bufferFlushTimer = null; doTranslate(transcript.trim()); transcript = ''; }
+                if (IS_ANDROID) { silenceTimer = setTimeout(() => { if (transcript.trim()) { queueTranslation(transcript.trim()); transcript = ''; } }, 600); }
+                else { bufferFlushTimer = null; queueTranslation(transcript.trim()); transcript = ''; }
             } else if (!cfg.instant && (transcript + interim).trim()) {
                 clearTimeout(silenceTimer);
-                silenceTimer = setTimeout(() => { if (transcript.trim()) { clearTimeout(bufferFlushTimer); bufferFlushTimer = null; doTranslate(transcript.trim()); transcript = ''; } }, cfg.silenceWait * 1000);
+                silenceTimer = setTimeout(() => { if (transcript.trim()) { clearTimeout(bufferFlushTimer); bufferFlushTimer = null; queueTranslation(transcript.trim()); transcript = ''; } }, cfg.silenceWait * 1000);
             }
             if (transcript.trim() && !bufferFlushTimer) {
-                bufferFlushTimer = setTimeout(() => { bufferFlushTimer = null; if (transcript.trim()) { clearTimeout(silenceTimer); doTranslate(transcript.trim()); transcript = ''; } }, cfg.bufferTime * 1000);
+                bufferFlushTimer = setTimeout(() => { bufferFlushTimer = null; if (transcript.trim()) { clearTimeout(silenceTimer); queueTranslation(transcript.trim()); transcript = ''; } }, cfg.bufferTime * 1000);
             }
         };
 
@@ -2483,7 +2483,7 @@ async function startListen() {
             else if (e.error === 'language-not-supported') { alert('Language not supported for speech recognition on your device.'); stopListen(); }
             else if (e.error === 'aborted' && isListening && restarts < 15) { restarts++; setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY * 3); }
         };
-        recognition.onend = () => { console.log('[v4.6] Recognition ended, isListening:', isListening); if (transcript.trim()) { doTranslate(transcript.trim()); transcript = ''; } if (isListening) setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY); };
+        recognition.onend = () => { console.log('[v4.6] Recognition ended, isListening:', isListening); if (transcript.trim()) { queueTranslation(transcript.trim()); transcript = ''; } if (isListening) setTimeout(() => { if (isListening) safeStartRecognition(); }, RESTART_DELAY); };
 
         if (IS_ANDROID) { setTimeout(() => { try { recognition.start(); console.log('[v4.6] Android: recognition.start() called (deferred)'); } catch(e) { console.error('[v4.6] Android start failed:', e); } }, 50); }
         else recognition.start();
@@ -2527,10 +2527,58 @@ async function doTranslate(text) {
     if (engine === 'auto' || engine === 'lingva') result = await tryLingva(text, src, tgt);
     if (!result && (engine === 'auto' || engine === 'mymemory')) result = await tryMyMemory(text, src, tgt);
     if (!result && engine === 'auto') result = await tryLibre(text, src, tgt);
+    if (!result) {
+        // All engines failed — likely rate-limited. Back off and retry once.
+        console.warn('[v4.6] All engines failed, retrying after 2.5s backoff...');
+        await new Promise(r => setTimeout(r, 2500));
+        lastTxApiCall = Date.now();
+        result = await tryLingva(text, src, tgt) || await tryMyMemory(text, src, tgt);
+    }
     document.getElementById('loader').classList.remove('on');
     if (result) { txCache.set(cacheKey, result); if (txCache.size > 500) { const firstKey = txCache.keys().next().value; txCache.delete(firstKey); } addEntry(text, result); }
     else addEntry(text, '⚠️ Translation unavailable — ' + text);
     updApiUI();
+}
+// ══════════════════════════════════════════════
+// TRANSLATION QUEUE — rate-limit + sentence aggregation
+// Collects speech fragments, merges short ones into full
+// sentences, adds punctuation on pause-flush, and sends
+// to the API no faster than TX_MIN_INTERVAL to avoid
+// server rate-limit drops.
+// ══════════════════════════════════════════════
+const txQueue = [];
+let txProcessing = false;
+let lastTxApiCall = 0;
+const TX_MIN_INTERVAL = 1500; // ms between API calls (respects free-tier rate limits)
+const TX_MAX_CHARS = 400;     // flush buffer when it grows beyond this
+
+function queueTranslation(text) {
+    if (!text?.trim()) return;
+    const clean = text.trim();
+    // Merge with the last queued fragment if combined it's still a reasonable sentence
+    const lastQ = txQueue[txQueue.length - 1];
+    if (lastQ && (lastQ.length + clean.length + 1) < TX_MAX_CHARS) {
+        txQueue[txQueue.length - 1] = lastQ + ' ' + clean;
+    } else {
+        txQueue.push(clean);
+    }
+    processTxQueue();
+}
+
+async function processTxQueue() {
+    if (txProcessing) return; // already draining
+    txProcessing = true;
+    while (txQueue.length) {
+        let text = txQueue.shift();
+        // Pause-triggered flush: ensure sentence ends with punctuation
+        if (!/[.!?,،؛؟…:]$/.test(text)) text += '.';
+        // Throttle: wait so we never exceed the server's allowable rate
+        const wait = TX_MIN_INTERVAL - (Date.now() - lastTxApiCall);
+        if (wait > 0) await new Promise(r => setTimeout(r, wait));
+        lastTxApiCall = Date.now();
+        await doTranslate(text);
+    }
+    txProcessing = false;
 }
 
 function truncateForUrl(text, maxChars) { if (text.length <= maxChars) return text; const trimmed = text.substring(0, maxChars); const lastSpace = trimmed.lastIndexOf(' '); return lastSpace > maxChars * 0.5 ? trimmed.substring(0, lastSpace) : trimmed; }
@@ -2640,7 +2688,7 @@ function applySettings() {
     document.getElementById('sSilence').value = cfg.silenceWait; document.getElementById('silenceVal').textContent = cfg.silenceWait;
     document.querySelectorAll('input[name=engine]').forEach(r => { r.checked = r.value === cfg.engine; });
 }
-function saveSettings() {
+function saveSettings(silent) {
     cfg.instant = document.getElementById('sInstant').checked; cfg.autoScroll = document.getElementById('sAutoScroll').checked;
     cfg.highlight = document.getElementById('sHighlight').checked; cfg.showOrig = document.getElementById('sShowOrig').checked;
     cfg.threshold = parseInt(document.getElementById('sThresh').value); cfg.wakeLock = document.getElementById('sWakeLock').checked;
@@ -2649,8 +2697,8 @@ function saveSettings() {
     cfg.noiseFilter = document.getElementById('sNoiseFilter').checked; cfg.voiceGain = parseFloat(document.getElementById('sGain').value);
     cfg.noiseGate = parseInt(document.getElementById('sGate').value);
     if (audioNodes.gain) audioNodes.gain.gain.value = cfg.voiceGain;
-    try { localStorage.setItem('kht_cfg_v3', JSON.stringify(cfg)); } catch(e) {}
-    alert('Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.');
+    try { localStorage.setItem('kht_cfg_v3', JSON.stringify(cfg)); } catch(e) {}renderTranslations(); // Re-render so showOrig/highlight changes apply immediately
+    if (!silent)alert('Settings saved ✓\nNoise filter & gate changes take effect next time you start listening.');
 }
 
 
